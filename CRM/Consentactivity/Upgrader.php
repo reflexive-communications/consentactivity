@@ -40,6 +40,20 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         $config->update($cfg);
     }
 
+    /**
+     * Uninstall process. Clean database.
+     *
+     * @throws CRM_Core_Exception
+     */
+    public function uninstall()
+    {
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        // delete current configs
+        if (!$config->remove()) {
+            throw new CRM_Core_Exception($this->extensionName.ts(' could not remove configs from database'));
+        }
+    }
+
     // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
 
@@ -59,13 +73,6 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
   //  civicrm_api3('Setting', 'create', array(
   //    'myWeirdFieldSetting' => array('id' => $customFieldId, 'weirdness' => 1),
   //  ));
-  // }
-
-  /**
-   * Example: Run an external SQL script when the module is uninstalled.
-   */
-  // public function uninstall() {
-  //  $this->executeSqlFile('sql/myuninstall.sql');
   // }
 
   /**
