@@ -6,16 +6,42 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
 {
+    /**
+     * Install process. Init database.
+     * On case of the config exists, it check that the stred activity-type id
+     * belongs to an actaul activity type or not. If belongs and the activity-type
+     * is enabled, it does nothing. If the activity type is not enabled, it updates
+     * the  enabled flag to true and returns. If the activity type does not exist
+     * the process creates it and updates the config with the new id.
+     *
+     * @throws CRM_Core_Exception
+     */
+    public function install()
+    {
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        try {
+            $config->load();
+        } catch (CRM_Core_Exception $e) {
+            // Create default configs
+            if (!$config->create()) {
+                throw new CRM_Core_Exception($this->extensionName.ts(' could not create configs in database'));
+            }
+        }
+        $cfg = $config->get();
+        $activityTypeId = $cfg['activity-type-id'];
+        if ($activityTypeId === 0) {
+            $activityTypeId = CRM_Consentactivity_Service::createDefaultActivityType();
+        } else {
+            // Existing activity needs to be enabled and reserved. Make it sure with
+            // updating it.
+            CRM_Consentactivity_Service::updateExistingActivityType($activityTypeId);
+        }
+        $cfg['activity-type-id'] = $activityTypeId;
+        $config->update($cfg);
+    }
 
-  // By convention, functions that look like "function upgrade_NNNN()" are
+    // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
-
-  /**
-   * Example: Run an external SQL script when the module is installed.
-   *
-  public function install() {
-    $this->executeSqlFile('sql/myinstall.sql');
-  }
 
   /**
    * Example: Work with entities usually not available during the install step.
