@@ -185,3 +185,13 @@ function consentactivity_civicrm_themes(&$themes)
 //  ));
 //  _consentactivity_civix_navigationMenu($menu);
 //}
+// The following hooks are implemented by me.
+/**
+ * Implements hook_civicrm_postProcess().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postProcess
+ */
+function consentactivity_civicrm_postProcess($formName, $form)
+{
+    CRM_Consentactivity_Service::postProcess($formName, $form);
+}
