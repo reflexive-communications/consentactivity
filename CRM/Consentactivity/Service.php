@@ -2,6 +2,7 @@
 
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
+use Civi\Api4\Activity;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -31,7 +32,7 @@ class CRM_Consentactivity_Service
         if ($currentActivityTypeId > 0) {
             return $currentActivityTypeId;
         }
-        $result = OptionValue::create()
+        $result = OptionValue::create(false)
             ->addValue('option_group_id', $activityTypeOptionGroupId)
             ->addValue('label', self::DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL)
             ->addValue('is_active', true)
@@ -39,7 +40,7 @@ class CRM_Consentactivity_Service
             ->addValue('icon', 'fa-thumbs-o-up')
             ->execute()
             ->first();
-        return $result['id'];
+        return $result['value'];
     }
     /*
      * It updates an existing activity type with making it reserved and active.
@@ -50,8 +51,8 @@ class CRM_Consentactivity_Service
      */
     public static function updateExistingActivityType(int $optionValueId): int
     {
-        OptionValue::update()
-            ->addWhere('id', '=', $optionValueId)
+        OptionValue::update(false)
+            ->addWhere('value', '=', $optionValueId)
             ->addValue('is_active', true)
             ->addValue('is_reserved', true)
             ->execute();
@@ -89,7 +90,7 @@ class CRM_Consentactivity_Service
         $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
-        $results = \Civi\Api4\Activity::create()
+        $results = Activity::create(false)
             ->addValue('activity_type_id', $config['activity-type-id'])
             ->addValue('source_contact_id', $contactId)
             ->addValue('status_id:name', 'Completed')
@@ -98,6 +99,21 @@ class CRM_Consentactivity_Service
         if (count($results) !== 1 || !array_key_exists('id', $results[0])) {
             Civi::log()->error('Consentactivity | Failed to create Activity for the following contact: '.$contactId);
         }
+    }
+    /*
+     * It is a wrapper function for option value get api call.
+     *
+     * @param int $optionValueId
+     *
+     * @return mixed
+     */
+    public static function getActivityType(int $optionValueId): array
+    {
+        $result = OptionValue::get(false)
+            ->addWhere('value', '=', $optionValueId)
+            ->execute()
+            ->first();
+        return $result ?? [];
     }
     /*
      * It returns true if the given form contains field that connected
@@ -136,7 +152,7 @@ class CRM_Consentactivity_Service
      */
     private static function getActivityTypeOptionGroupId(): int
     {
-        $optionGroup = OptionGroup::get()
+        $optionGroup = OptionGroup::get(false)
             ->addSelect('id')
             ->addWhere('name', '=', 'activity_type')
             ->setLimit(1)
@@ -155,7 +171,7 @@ class CRM_Consentactivity_Service
      */
     private static function getActivityTypeId(int $optionGroupId): int
     {
-        $optionValues = OptionValue::get()
+        $optionValues = OptionValue::get(false)
             ->addSelect('id', 'is_active')
             ->addWhere('option_group_id', '=', $optionGroupId)
             ->addWhere('label', '=', self::DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL)
