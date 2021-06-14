@@ -181,7 +181,7 @@ class CRM_Consentactivity_Service
             return [];
         }
         $optionValue = $optionValues->first();
-        if ($optionValue['is_active']) {
+        if ($optionValue['is_active'] && $optionValue['is_reserved']) {
             return $optionValue;
         }
         // Set it active to be able to use it later.
