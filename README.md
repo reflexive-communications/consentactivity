@@ -28,5 +28,7 @@ cv en consentactivity
 ### Upgrader
 
 When the extension is installed, it creates the default setting. During the postInstall step, it searches for an activity type that has a given label. If not found, then it creates it in this step. Finally it updates the default setting values with the option group id and the value of this type. The option group id is mapped to `option-value-id` and the value is to `activity-type-id`.
+
 When the extension is enabled, it validates the setting values. In case of data corruption it creates the activity type again and updates the setting with the new values.
+
 When the extension is uninstalled, it deletes the settings. The activity type and the activities are not changed during the uninstall process.
