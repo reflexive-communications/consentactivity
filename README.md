@@ -1,29 +1,19 @@
 # consentactivity
 
-![Screenshot](/images/screenshot.png)
+This extension could be used for tracking GDPR related activities. It supports the following use case:
+- The contact data could be used for N years after the consent.
+- The consent is defined as a form submission that contains at least one of the following contact parameters: `do_not_mail`, `do_not_phone`, `is_opt_out`
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+An activity is added to the contact when it fills a form that contains the consent parameters. The date of the activity is the date of the consent. The status of the activity will be completed.
+The activity type is created by the extension. If an existing activity type has to be used, you can make it happen if you change the label of the type to the extension default value, that is `GDPR Consent Activity`.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
-* PHP v7.2+
-* CiviCRM (*FIXME: Version number*)
-
-## Installation (Web UI)
-
-Learn more about installing CiviCRM extensions in the [CiviCRM Sysadmin Guide](https://docs.civicrm.org/sysadmin/en/latest/customize/extensions/).
-
-## Installation (CLI, Zip)
-
-Sysadmins and developers may download the `.zip` file for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-cd <extension-dir>
-cv dl consentactivity@https://github.com/FIXME/consentactivity/archive/master.zip
-```
+* PHP v7.3+
+* CiviCRM v5.37.1
+* RcBase v0.8.2
 
 ## Installation (CLI, Git)
 
@@ -31,14 +21,12 @@ Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) 
 install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
-git clone https://github.com/FIXME/consentactivity.git
+git clone git@github.com:reflexive-communications/consentactivity.git
 cv en consentactivity
 ```
 
-## Getting Started
+### Upgrader
 
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
-
-## Known Issues
-
-(* FIXME *)
+When the extension is installed, it creates the default setting. During the postInstall step, it searches for an activity type that has a given label. If not found, then it creates it in this step. Finally it updates the default setting values with the option group id and the value of this type. The option group id is mapped to `option-value-id` and the value is to `activity-type-id`.
+When the extension is enabled, it validates the setting values. In case of data corruption it creates the activity type again and updates the setting with the new values.
+When the extension is uninstalled, it deletes the settings. The activity type and the activities are not changed during the uninstall process.
