@@ -19,24 +19,46 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
     public function install()
     {
         $config = new CRM_Consentactivity_Config($this->extensionName);
-        try {
-            $config->load();
-        } catch (CRM_Core_Exception $e) {
-            // Create default configs
-            if (!$config->create()) {
-                throw new CRM_Core_Exception($this->extensionName.ts(' could not create configs in database'));
-            }
+        // Create default configs
+        if (!$config->create()) {
+            throw new CRM_Core_Exception($this->extensionName.ts(' could not create configs in database'));
         }
+    }
+
+    /**
+     * After the installation, the activityType is created and stored in the
+     * setting db.
+     *
+     */
+    public function postInstall()
+    {
+        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config->load();
         $cfg = $config->get();
-        $activityTypeId = $cfg['activity-type-id'];
-        if ($activityTypeId === 0) {
-            $activityTypeId = CRM_Consentactivity_Service::createDefaultActivityType();
-        } else {
-            // Existing activity needs to be enabled and reserved. Make it sure with
-            // updating it.
-            CRM_Consentactivity_Service::updateExistingActivityType($activityTypeId);
+        $cfg['option-value-id'] = $activityType['id'];
+        $cfg['activity-type-id'] = $activityType['value'];
+        $config->update($cfg);
+    }
+
+    /**
+     * When the extension is enabled, we have to make sure that the setup is still valid.
+     * If the activity type has been changed manually, it has to be changed back to the
+     * default values. If the activity type is missing, it has to be created again.
+     */
+    public function enable()
+    {
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config->load();
+        $cfg = $config->get();
+        $current = CRM_Consentactivity_Service::getActivityType($cfg['option-value-id']);
+        if (empty($current)) {
+            // missing type, it could be deleted. A new one has to be created.
+            $current = CRM_Consentactivity_Service::createDefaultActivityType();
         }
-        $cfg['activity-type-id'] = $activityTypeId;
+        CRM_Consentactivity_Service::updateExistingActivityType($current['id']);
+        $cfg['activity-type-id'] = $current['value'];
+        $cfg['option-value-id'] = $current['id'];
         $config->update($cfg);
     }
 
@@ -56,31 +78,6 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
 
     // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
-
-  /**
-   * Example: Work with entities usually not available during the install step.
-   *
-   * This method can be used for any post-install tasks. For example, if a step
-   * of your installation depends on accessing an entity that is itself
-   * created during the installation (e.g., a setting or a managed entity), do
-   * so here to avoid order of operation problems.
-   */
-  // public function postInstall() {
-  //  $customFieldId = civicrm_api3('CustomField', 'getvalue', array(
-  //    'return' => array("id"),
-  //    'name' => "customFieldCreatedViaManagedHook",
-  //  ));
-  //  civicrm_api3('Setting', 'create', array(
-  //    'myWeirdFieldSetting' => array('id' => $customFieldId, 'weirdness' => 1),
-  //  ));
-  // }
-
-  /**
-   * Example: Run a simple query when a module is enabled.
-   */
-  // public function enable() {
-  //  CRM_Core_DAO::executeQuery('UPDATE foo SET is_active = 1 WHERE bar = "whiz"');
-  // }
 
   /**
    * Example: Run a simple query when a module is disabled.
