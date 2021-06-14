@@ -23,14 +23,14 @@ class CRM_Consentactivity_Service
      * default consent activity, the label has to be updated to the default value. The service
      * will use that one.
      *
-     * @return int
+     * @return array
      */
-    public static function createDefaultActivityType(): int
+    public static function createDefaultActivityType(): array
     {
         $activityTypeOptionGroupId = self::getActivityTypeOptionGroupId();
-        $currentActivityTypeId = self::getActivityTypeId($activityTypeOptionGroupId);
-        if ($currentActivityTypeId > 0) {
-            return $currentActivityTypeId;
+        $currentActivityType = self::findActivityType($activityTypeOptionGroupId);
+        if (count($currentActivityType) > 0) {
+            return $currentActivityType;
         }
         $result = OptionValue::create(false)
             ->addValue('option_group_id', $activityTypeOptionGroupId)
@@ -40,23 +40,24 @@ class CRM_Consentactivity_Service
             ->addValue('icon', 'fa-thumbs-o-up')
             ->execute()
             ->first();
-        return $result['value'];
+        return $result;
     }
     /*
      * It updates an existing activity type with making it reserved and active.
      *
      * @param int $optionValueId
      *
-     * @return int
+     * @return array
      */
-    public static function updateExistingActivityType(int $optionValueId): int
+    public static function updateExistingActivityType(int $optionValueId): array
     {
-        OptionValue::update(false)
-            ->addWhere('value', '=', $optionValueId)
+        $result = OptionValue::update(false)
+            ->addWhere('id', '=', $optionValueId)
             ->addValue('is_active', true)
             ->addValue('is_reserved', true)
-            ->execute();
-        return $optionValueId;
+            ->execute()
+            ->first();
+        return $result;
     }
     /**
      * This function is responsible for handling the email, phone opt-out values.
@@ -105,12 +106,12 @@ class CRM_Consentactivity_Service
      *
      * @param int $optionValueId
      *
-     * @return mixed
+     * @return array
      */
     public static function getActivityType(int $optionValueId): array
     {
         $result = OptionValue::get(false)
-            ->addWhere('value', '=', $optionValueId)
+            ->addWhere('id', '=', $optionValueId)
             ->execute()
             ->first();
         return $result ?? [];
@@ -161,28 +162,27 @@ class CRM_Consentactivity_Service
         return $optionGroup['id'];
     }
     /*
-     * It returns a not negative integer value as activity type id.
-     * It tries to find the id of the existing activity type. If not found
-     * It returns 0.
+     * It returns an array as activity type.
+     * It tries to find the existing activity type. If not found
+     * It returns empty array.
      *
      * @param int $optionGroupId
      *
-     * @return int
+     * @return array
      */
-    private static function getActivityTypeId(int $optionGroupId): int
+    private static function findActivityType(int $optionGroupId): array
     {
         $optionValues = OptionValue::get(false)
-            ->addSelect('id', 'is_active')
             ->addWhere('option_group_id', '=', $optionGroupId)
             ->addWhere('label', '=', self::DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL)
             ->setLimit(1)
             ->execute();
         if (count($optionValues) === 0) {
-            return 0;
+            return [];
         }
         $optionValue = $optionValues->first();
         if ($optionValue['is_active']) {
-            return $optionValue['id'];
+            return $optionValue;
         }
         // Set it active to be able to use it later.
         return self::updateExistingActivityType($optionValue['id']);
