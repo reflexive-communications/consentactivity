@@ -8,11 +8,6 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
 {
     /**
      * Install process. Init database.
-     * On case of the config exists, it check that the stred activity-type id
-     * belongs to an actaul activity type or not. If belongs and the activity-type
-     * is enabled, it does nothing. If the activity type is not enabled, it updates
-     * the  enabled flag to true and returns. If the activity type does not exist
-     * the process creates it and updates the config with the new id.
      *
      * @throws CRM_Core_Exception
      */
