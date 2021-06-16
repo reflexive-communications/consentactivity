@@ -1,6 +1,7 @@
 <?php
 
 use Civi\Api4\OptionValue;
+use Civi\Api4\Contact;
 
 /**
  * Service class test cases.
@@ -53,5 +54,73 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         foreach ($activityType as $k => $v) {
             self::assertSame($v, $newActivityType[$k]);
         }
+    }
+
+    /**
+     * Test the postProcess function.
+     */
+    public function testPostProcessInvalidFormName()
+    {
+        $form = new CRM_Profile_Form_Edit();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_id', $contact['id']);
+        $submit = [
+            'is_opt_out' => ''
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess('Not_Intrested_In_This_Class', $form), 'PostProcess supposed to be empty.');
+    }
+    public function testPostProcessMissingParameter()
+    {
+        $form = new CRM_Profile_Form_Edit();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_id', $contact['id']);
+        $submit = [
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+    }
+    public function testPostProcessInvalidContactId()
+    {
+        // enable extension
+        Civi\Test::headless()
+            ->installMe(__DIR__)
+            ->apply();
+        $form = new CRM_Profile_Form_Edit();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_id', 0);
+        $submit = [
+            'is_opt_out' => ''
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::expectException(CRM_Core_Exception::class);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+    }
+    public function testPostProcess()
+    {
+        // enable extension
+        Civi\Test::headless()
+            ->installMe(__DIR__)
+            ->apply();
+        $form = new CRM_Profile_Form_Edit();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_id', $contact['id']);
+        $submit = [
+            'is_opt_out' => ''
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 }
