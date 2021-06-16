@@ -1,59 +1,24 @@
 <?php
 
-use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
-
 /**
- * FIXME - Add test description.
- *
- * Tips:
- *  - With HookInterface, you may implement CiviCRM hooks directly in the test class.
- *    Simply create corresponding functions (e.g. "hook_civicrm_post(...)" or similar).
- *  - With TransactionalInterface, any data changes made by setUp() or test****() functions will
- *    rollback automatically -- as long as you don't manipulate schema or truncate tables.
- *    If this test needs to manipulate schema or truncate tables, then either:
- *       a. Do all that using setupHeadless() and Civi\Test.
- *       b. Disable TransactionalInterface, and handle all setup/teardown yourself.
+ * Config class base test cases.
  *
  * @group headless
  */
-class CRM_Consentactivity_ConfigTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class CRM_Consentactivity_ConfigTest extends CRM_Consentactivity_HeadlessBase
 {
-    public function setUpHeadless()
-    {
-        // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
-        // See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
-        return \Civi\Test::headless()
-      ->installMe(__DIR__)
-      ->apply();
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
-     * Example: Test that a version is returned.
+     * It checks that the create function works well.
      */
-    public function testWellFormedVersion()
+    public function testCreate()
     {
-        $this->assertNotEmpty(E::SHORT_NAME);
-        $this->assertRegExp('/^([0-9\.]|alpha|beta)*$/', \CRM_Utils_System::version());
-    }
-
-    /**
-     * Example: Test that we're using a fake CMS.
-     */
-    public function testWellFormedUF()
-    {
-        $this->assertEquals('UnitTests', CIVICRM_UF);
+        $config = new CRM_Consentactivity_Config('consentactivity_test');
+        self::assertTrue($config->create(), 'Create config has to be successful.');
+        $cfg = $config->get();
+        self::assertTrue(array_key_exists('activity-type-id', $cfg), 'activity-type-id key is missing from the config.');
+        self::assertSame(0, $cfg['activity-type-id'], 'Invalid activity-type-id initial value.');
+        self::assertTrue(array_key_exists('option-value-id', $cfg), 'option-value-id key is missing from the config.');
+        self::assertSame(0, $cfg['option-value-id'], 'Invalid option-value-id initial value.');
+        self::assertTrue($config->create(), 'Create config has to be successful multiple times.');
     }
 }
