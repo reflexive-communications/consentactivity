@@ -45,6 +45,8 @@ class CRM_Consentactivity_Service
     }
     /*
      * It updates an existing activity type with making it reserved and active.
+     * As the update does not return all fields, the getActivityType function is
+     * returned.
      *
      * @param int $optionValueId
      *
@@ -52,13 +54,12 @@ class CRM_Consentactivity_Service
      */
     public static function updateExistingActivityType(int $optionValueId): array
     {
-        $result = OptionValue::update(false)
+        OptionValue::update(false)
             ->addWhere('id', '=', $optionValueId)
             ->addValue('is_active', true)
             ->addValue('is_reserved', true)
-            ->execute()
-            ->first();
-        return $result;
+            ->execute();
+        return self::getActivityType($optionValueId);
     }
     /**
      * This function is responsible for handling the email, phone opt-out values.
