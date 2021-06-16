@@ -2,6 +2,7 @@
 
 use Civi\Api4\OptionValue;
 use Civi\Api4\Contact;
+use Civi\Api4\Activity;
 
 /**
  * Service class test cases.
@@ -75,6 +76,10 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
     }
     public function testPostProcessMissingParameter()
     {
+        // enable extension
+        Civi\Test::headless()
+            ->installMe(__DIR__)
+            ->apply();
         $form = new CRM_Profile_Form_Edit();
         $contact = Contact::create(false)
             ->addValue('contact_type', 'Individual')
@@ -85,6 +90,9 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         ];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertSame(0, count($activities));
     }
     public function testPostProcessInvalidContactId()
     {
@@ -122,5 +130,8 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         ];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertSame(1, count($activities));
     }
 }
