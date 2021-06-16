@@ -1,59 +1,40 @@
 <?php
 
-use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
-
 /**
  * FIXME - Add test description.
  *
- * Tips:
- *  - With HookInterface, you may implement CiviCRM hooks directly in the test class.
- *    Simply create corresponding functions (e.g. "hook_civicrm_post(...)" or similar).
- *  - With TransactionalInterface, any data changes made by setUp() or test****() functions will
- *    rollback automatically -- as long as you don't manipulate schema or truncate tables.
- *    If this test needs to manipulate schema or truncate tables, then either:
- *       a. Do all that using setupHeadless() and Civi\Test.
- *       b. Disable TransactionalInterface, and handle all setup/teardown yourself.
- *
  * @group headless
  */
-class CRM_Consentactivity_ServiceTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
 {
+    /*
+     * Overwrite setup function to skip the install of the current extenstion
+     * to be able to test the create steps of the service.
+     */
     public function setUpHeadless()
     {
-        // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
-        // See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
         return \Civi\Test::headless()
-      ->installMe(__DIR__)
-      ->apply();
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
+            ->install('rc-base')
+            ->apply();
     }
 
     /**
-     * Example: Test that a version is returned.
+     * Test the createDefaultActivityType function.
      */
-    public function testWellFormedVersion()
+    public function testCreateDefaultActivityType()
     {
-        $this->assertNotEmpty(E::SHORT_NAME);
-        $this->assertRegExp('/^([0-9\.]|alpha|beta)*$/', \CRM_Utils_System::version());
-    }
-
-    /**
-     * Example: Test that we're using a fake CMS.
-     */
-    public function testWellFormedUF()
-    {
-        $this->assertEquals('UnitTests', CIVICRM_UF);
+        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        self::assertIsArray($activityType);
+        self::assertSame(CRM_Consentactivity_Service::DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL, $activityType['label']);
+        self::assertSame(CRM_Consentactivity_Service::DEFAULT_CONSENT_ACTIVITY_TYPE_ICON, $activityType['icon']);
+        self::assertTrue($activityType['is_active']);
+        self::assertTrue($activityType['is_reserved']);
+        // when we want to create the type again without changing the label, it will return the same;
+        $newActivityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        // If the existing one is returned from this function, the list of the keys is
+        // extended, so that only those keys could be checked that were set in the original.
+        foreach ($activityType as $k => $v) {
+            self::assertSame($v, $newActivityType[$k]);
+        }
     }
 }

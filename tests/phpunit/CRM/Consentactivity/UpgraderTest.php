@@ -37,12 +37,22 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
     /**
      * Test the enable process.
      */
-    public function testEnable()
+    public function testEnableNoIssue()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
         try {
             $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->postInstall());
+            $this->assertEmpty($installer->enable());
+        } catch (Exception $e) {
+            $this->fail("Should not throw exception.");
+        }
+    }
+    public function testEnableCorruptInstall()
+    {
+        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        try {
+            $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
             $this->fail("Should not throw exception.");

@@ -8,6 +8,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
 class CRM_Consentactivity_Service
 {
     public const DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL = 'GDPR Consent Activity';
+    public const DEFAULT_CONSENT_ACTIVITY_TYPE_ICON = 'fa-thumbs-o-up';
     public const FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS = [
         'CRM_Campaign_Form_Petition_Signature',
         'CRM_Profile_Form_Edit',
@@ -37,7 +38,7 @@ class CRM_Consentactivity_Service
             ->addValue('label', self::DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL)
             ->addValue('is_active', true)
             ->addValue('is_reserved', true)
-            ->addValue('icon', 'fa-thumbs-o-up')
+            ->addValue('icon', self::DEFAULT_CONSENT_ACTIVITY_TYPE_ICON)
             ->execute()
             ->first();
         return $result;
