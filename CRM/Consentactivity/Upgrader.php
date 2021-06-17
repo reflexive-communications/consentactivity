@@ -92,7 +92,6 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
      */
     public function upgrade_5000()
     {
-        $this->ctx->log->info('Applying update 5000');
         $config = new CRM_Consentactivity_Config($this->extensionName);
         $config->load();
         $cfg = $config->get();
