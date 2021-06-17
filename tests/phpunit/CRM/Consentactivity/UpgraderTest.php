@@ -7,6 +7,16 @@
  */
 class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 {
+    /*
+     * Overwrite setup function to skip the install of the current extenstion
+     * to be able to test the create steps of the service.
+     */
+    public function setUpHeadless()
+    {
+        return \Civi\Test::headless()
+            ->install('rc-base')
+            ->apply();
+    }
     /**
      * Test the install process.
      */
@@ -30,7 +40,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->postInstall());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception.");
+            $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
 
@@ -45,7 +55,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->assertEmpty($installer->postInstall());
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception.");
+            $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
     public function testEnableCorruptInstall()
@@ -55,7 +65,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception.");
+            $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
 
@@ -69,7 +79,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
         try {
             $this->assertEmpty($installer->uninstall());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception.");
+            $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
 }
