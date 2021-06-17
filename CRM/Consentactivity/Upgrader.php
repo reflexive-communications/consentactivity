@@ -54,6 +54,14 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
             $current = CRM_Consentactivity_Service::createDefaultActivityType();
         }
         CRM_Consentactivity_Service::updateExistingActivityType($current['id']);
+        if (array_key_exists('saved-search-id', $cfg)) {
+            // check that the saved search exists
+            $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['saved-search-id']);
+            if (empty($currentSearch)) {
+                $savedSearch = CRM_Consentactivity_Service::savedSearch($current['name']);
+                $cfg['saved-search-id'] = $savedSearch['id'];
+            }
+        }
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $config->update($cfg);
@@ -74,27 +82,36 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
     }
 
     // By convention, functions that look like "function upgrade_NNNN()" are
-  // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
+    // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
+    /**
+     * Upgrader function, if the saved-search-id does not exists, it has
+     * to be created and the id field has to be added to the setting.
+     *
+     * @return true on success
+     * @throws Exception
+     */
+    public function upgrade_5000()
+    {
+        $this->ctx->log->info('Applying update 5000');
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config->load();
+        $cfg = $config->get();
+        if (!array_key_exists('saved-search-id', $cfg) || $cfg['saved-search-id'] === 0) {
+            $activityType = CRM_Consentactivity_Service::getActivityType($cfg['option-value-id']);
+            $savedSearch = CRM_Consentactivity_Service::savedSearch($activityType['name']);
+            $cfg['saved-search-id'] = $savedSearch['id'];
+            $config->update($cfg);
+        }
+        return true;
+    }
 
-  /**
-   * Example: Run a simple query when a module is disabled.
-   */
+    /**
+     * Example: Run a simple query when a module is disabled.
+     */
   // public function disable() {
   //   CRM_Core_DAO::executeQuery('UPDATE foo SET is_active = 0 WHERE bar = "whiz"');
   // }
 
-  /**
-   * Example: Run a couple simple queries.
-   *
-   * @return TRUE on success
-   * @throws Exception
-   */
-  // public function upgrade_4200() {
-  //   $this->ctx->log->info('Applying update 4200');
-  //   CRM_Core_DAO::executeQuery('UPDATE foo SET bar = "whiz"');
-  //   CRM_Core_DAO::executeQuery('DELETE FROM bang WHERE willy = wonka(2)');
-  //   return TRUE;
-  // }
 
 
   /**
