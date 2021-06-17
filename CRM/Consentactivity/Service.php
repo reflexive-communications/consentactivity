@@ -171,12 +171,27 @@ class CRM_Consentactivity_Service
                 ],
             ],
         ];
-        $results = \Civi\Api4\SavedSearch::create(false)
+        $results = SavedSearch::create(false)
             ->addValue('label', 'Contacts with old consents')
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', $apiParams)
             ->execute();
         return $results->first();
+    }
+    /*
+     * It is a wrapper function for saved search get api call.
+     *
+     * @param int $savedSearchId
+     *
+     * @return array
+     */
+    public static function getSavedSearch(int $savedSearchId): array
+    {
+        $result = SavedSearch::get(false)
+            ->addWhere('id', '=', $savedSearchId)
+            ->execute()
+            ->first();
+        return $result ?? [];
     }
     /*
      * It returns true if the given form contains field that connected
