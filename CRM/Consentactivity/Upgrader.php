@@ -33,6 +33,8 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         $cfg = $config->get();
         $cfg['option-value-id'] = $activityType['id'];
         $cfg['activity-type-id'] = $activityType['value'];
+        $savedSearch = CRM_Consentactivity_Service::savedSearch($activityType['name']);
+        $cfg['saved-search-id'] = $savedSearch['id'];
         $config->update($cfg);
     }
 
