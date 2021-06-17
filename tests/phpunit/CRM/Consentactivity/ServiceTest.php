@@ -101,10 +101,6 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->installMe(__DIR__)
             ->apply();
         $form = new CRM_Profile_Form_Edit();
-        $contact = Contact::create(false)
-            ->addValue('contact_type', 'Individual')
-            ->execute()
-            ->first();
         $form->setVar('_id', 0);
         $submit = [
             'is_opt_out' => ''
