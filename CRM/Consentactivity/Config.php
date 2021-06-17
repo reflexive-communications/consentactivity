@@ -14,6 +14,7 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
         return [
             'activity-type-id' => 0,
             'option-value-id' => 0,
+            'saved-search-id' => 0,
         ];
     }
 }
