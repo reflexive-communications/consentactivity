@@ -7,7 +7,7 @@ This extension could be used for tracking GDPR related activities. It supports t
 An activity is added to the contact when it fills a form that contains the consent parameters. The date of the activity is the date of the consent. The status of the activity will be completed.
 The activity type is created by the extension. If an existing activity type has to be used, you can make it happen if you change the label of the type to the extension default value, that is `GDPR Consent Activity`.
 
-The search-kit extension could be used for finding the contacts where the last consent activity was more then N years ago. This extension provides a saved search that contains the basic setup. The date field has to be updated in the Having statement.
+The search-kit extension could be used for finding the contacts where the last consent activity was more than N years ago. This extension provides a saved search that contains the basic setup. The date field has to be updated in the Having statement.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
