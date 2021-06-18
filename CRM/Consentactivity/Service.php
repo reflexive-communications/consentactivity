@@ -3,6 +3,7 @@
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\Activity;
+use Civi\Api4\SavedSearch;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -114,6 +115,80 @@ class CRM_Consentactivity_Service
     {
         $result = OptionValue::get(false)
             ->addWhere('id', '=', $optionValueId)
+            ->execute()
+            ->first();
+        return $result ?? [];
+    }
+    /*
+     * This function creates a saved search, that could be the base query of the
+     * gathering process of the contacts with old consents.
+     *
+     * @param string $activityName
+     *
+     * @return array
+     */
+    public static function savedSearch(string $activityName): array
+    {
+        $apiParams = [
+            'version' => 4,
+            'select' => [
+                'id',
+                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
+                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
+            ],
+            'orderBy' => [],
+            'where' => [],
+            'groupBy' => [
+                'id'
+            ],
+            'join' => [
+                [
+                    'Activity AS Contact_ActivityContact_Activity_01',
+                    'INNER',
+                    'ActivityContact',
+                    [
+                        'id',
+                        '=',
+                        'Contact_ActivityContact_Activity_01.contact_id'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.record_type_id:name',
+                        '=',
+                        '"Activity Source"'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
+                        '=',
+                        '"'.$activityName.'"'
+                    ]
+                ],
+            ],
+            'having' => [
+                [
+                    'MAX_Contact_ActivityContact_Activity_01_created_date',
+                    '<',
+                    '2021-06-17 11:50'
+                ],
+            ],
+        ];
+        $results = SavedSearch::create(false)
+            ->addValue('label', 'Contacts with old consents')
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', $apiParams)
+            ->execute();
+        return $results->first();
+    }
+    /*
+     * It is a wrapper function for saved search get api call.
+     *
+     * @param int $savedSearchId
+     *
+     * @return array
+     */
+    public static function getSavedSearch(int $savedSearchId): array
+    {
+        $result = SavedSearch::get(false)
+            ->addWhere('id', '=', $savedSearchId)
             ->execute()
             ->first();
         return $result ?? [];
