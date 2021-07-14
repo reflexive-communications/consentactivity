@@ -169,22 +169,6 @@ function consentactivity_civicrm_themes(&$themes)
 //
 //}
 
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- */
-//function consentactivity_civicrm_navigationMenu(&$menu) {
-//  _consentactivity_civix_insert_navigation_menu($menu, 'Mailings', array(
-//    'label' => E::ts('New subliminal message'),
-//    'name' => 'mailing_subliminal_message',
-//    'url' => 'civicrm/mailing/subliminal',
-//    'permission' => 'access CiviMail',
-//    'operator' => 'OR',
-//    'separator' => 0,
-//  ));
-//  _consentactivity_civix_navigationMenu($menu);
-//}
 // The following hooks are implemented by me.
 /**
  * Implements hook_civicrm_postProcess().
@@ -194,4 +178,22 @@ function consentactivity_civicrm_themes(&$themes)
 function consentactivity_civicrm_postProcess($formName, $form)
 {
     CRM_Consentactivity_Service::postProcess($formName, $form);
+}
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
+ */
+function consentactivity_civicrm_navigationMenu(&$menu)
+{
+    _consentactivity_civix_insert_navigation_menu($menu, 'Administer', [
+        'label' => E::ts('Consentactivity Settings'),
+        'name' => 'consentactivity_setting',
+        'url' => 'civicrm/admin/consent-activity',
+        'permission' => 'administer CiviCRM',
+        'operator' => 'AND',
+        'separator' => 0,
+    ]);
+    _consentactivity_civix_navigationMenu($menu);
 }
