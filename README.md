@@ -36,3 +36,15 @@ When the extension is enabled, it validates the setting values. In case of data 
 When the extension is uninstalled, it deletes the settings. The activity type and the activities are not changed during the uninstall process.
 
 When the upgrade-db task is running, it checks for the existance of saved-search-id in the config. If it is not set or is on default value, it creates the saved search and updates the setting.
+
+### Stored configuration
+
+The extension has in internal setting database where the following parameters are stored:
+
+- `activity-type-id`
+- `option-value-id`
+- `saved-search-id` The search for the expiration.
+- `tagging-search-id` The search for the tagging.
+- `tag-id` The tag id that has to be added to the contact.
+- `consent-expiration-years` The number of years after the consent gets expired. By default it is 3 years.
+- `consent-expiration-tagging-days` The number of days before the expiration. The tag has to be added at this time.
