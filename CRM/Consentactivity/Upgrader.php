@@ -27,15 +27,6 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
      */
     public function postInstall()
     {
-        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
-        $config = new CRM_Consentactivity_Config($this->extensionName);
-        $config->load();
-        $cfg = $config->get();
-        $cfg['option-value-id'] = $activityType['id'];
-        $cfg['activity-type-id'] = $activityType['value'];
-        $savedSearch = CRM_Consentactivity_Service::savedSearch($activityType['name']);
-        $cfg['saved-search-id'] = $savedSearch['id'];
-        $config->update($cfg);
     }
 
     /**
@@ -54,12 +45,39 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
             $current = CRM_Consentactivity_Service::createDefaultActivityType();
         }
         CRM_Consentactivity_Service::updateExistingActivityType($current['id']);
-        if (array_key_exists('saved-search-id', $cfg)) {
-            // check that the saved search exists
-            $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['saved-search-id']);
-            if (empty($currentSearch)) {
-                $savedSearch = CRM_Consentactivity_Service::savedSearch($current['name']);
-                $cfg['saved-search-id'] = $savedSearch['id'];
+        if (array_key_exists('tag-id', $cfg)) {
+            // If the stored tag id is connected to a deleted tag, set the default value.
+            if ($cfg['tag-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_ID && !CRM_Consentactivity_Service::tagExists(intval($cfg['tag-id']))) {
+                $cfg['tag-id'] = CRM_Consentactivity_Config::DEFAULT_TAG_ID;
+            }
+            // At this point, if the tag id is default value, delete the saved searches without thinking.
+            if ($cfg['tag-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_ID) {
+                if (array_key_exists('saved-search-id', $cfg) && $cfg['saved-search-id'] !== CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
+                    CRM_Consentactivity_Service::deleteSavedSearch($cfg['saved-search-id']);
+                    $cfg['saved-search-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID;
+                }
+                if (array_key_exists('tagging-search-id', $cfg) && $cfg['tagging-search-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
+                    CRM_Consentactivity_Service::deleteSavedSearch($cfg['tagging-search-id']);
+                    $cfg['tagging-search-id'] = CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID;
+                }
+            } else {
+                // validate the search ids. Rebuild them based on the current settings..
+                if (array_key_exists('saved-search-id', $cfg) && $cfg['saved-search-id'] !== CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
+                    // check that the saved search exists
+                    $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['saved-search-id']);
+                    if (empty($currentSearch)) {
+                        $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], false);
+                        $cfg['saved-search-id'] = $savedSearch['id'];
+                    }
+                }
+                if (array_key_exists('tagging-search-id', $cfg) && $cfg['tagging-search-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
+                    // check that the saved search exists
+                    $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['tagging-search-id']);
+                    if (empty($currentSearch)) {
+                        $savedSearch = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['tag-id'], false);
+                        $cfg['tagging-search-id'] = $savedSearch['id'];
+                    }
+                }
             }
         }
         $cfg['activity-type-id'] = $current['value'];
@@ -84,23 +102,47 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
     // By convention, functions that look like "function upgrade_NNNN()" are
     // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
     /**
-     * Upgrader function, if the saved-search-id does not exists, it has
-     * to be created and the id field has to be added to the setting.
+     * This update logic has been changed with 5001, as the service API made
+     * breaking changes.
      *
      * @return true on success
      * @throws Exception
      */
     public function upgrade_5000()
     {
+        return true;
+    }
+
+    /**
+     * Upgrader function, that inserts the tagging and searching parameters
+     * and removes the current saved search, as the content is deprecated.
+     *
+     * @return true on success
+     * @throws Exception
+     */
+    public function upgrade_5001()
+    {
         $config = new CRM_Consentactivity_Config($this->extensionName);
         $config->load();
         $cfg = $config->get();
-        if (!array_key_exists('saved-search-id', $cfg) || $cfg['saved-search-id'] === 0) {
-            $activityType = CRM_Consentactivity_Service::getActivityType($cfg['option-value-id']);
-            $savedSearch = CRM_Consentactivity_Service::savedSearch($activityType['name']);
-            $cfg['saved-search-id'] = $savedSearch['id'];
-            $config->update($cfg);
+        if (!array_key_exists('tag-id', $cfg)) {
+            $cfg['tag-id'] = CRM_Consentactivity_Config::DEFAULT_TAG_ID;
         }
+        if (!array_key_exists('consent-expiration-years', $cfg)) {
+            $cfg['consent-expiration-years'] = CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR;
+        }
+        if (!array_key_exists('consent-expiration-tagging-days', $cfg)) {
+            $cfg['consent-expiration-tagging-days'] = CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS;
+        }
+        if (!array_key_exists('tagging-search-id', $cfg)) {
+            $cfg['tagging-search-id'] = CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID;
+        }
+        // Deattach old search, as the new version has to use the tagging feature.
+        if (!array_key_exists('saved-search-id', $cfg) || $cfg['saved-search-id'] != CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
+            CRM_Consentactivity_Service::deleteSavedSearch($cfg['saved-search-id']);
+            $cfg['saved-search-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID;
+        }
+        $config->update($cfg);
         return true;
     }
 

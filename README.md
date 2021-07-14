@@ -29,13 +29,13 @@ cv en consentactivity
 
 ### Upgrader
 
-When the extension is installed, it creates the default setting. During the postInstall step, it searches for an activity type that has a given label. If not found, then it creates it in this step. The saved search is also created in this step. Finally it updates the default setting values with the saved search id, the option group id and the value of this type. The option group id is mapped to `option-value-id`, the value is to `activity-type-id` and the saved search id is mapped to `saved-search-id`.
+When the extension is installed, it creates the default setting.
 
-When the extension is enabled, it validates the setting values. In case of data corruption it creates the activity type again and updates the setting with the new values.
+On the enable step it validates the settings that is created before. It validates the activity type. If activity type is not found it creates one and makes it active and reserved. If the config contains the tag-id key, it is also validated. If the given tag is missing, the tag and the search ids are reseted to initial values. If the tag id is valid, the search ids are needs to be checked. If the searches with the given ids are deleted (not found), new ones are created. After the validation the setting is updated with the valid values.
 
 When the extension is uninstalled, it deletes the settings. The activity type and the activities are not changed during the uninstall process.
 
-When the upgrade-db task is running, it checks for the existance of saved-search-id in the config. If it is not set or is on default value, it creates the saved search and updates the setting.
+When the upgrade-db task is running, it checks for the existance of the setting keys. They are set with default values. The saved-search is deleted as the tag id dependency can not be handled.
 
 ### Stored configuration
 

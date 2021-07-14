@@ -38,6 +38,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
         try {
             $this->assertEmpty($installer->install());
+            $this->assertEmpty($installer->enable());
             $this->assertEmpty($installer->postInstall());
         } catch (Exception $e) {
             $this->fail("Should not throw exception. ".$e->getMessage());
@@ -52,21 +53,112 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
         try {
             $this->assertEmpty($installer->install());
-            $this->assertEmpty($installer->postInstall());
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
             $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
-    public function testEnableCorruptInstall()
+    public function testEnableOldVersionOptionValue()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $this->assertEmpty($installer->install());
+        $this->assertEmpty($installer->enable());
+        $this->assertEmpty($installer->postInstall());
+        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg->load();
+        $config = $cfg->get();
+        $config['option-value-id'] = $config['option-value-id'] + 1;
+        $cfg->update($config);
         try {
-            $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
             $this->fail("Should not throw exception. ".$e->getMessage());
         }
+    }
+    public function testEnableOldVersionTagNotSet()
+    {
+        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $this->assertEmpty($installer->install());
+        $this->assertEmpty($installer->enable());
+        $this->assertEmpty($installer->postInstall());
+        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg->load();
+        $config = $cfg->get();
+        unset($config['tag-id']);
+        unset($config['tagging-search-id']);
+        unset($config['consent-expiration-years']);
+        unset($config['consent-expiration-tagging-days']);
+        $cfg->update($config);
+        try {
+            $this->assertEmpty($installer->enable());
+        } catch (Exception $e) {
+            $this->fail("Should not throw exception. ".$e->getMessage());
+        }
+    }
+    public function testEnableOldVersionTagDeleted()
+    {
+        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $this->assertEmpty($installer->install());
+        $this->assertEmpty($installer->enable());
+        $this->assertEmpty($installer->postInstall());
+        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg->load();
+        $config = $cfg->get();
+        $config['tag-id'] = '100000';
+        $cfg->update($config);
+        try {
+            $this->assertEmpty($installer->enable());
+        } catch (Exception $e) {
+            $this->fail("Should not throw exception. ".$e->getMessage());
+        }
+    }
+    public function testEnableOldVersionDeletedTagSearchDeletion()
+    {
+        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $this->assertEmpty($installer->install());
+        $this->assertEmpty($installer->enable());
+        $this->assertEmpty($installer->postInstall());
+        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg->load();
+        $config = $cfg->get();
+        $config['tag-id'] = '100000';
+        $config['saved-search-id'] = 10;
+        $config['tagging-search-id'] = 11;
+        $cfg->update($config);
+        try {
+            $this->assertEmpty($installer->enable());
+        } catch (Exception $e) {
+            $this->fail("Should not throw exception. ".$e->getMessage());
+        }
+        $cfg->load();
+        $config = $cfg->get();
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
+    }
+    public function testEnableOldVersionValidTagDeletedSearch()
+    {
+        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $this->assertEmpty($installer->install());
+        $this->assertEmpty($installer->enable());
+        $this->assertEmpty($installer->postInstall());
+        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg->load();
+        $config = $cfg->get();
+        $config['tag-id'] = '1';
+        $config['saved-search-id'] = 10;
+        $config['tagging-search-id'] = 11;
+        $cfg->update($config);
+        try {
+            $this->assertEmpty($installer->enable());
+        } catch (Exception $e) {
+            $this->fail("Should not throw exception. ".$e->getMessage());
+        }
+        $cfg->load();
+        $config = $cfg->get();
+        self::assertNotSame(10, $config['saved-search-id']);
+        self::assertNotSame(11, $config['tagging-search-id']);
+        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
+        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
     }
 
     /**
