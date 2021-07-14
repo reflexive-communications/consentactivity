@@ -4,6 +4,7 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\Activity;
 use Civi\Api4\SavedSearch;
+use Civi\Api4\Tag;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -127,54 +128,49 @@ class CRM_Consentactivity_Service
      *
      * @return array
      */
-    public static function savedSearch(string $activityName): array
+    public static function savedSearchExpired(string $activityName, string $tagId, bool $aclFlag = true): array
     {
-        $apiParams = [
-            'version' => 4,
-            'select' => [
-                'id',
-                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
-                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
-            ],
-            'orderBy' => [],
-            'where' => [],
-            'groupBy' => [
-                'id'
-            ],
-            'join' => [
-                [
-                    'Activity AS Contact_ActivityContact_Activity_01',
-                    'INNER',
-                    'ActivityContact',
-                    [
-                        'id',
-                        '=',
-                        'Contact_ActivityContact_Activity_01.contact_id'
-                    ],
-                    [
-                        'Contact_ActivityContact_Activity_01.record_type_id:name',
-                        '=',
-                        '"Activity Source"'
-                    ],
-                    [
-                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
-                        '=',
-                        '"'.$activityName.'"'
-                    ]
-                ],
-            ],
-            'having' => [
-                [
-                    'MAX_Contact_ActivityContact_Activity_01_created_date',
-                    '<',
-                    '2021-06-17 11:50'
-                ],
-            ],
-        ];
-        $results = SavedSearch::create(false)
+        $results = SavedSearch::create($aclFlag)
             ->addValue('label', 'Contacts with old consents')
             ->addValue('api_entity', 'Contact')
-            ->addValue('api_params', $apiParams)
+            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
+            ->execute();
+        return $results->first();
+    }
+    public static function savedSearchExpiredUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
+    {
+        $results = SavedSearch::update($aclFlag)
+            ->addWhere('id', '=', $savedSearchId)
+            ->addValue('label', 'Contacts with old consents')
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
+            ->execute();
+        return $results->first();
+    }
+    /*
+     * This function creates a saved search, that could be the base query of the
+     * gathering process of the contacts with old consents.
+     *
+     * @param string $activityName
+     *
+     * @return array
+     */
+    public static function savedSearchTagging(string $activityName, string $tagId, bool $aclFlag = true): array
+    {
+        $results = SavedSearch::create($aclFlag)
+            ->addValue('label', 'Contacts with old consents for tagging.')
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
+            ->execute();
+        return $results->first();
+    }
+    public static function savedSearchTaggingUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
+    {
+        $results = SavedSearch::update($aclFlag)
+            ->addWhere('id', '=', $savedSearchId)
+            ->addValue('label', 'Contacts with old consents for tagging.')
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
             ->execute();
         return $results->first();
     }
@@ -192,6 +188,37 @@ class CRM_Consentactivity_Service
             ->execute()
             ->first();
         return $result ?? [];
+    }
+    /*
+     * It is a wrapper function for saved searchdelete api call.
+     *
+     * @param int $savedSearchId
+     *
+     * @return array
+     */
+    public static function deleteSavedSearch(int $savedSearchId): array
+    {
+        $result = SavedSearch::delete(false)
+            ->addWhere('id', '=', $savedSearchId)
+            ->execute()
+            ->first();
+        return $result ?? [];
+    }
+    /*
+     * It checks that the tag with the given tagId exists
+     * or not.
+     *
+     * @param int $tagId
+     *
+     * @return bool
+     */
+    public static function tagExists(int $tagId): bool
+    {
+        $tags = Tag::get(false)
+            ->addWhere('id', '=', $tagId)
+            ->setLimit(1)
+            ->execute();
+        return count($tags) === 1;
     }
     /*
      * It returns true if the given form contains field that connected
@@ -263,5 +290,135 @@ class CRM_Consentactivity_Service
         }
         // Set it active to be able to use it later.
         return self::updateExistingActivityType($optionValue['id']);
+    }
+    private static function savedSearchTaggingApiParams(string $activityName, string $tagId): array
+    {
+        return [
+            'version' => 4,
+            'select' => [
+                'id',
+                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
+                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
+            ],
+            'orderBy' => [],
+            'where' => [],
+            'groupBy' => [
+                'id'
+            ],
+            'join' => [
+                [
+                    'Activity AS Contact_ActivityContact_Activity_01',
+                    'INNER',
+                    'ActivityContact',
+                    [
+                        'id',
+                        '=',
+                        'Contact_ActivityContact_Activity_01.contact_id'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.record_type_id:name',
+                        '=',
+                        '"Activity Source"'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
+                        '=',
+                        '"'.$activityName.'"'
+                    ]
+                ],
+                [
+                    'Tag AS Contact_EntityTag_Tag_01',
+                    'EXCLUDE',
+                    'EntityTag',
+                    [
+                        'id',
+                        '=',
+                        'Contact_EntityTag_Tag_01.entity_id'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.entity_table',
+                        '=',
+                        '"civicrm_contact"'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.id',
+                        '=',
+                        '"'.$tagId.'"'
+                    ],
+                ],
+            ],
+            'having' => [
+                [
+                    'MAX_Contact_ActivityContact_Activity_01_created_date',
+                    '<',
+                    '2021-06-17 11:50'
+                ],
+            ],
+        ];
+    }
+    private static function savedSearchExpiredApiParams(string $activityName, string $tagId): array
+    {
+        return [
+            'version' => 4,
+            'select' => [
+                'id',
+                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
+                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
+            ],
+            'orderBy' => [],
+            'where' => [],
+            'groupBy' => [
+                'id'
+            ],
+            'join' => [
+                [
+                    'Activity AS Contact_ActivityContact_Activity_01',
+                    'INNER',
+                    'ActivityContact',
+                    [
+                        'id',
+                        '=',
+                        'Contact_ActivityContact_Activity_01.contact_id'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.record_type_id:name',
+                        '=',
+                        '"Activity Source"'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
+                        '=',
+                        '"'.$activityName.'"'
+                    ]
+                ],
+                [
+                    'Tag AS Contact_EntityTag_Tag_01',
+                    'INNER',
+                    'EntityTag',
+                    [
+                        'id',
+                        '=',
+                        'Contact_EntityTag_Tag_01.entity_id'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.entity_table',
+                        '=',
+                        '"civicrm_contact"'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.id',
+                        '=',
+                        '"'.$tagId.'"'
+                    ],
+                ],
+            ],
+            'having' => [
+                [
+                    'MAX_Contact_ActivityContact_Activity_01_created_date',
+                    '<',
+                    '2021-06-17 11:50'
+                ],
+            ],
+        ];
     }
 }
