@@ -1,0 +1,189 @@
+<?php
+use CRM_Consentactivity_ExtensionUtil as E;
+
+/**
+ * Settings form test cases.
+ *
+ * @group headless
+ */
+class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_HeadlessBase
+{
+    private static function testDefaultSetting(): array
+    {
+        return [
+            'activity-type-id' => 0,
+            'option-value-id' => 0,
+            'saved-search-id' => CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID,
+            'tagging-search-id' => CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID,
+            'tag-id' => CRM_Consentactivity_Config::DEFAULT_TAG_ID,
+            'consent-expiration-years' => CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR,
+            'consent-expiration-tagging-days' => CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS,
+        ];
+    }
+    private function setupTestDefaultConfig()
+    {
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        self::assertTrue($config->update(self::testDefaultSetting()), 'Config update has to be successful.');
+    }
+    /**
+     * PreProcess test case with existing config.
+     * Setup test configuration then call the function.
+     * It shouldn't throw exception.
+     */
+    public function testPreProcessExistingConfig()
+    {
+        $this->setupTestDefaultConfig();
+        $form = new CRM_Consentactivity_Form_Settings();
+        try {
+            self::assertEmpty($form->preProcess(), 'PreProcess supposed to be empty.');
+        } catch (Exception $e) {
+            self::fail('Shouldn\'t throw exception with valid db. '.$e->getMessage());
+        }
+    }
+
+    /**
+     * PreProcess test case with deleted config.
+     * Setup test configuration then call the function.
+     * It should throw exception.
+     */
+    public function testPreProcessMissingConfig()
+    {
+        $form = new CRM_Consentactivity_Form_Settings();
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config->remove();
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage(E::LONG_NAME.'_config config invalid.');
+        self::assertEmpty($form->preProcess(), 'PreProcess supposed to be empty.');
+    }
+    /**
+     * setDefaultValues test case. It has to return
+     * the config values.
+     */
+    public function testSetDefaultValues()
+    {
+        $this->setupTestDefaultConfig();
+        $form = new CRM_Consentactivity_Form_Settings();
+        $form->preProcess();
+        $defaults = $form->setDefaultValues();
+        $testSettings = self::testDefaultSetting();
+        self::assertSame($testSettings['tag-id'], $defaults['tagId']);
+        self::assertSame($testSettings['consent-expiration-years'], $defaults['consentExpirationYears']);
+        self::assertSame($testSettings['consent-expiration-tagging-days'], $defaults['consentExpirationTaggingDays']);
+    }
+    /**
+     * addRules test case with existing config.
+     * It shouldn't throw exception.
+     */
+    public function testAddRules()
+    {
+        $this->setupTestDefaultConfig();
+        $form = new CRM_Consentactivity_Form_Settings();
+        self::assertEmpty($form->preProcess());
+        self::assertEmpty($form->buildQuickForm());
+        try {
+            self::assertEmpty($form->addRules(), 'addRules supposed to be empty.');
+        } catch (Exception $e) {
+            self::fail('Shouldn\'t throw exception with valid db. '.$e->getMessage());
+        }
+    }
+    /**
+     * zeroNotAllowed test case.
+     */
+    public function testZeroNotAllowed()
+    {
+        $this->setupTestDefaultConfig();
+        $form = new CRM_Consentactivity_Form_Settings();
+        $testData = [
+            [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '1'], true],
+            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '1'], ['consentExpirationYears' => ts('Not allowed value.')]],
+            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '0'], ['consentExpirationYears' => ts('Not allowed value.'),'consentExpirationTaggingDays' => ts('Not allowed value.')]],
+            [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '0'], ['consentExpirationTaggingDays' => ts('Not allowed value.')]],
+        ];
+        foreach ($testData as $t) {
+            self::assertSame($t[1], CRM_Consentactivity_Form_Settings::zeroNotAllowed($t[0]));
+        }
+    }
+    /**
+     * Build quick form test case.
+     * Setup test configuration, preProcess then call the function.
+     * It shouldn't throw exception.
+     * The title should be set.
+     */
+    public function testBuildQuickFormNoActionState()
+    {
+        $this->setupTestDefaultConfig();
+        $form = new CRM_Consentactivity_Form_Settings();
+        self::assertEmpty($form->preProcess(), 'PreProcess supposed to be empty.');
+        try {
+            self::assertEmpty($form->buildQuickForm());
+        } catch (Exception $e) {
+            self::fail('It shouldn\'t throw exception. '.$e->getMessage());
+        }
+        self::assertSame(ts('Consentactivity Settings'), $form->getTitle(), 'Invalid form title.');
+    }
+    /**
+     * Post Process test cases.
+     * The necessary params are updated manually.
+     */
+    public function testPostDefaultOriginalValues()
+    {
+        $_POST['tagId'] = '1';
+        $_POST['consentExpirationYears'] = '2';
+        $_POST['consentExpirationTaggingDays'] = '10';
+        $this->setupTestDefaultConfig();
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config->load();
+        $cfg = $config->get();
+        $current = CRM_Consentactivity_Service::createDefaultActivityType();
+        $cfg['activity-type-id'] = $current['value'];
+        $cfg['option-value-id'] = $current['id'];
+        $config->update($cfg);
+
+        $form = new CRM_Consentactivity_Form_Settings();
+        self::assertEmpty($form->preProcess(), 'PreProcess supposed to be empty.');
+        try {
+            self::assertEmpty($form->postProcess());
+        } catch (Exception $e) {
+            self::fail('It shouldn\'t throw exception. '.$e->getMessage());
+        }
+        $config->load();
+        $cfg = $config->get();
+        self::assertSame($_POST['tagId'], $cfg['tag-id']);
+        self::assertSame($_POST['consentExpirationYears'], $cfg['consent-expiration-years']);
+        self::assertSame($_POST['consentExpirationTaggingDays'], $cfg['consent-expiration-tagging-days']);
+        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id']);
+        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id']);
+    }
+    public function testPostDefaultSearchUpdate()
+    {
+        $_POST['tagId'] = '2';
+        $_POST['consentExpirationYears'] = '2';
+        $_POST['consentExpirationTaggingDays'] = '10';
+        $this->setupTestDefaultConfig();
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config->load();
+        $cfg = $config->get();
+        $current = CRM_Consentactivity_Service::createDefaultActivityType();
+        $cfg['activity-type-id'] = $current['value'];
+        $cfg['option-value-id'] = $current['id'];
+        $cfg['tag-id'] = 1;
+        $cfg['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], false)['id'];
+        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['tag-id'], false)['id'];
+        $config->update($cfg);
+
+        $form = new CRM_Consentactivity_Form_Settings();
+        self::assertEmpty($form->preProcess(), 'PreProcess supposed to be empty.');
+        try {
+            self::assertEmpty($form->postProcess());
+        } catch (Exception $e) {
+            self::fail('It shouldn\'t throw exception. '.$e->getMessage());
+        }
+        $config->load();
+        $cfgNew = $config->get();
+        self::assertSame($_POST['tagId'], $cfgNew['tag-id']);
+        self::assertSame($_POST['consentExpirationYears'], $cfgNew['consent-expiration-years']);
+        self::assertSame($_POST['consentExpirationTaggingDays'], $cfgNew['consent-expiration-tagging-days']);
+        self::assertSame($cfg['saved-search-id'], $cfgNew['saved-search-id']);
+        self::assertSame($cfg['tagging-search-id'], $cfgNew['tagging-search-id']);
+    }
+}
