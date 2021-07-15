@@ -5,6 +5,7 @@ use Civi\Api4\OptionValue;
 use Civi\Api4\Activity;
 use Civi\Api4\SavedSearch;
 use Civi\Api4\Tag;
+use Civi\Api4\EntityTag;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -104,6 +105,15 @@ class CRM_Consentactivity_Service
         // on case of invalid result (missing id field), it prints error to the log
         if (count($results) !== 1 || !array_key_exists('id', $results[0])) {
             Civi::log()->error('Consentactivity | Failed to create Activity for the following contact: '.$contactId);
+        }
+        // Remove the expired tag from the contact if the tag-id is set in the config.
+        // The result checking is skipped, because not every contact has this tag, only the old ones.
+        if ($config['tag-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_ID) {
+            EntityTag::delete(false)
+                ->addWhere('entity_table', '=', 'civicrm_contact')
+                ->addWhere('entity_id', '=', $contactId)
+                ->addWhere('tag_id', '=', $config['tag-id'])
+                ->execute();
         }
     }
     /*
