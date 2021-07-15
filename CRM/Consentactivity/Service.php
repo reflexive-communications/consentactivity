@@ -14,6 +14,7 @@ class CRM_Consentactivity_Service
     public const FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS = [
         'CRM_Campaign_Form_Petition_Signature',
         'CRM_Profile_Form_Edit',
+        'CRM_Event_Form_Registration_Confirm',
     ];
     public const CONSENT_FIELDS = [
         'do_not_email',
