@@ -48,3 +48,10 @@ The extension has in internal setting database where the following parameters ar
 - `tag-id` The tag id that has to be added to the contact.
 - `consent-expiration-years` The number of years after the consent gets expired. By default it is 3 years.
 - `consent-expiration-tagging-days` The number of days before the expiration. The tag has to be added at this time.
+
+### Scheduled jobs
+
+The extension provides two API endpoints and daily scheduled processes.
+
+- The tagging job applies a given tag to the contacts that are found by the tagging saved search. The tag is added if the lates consent activity is older than `Now - consent-expiration-years + consent-expiration-tagging-days`.
+- The expiration job needs to be Defined and implemented.
