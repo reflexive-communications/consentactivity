@@ -32,9 +32,9 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         self::assertSame($cfg, $cfgNew);
     }
     /**
-     * Test the upgrade_5001 process.
+     * Test the upgrade_5100 process.
      */
-    public function testUpgrade5001()
+    public function testUpgrade5100()
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
@@ -48,7 +48,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $config->update($cfg);
         $installer = new CRM_Consentactivity_Upgrader(E::LONG_NAME, ".");
         try {
-            $this->assertTrue($installer->upgrade_5001());
+            $this->assertTrue($installer->upgrade_5100());
         } catch (Exception $e) {
             $this->fail("Should not throw exception. ".$e->getMessage());
         }

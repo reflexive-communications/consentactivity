@@ -120,7 +120,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5001()
+    public function upgrade_5100()
     {
         $config = new CRM_Consentactivity_Config($this->extensionName);
         $config->load();
