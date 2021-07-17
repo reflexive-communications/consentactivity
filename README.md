@@ -55,3 +55,7 @@ The extension provides two API endpoints and daily scheduled processes.
 
 - The tagging job applies a given tag to the contacts that are found by the tagging saved search. The tag is added if the lates consent activity is older than `Now - consent-expiration-years + consent-expiration-tagging-days`.
 - The expiration job needs to be Defined and implemented.
+
+### Deleted saved search
+
+If the saved searches have been accidentally deleted (eg from the search kit), you can recreate them with updating the tag-id on the consentactivity settings screen.
