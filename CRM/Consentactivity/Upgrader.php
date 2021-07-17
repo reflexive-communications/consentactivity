@@ -102,7 +102,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
     // By convention, functions that look like "function upgrade_NNNN()" are
     // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
     /**
-     * This update logic has been changed with 5001, as the service API made
+     * This update logic has been changed with 5100, as the service API made
      * breaking changes.
      *
      * @return true on success
