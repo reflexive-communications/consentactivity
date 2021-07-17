@@ -57,7 +57,7 @@ function civicrm_api3_consentactivity_expire_Process($params)
             // Currently it cause infinite loop, as the search criteria will always be the same.
             // The action has to be defined here. (like user deletion or add to a group that will be
             // to be excluded from this search)
-             return civicrm_api3_create_error('This feature is unimplemented.', []);
+            return civicrm_api3_create_error('This feature is unimplemented.', []);
         }
         $handledContacts = $handledContacts + count($contacts);
         $search['limit'] = count($contacts);
