@@ -3,7 +3,7 @@
 class CRM_Consentactivity_Config extends CRM_RcBase_Config
 {
     const DEFAULT_CONSENT_EXPIRATION_YEAR = 3;
-    const DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS = 3;
+    const DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS = 30;
     const DEFAULT_TAG_ID = '0';
     const DEFAULT_EXPIRATION_SEARCH_ID = '0';
     const DEFAULT_TAG_SEARCH_ID = '0';
