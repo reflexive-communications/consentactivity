@@ -169,22 +169,6 @@ function consentactivity_civicrm_themes(&$themes)
 //
 //}
 
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- */
-//function consentactivity_civicrm_navigationMenu(&$menu) {
-//  _consentactivity_civix_insert_navigation_menu($menu, 'Mailings', array(
-//    'label' => E::ts('New subliminal message'),
-//    'name' => 'mailing_subliminal_message',
-//    'url' => 'civicrm/mailing/subliminal',
-//    'permission' => 'access CiviMail',
-//    'operator' => 'OR',
-//    'separator' => 0,
-//  ));
-//  _consentactivity_civix_navigationMenu($menu);
-//}
 // The following hooks are implemented by me.
 /**
  * Implements hook_civicrm_postProcess().
@@ -194,4 +178,48 @@ function consentactivity_civicrm_themes(&$themes)
 function consentactivity_civicrm_postProcess($formName, $form)
 {
     CRM_Consentactivity_Service::postProcess($formName, $form);
+}
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
+ */
+function consentactivity_civicrm_navigationMenu(&$menu)
+{
+    _consentactivity_civix_insert_navigation_menu($menu, 'Administer', [
+        'label' => E::ts('Consentactivity Settings'),
+        'name' => 'consentactivity_setting',
+        'url' => 'civicrm/admin/consent-activity',
+        'permission' => 'administer CiviCRM',
+        'operator' => 'AND',
+        'separator' => 0,
+    ]);
+    _consentactivity_civix_navigationMenu($menu);
+}
+/**
+ * Implements hook_civicrm_validateForm().
+ *
+ * @param string $formName
+ * @param array $fields
+ * @param array $files
+ * @param CRM_Core_Form $form
+ * @param array $errors
+ */
+function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
+{
+    // extend tag validation. On case of tag deletion, check
+    if ($formName === 'CRM_Tag_Form_Edit' && $form->_action === CRM_Core_Action::DELETE) {
+        $ids = $form->getVar('_id');
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        foreach ($ids as $id) {
+            if ($id == $config['tag-id']) {
+                $errors['tag_id'] = ts('The tag is reserved for the consentactivity.');
+                CRM_Core_Session::setStatus(ts('The tag is reserved for the consentactivity.'), 'Consentactivity', 'error');
+                return;
+            }
+        }
+    }
 }

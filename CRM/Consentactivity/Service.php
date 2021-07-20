@@ -4,6 +4,8 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\Activity;
 use Civi\Api4\SavedSearch;
+use Civi\Api4\Tag;
+use Civi\Api4\EntityTag;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -13,12 +15,15 @@ class CRM_Consentactivity_Service
     public const FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS = [
         'CRM_Campaign_Form_Petition_Signature',
         'CRM_Profile_Form_Edit',
+        'CRM_Event_Form_Registration_Confirm',
     ];
     public const CONSENT_FIELDS = [
         'do_not_email',
         'do_not_phone',
         'is_opt_out',
     ];
+    public const EXPIRED_SEARCH_LABEL = 'Contacts with expired consents';
+    public const TAGGING_SEARCH_LABEL = 'Contacts with nearly expired consents for tagging';
     /*
      * It creates the activity type for the gdpr consent activity.
      * By default it usess the hardcoded values. If an existing activity has to be used as
@@ -103,6 +108,15 @@ class CRM_Consentactivity_Service
         if (count($results) !== 1 || !array_key_exists('id', $results[0])) {
             Civi::log()->error('Consentactivity | Failed to create Activity for the following contact: '.$contactId);
         }
+        // Remove the expired tag from the contact if the tag-id is set in the config.
+        // The result checking is skipped, because not every contact has this tag, only the old ones.
+        if ($config['tag-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_ID) {
+            EntityTag::delete(false)
+                ->addWhere('entity_table', '=', 'civicrm_contact')
+                ->addWhere('entity_id', '=', $contactId)
+                ->addWhere('tag_id', '=', $config['tag-id'])
+                ->execute();
+        }
     }
     /*
      * It is a wrapper function for option value get api call.
@@ -127,54 +141,49 @@ class CRM_Consentactivity_Service
      *
      * @return array
      */
-    public static function savedSearch(string $activityName): array
+    public static function savedSearchExpired(string $activityName, string $tagId, bool $aclFlag = true): array
     {
-        $apiParams = [
-            'version' => 4,
-            'select' => [
-                'id',
-                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
-                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
-            ],
-            'orderBy' => [],
-            'where' => [],
-            'groupBy' => [
-                'id'
-            ],
-            'join' => [
-                [
-                    'Activity AS Contact_ActivityContact_Activity_01',
-                    'INNER',
-                    'ActivityContact',
-                    [
-                        'id',
-                        '=',
-                        'Contact_ActivityContact_Activity_01.contact_id'
-                    ],
-                    [
-                        'Contact_ActivityContact_Activity_01.record_type_id:name',
-                        '=',
-                        '"Activity Source"'
-                    ],
-                    [
-                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
-                        '=',
-                        '"'.$activityName.'"'
-                    ]
-                ],
-            ],
-            'having' => [
-                [
-                    'MAX_Contact_ActivityContact_Activity_01_created_date',
-                    '<',
-                    '2021-06-17 11:50'
-                ],
-            ],
-        ];
-        $results = SavedSearch::create(false)
-            ->addValue('label', 'Contacts with old consents')
+        $results = SavedSearch::create($aclFlag)
+            ->addValue('label', self::EXPIRED_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
-            ->addValue('api_params', $apiParams)
+            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
+            ->execute();
+        return $results->first();
+    }
+    public static function savedSearchExpiredUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
+    {
+        $results = SavedSearch::update($aclFlag)
+            ->addWhere('id', '=', $savedSearchId)
+            ->addValue('label', self::EXPIRED_SEARCH_LABEL)
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
+            ->execute();
+        return $results->first();
+    }
+    /*
+     * This function creates a saved search, that could be the base query of the
+     * gathering process of the contacts with old consents.
+     *
+     * @param string $activityName
+     *
+     * @return array
+     */
+    public static function savedSearchTagging(string $activityName, string $tagId, bool $aclFlag = true): array
+    {
+        $results = SavedSearch::create($aclFlag)
+            ->addValue('label', self::TAGGING_SEARCH_LABEL)
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
+            ->execute();
+        return $results->first();
+    }
+    public static function savedSearchTaggingUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
+    {
+        $results = SavedSearch::update($aclFlag)
+            ->addWhere('id', '=', $savedSearchId)
+            ->addValue('label', self::TAGGING_SEARCH_LABEL)
+            ->addValue('api_entity', 'Contact')
+            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
             ->execute();
         return $results->first();
     }
@@ -192,6 +201,37 @@ class CRM_Consentactivity_Service
             ->execute()
             ->first();
         return $result ?? [];
+    }
+    /*
+     * It is a wrapper function for saved searchdelete api call.
+     *
+     * @param int $savedSearchId
+     *
+     * @return array
+     */
+    public static function deleteSavedSearch(int $savedSearchId): array
+    {
+        $result = SavedSearch::delete(false)
+            ->addWhere('id', '=', $savedSearchId)
+            ->execute()
+            ->first();
+        return $result ?? [];
+    }
+    /*
+     * It checks that the tag with the given tagId exists
+     * or not.
+     *
+     * @param int $tagId
+     *
+     * @return bool
+     */
+    public static function tagExists(int $tagId): bool
+    {
+        $tags = Tag::get(false)
+            ->addWhere('id', '=', $tagId)
+            ->setLimit(1)
+            ->execute();
+        return count($tags) === 1;
     }
     /*
      * It returns true if the given form contains field that connected
@@ -263,5 +303,135 @@ class CRM_Consentactivity_Service
         }
         // Set it active to be able to use it later.
         return self::updateExistingActivityType($optionValue['id']);
+    }
+    private static function savedSearchTaggingApiParams(string $activityName, string $tagId): array
+    {
+        return [
+            'version' => 4,
+            'select' => [
+                'id',
+                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
+                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
+            ],
+            'orderBy' => [],
+            'where' => [],
+            'groupBy' => [
+                'id'
+            ],
+            'join' => [
+                [
+                    'Activity AS Contact_ActivityContact_Activity_01',
+                    'INNER',
+                    'ActivityContact',
+                    [
+                        'id',
+                        '=',
+                        'Contact_ActivityContact_Activity_01.contact_id'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.record_type_id:name',
+                        '=',
+                        '"Activity Source"'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
+                        '=',
+                        '"'.$activityName.'"'
+                    ]
+                ],
+                [
+                    'Tag AS Contact_EntityTag_Tag_01',
+                    'EXCLUDE',
+                    'EntityTag',
+                    [
+                        'id',
+                        '=',
+                        'Contact_EntityTag_Tag_01.entity_id'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.entity_table',
+                        '=',
+                        '"civicrm_contact"'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.id',
+                        '=',
+                        '"'.$tagId.'"'
+                    ],
+                ],
+            ],
+            'having' => [
+                [
+                    'MAX_Contact_ActivityContact_Activity_01_created_date',
+                    '<',
+                    '2021-06-17 11:50'
+                ],
+            ],
+        ];
+    }
+    private static function savedSearchExpiredApiParams(string $activityName, string $tagId): array
+    {
+        return [
+            'version' => 4,
+            'select' => [
+                'id',
+                'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
+                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
+            ],
+            'orderBy' => [],
+            'where' => [],
+            'groupBy' => [
+                'id'
+            ],
+            'join' => [
+                [
+                    'Activity AS Contact_ActivityContact_Activity_01',
+                    'INNER',
+                    'ActivityContact',
+                    [
+                        'id',
+                        '=',
+                        'Contact_ActivityContact_Activity_01.contact_id'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.record_type_id:name',
+                        '=',
+                        '"Activity Source"'
+                    ],
+                    [
+                        'Contact_ActivityContact_Activity_01.activity_type_id:name',
+                        '=',
+                        '"'.$activityName.'"'
+                    ]
+                ],
+                [
+                    'Tag AS Contact_EntityTag_Tag_01',
+                    'INNER',
+                    'EntityTag',
+                    [
+                        'id',
+                        '=',
+                        'Contact_EntityTag_Tag_01.entity_id'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.entity_table',
+                        '=',
+                        '"civicrm_contact"'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_01.id',
+                        '=',
+                        '"'.$tagId.'"'
+                    ],
+                ],
+            ],
+            'having' => [
+                [
+                    'MAX_Contact_ActivityContact_Activity_01_created_date',
+                    '<',
+                    '2021-06-17 11:50'
+                ],
+            ],
+        ];
     }
 }

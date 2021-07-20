@@ -74,4 +74,44 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess('Not_Intrested_In_This_Class', $form), 'PostProcess supposed to be empty.');
     }
+    /**
+     * Test the savedSearchExpired function.
+     */
+    public function testSavedSearchExpired()
+    {
+        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, false);
+        self::assertSame('Contact', $search['api_entity']);
+    }
+    /**
+     * Test the savedSearchExpiredUpdate function.
+     */
+    public function testSavedSearchExpiredUpdate()
+    {
+        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, false);
+        self::assertSame('Contact', $search['api_entity']);
+        $search = CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], 1, $search['id'], false);
+        self::assertSame('Contact', $search['api_entity']);
+    }
+    /**
+     * Test the savedSearchTagging function.
+     */
+    public function testSavedSearchTagging()
+    {
+        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        $search = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], 1, false);
+        self::assertSame('Contact', $search['api_entity']);
+    }
+    /**
+     * Test the savedSearchTaggingUpdate function.
+     */
+    public function testSavedSearchTaggingUpdate()
+    {
+        $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
+        $search = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], 1, false);
+        self::assertSame('Contact', $search['api_entity']);
+        $search = CRM_Consentactivity_Service::savedSearchTaggingUpdate($activityType['name'], 1, $search['id'], false);
+        self::assertSame('Contact', $search['api_entity']);
+    }
 }

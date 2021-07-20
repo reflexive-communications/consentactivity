@@ -19,6 +19,16 @@ class CRM_Consentactivity_ConfigTest extends CRM_Consentactivity_HeadlessBase
         self::assertSame(0, $cfg['activity-type-id'], 'Invalid activity-type-id initial value.');
         self::assertTrue(array_key_exists('option-value-id', $cfg), 'option-value-id key is missing from the config.');
         self::assertSame(0, $cfg['option-value-id'], 'Invalid option-value-id initial value.');
+        self::assertTrue(array_key_exists('saved-search-id', $cfg), 'saved-search-id key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id'], 'Invalid saved-search-id initial value.');
+        self::assertTrue(array_key_exists('tagging-search-id', $cfg), 'tagging-search-id key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id'], 'Invalid tagging-search-id initial value.');
+        self::assertTrue(array_key_exists('tag-id', $cfg), 'tag-id key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_ID, $cfg['tag-id'], 'Invalid tag-id initial value.');
+        self::assertTrue(array_key_exists('consent-expiration-years', $cfg), 'consent-expiration-years key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR, $cfg['consent-expiration-years'], 'Invalid consent-expiration-years initial value.');
+        self::assertTrue(array_key_exists('consent-expiration-tagging-days', $cfg), 'consent-expiration-tagging-days key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS, $cfg['consent-expiration-tagging-days'], 'Invalid consent-expiration-tagging-days initial value.');
         self::assertTrue($config->create(), 'Create config has to be successful multiple times.');
     }
 }

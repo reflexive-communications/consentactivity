@@ -15,6 +15,9 @@
         <file>./consentactivity.php</file>
         <file>./consentactivity.civix.php</file>
         <file>./CRM/Consentactivity/Upgrader/Base.php</file>
+        <!-- Skip the mgd files managed database record -->
+        <directory suffix="mgd.php">./api/v3/ConsentactivityExpire/</directory>
+        <directory suffix="mgd.php">./api/v3/ConsentactivityTagging/</directory>
       </exclude>
     </whitelist>
   </filter>
