@@ -22,6 +22,8 @@ class CRM_Consentactivity_Service
         'do_not_phone',
         'is_opt_out',
     ];
+    public const EXPIRED_SEARCH_LABEL = 'Contacts with expired consents';
+    public const TAGGING_SEARCH_LABEL = 'Contacts with nearly expired consents for tagging';
     /*
      * It creates the activity type for the gdpr consent activity.
      * By default it usess the hardcoded values. If an existing activity has to be used as
@@ -142,7 +144,7 @@ class CRM_Consentactivity_Service
     public static function savedSearchExpired(string $activityName, string $tagId, bool $aclFlag = true): array
     {
         $results = SavedSearch::create($aclFlag)
-            ->addValue('label', 'Contacts with old consents')
+            ->addValue('label', self::EXPIRED_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
             ->execute();
@@ -152,7 +154,7 @@ class CRM_Consentactivity_Service
     {
         $results = SavedSearch::update($aclFlag)
             ->addWhere('id', '=', $savedSearchId)
-            ->addValue('label', 'Contacts with old consents')
+            ->addValue('label', self::EXPIRED_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
             ->execute();
@@ -169,7 +171,7 @@ class CRM_Consentactivity_Service
     public static function savedSearchTagging(string $activityName, string $tagId, bool $aclFlag = true): array
     {
         $results = SavedSearch::create($aclFlag)
-            ->addValue('label', 'Contacts with old consents for tagging.')
+            ->addValue('label', self::TAGGING_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
             ->execute();
@@ -179,7 +181,7 @@ class CRM_Consentactivity_Service
     {
         $results = SavedSearch::update($aclFlag)
             ->addWhere('id', '=', $savedSearchId)
-            ->addValue('label', 'Contacts with old consents for tagging.')
+            ->addValue('label', self::TAGGING_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
             ->execute();
