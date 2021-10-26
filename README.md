@@ -2,7 +2,7 @@
 
 This extension could be used for tracking GDPR related activities. It supports the following use case:
 - The contact data could be used for N years after the consent.
-- The consent is defined as a form submission that contains at least one of the following contact parameters: `do_not_mail`, `do_not_phone`, `is_opt_out`
+- The consent is defined as a form submission on a profile, petition, or event page.
 
 An activity is added to the contact when it fills a form that contains the consent parameters. The date of the activity is the date of the consent. The status of the activity will be completed.
 The activity type is created by the extension. If an existing activity type has to be used, you can make it happen if you change the label of the type to the extension default value, that is `GDPR Consent Activity`.
