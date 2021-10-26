@@ -27,7 +27,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
-        self::assertSame(0, count($activities));
+        self::assertSame(1, count($activities));
     }
     public function testPostProcessInvalidContactId()
     {
