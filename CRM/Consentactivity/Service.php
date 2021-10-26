@@ -17,11 +17,6 @@ class CRM_Consentactivity_Service
         'CRM_Profile_Form_Edit',
         'CRM_Event_Form_Registration_Confirm',
     ];
-    public const CONSENT_FIELDS = [
-        'do_not_email',
-        'do_not_phone',
-        'is_opt_out',
-    ];
     public const EXPIRED_SEARCH_LABEL = 'Contacts with expired consents';
     public const TAGGING_SEARCH_LABEL = 'Contacts with nearly expired consents for tagging';
     /*
@@ -68,9 +63,8 @@ class CRM_Consentactivity_Service
         return self::getActivityType($optionValueId);
     }
     /**
-     * This function is responsible for handling the email, phone opt-out values.
-     * In case of at least one parameter is present on the target form, it triggers
-     * a consent activity.
+     * This function is responsible for triggering a consent activity on case a petition
+     * profile or event form has been submitted.
      *
      * @param string $formName the name of the current form
      * @param CRM_Core_Form $form
@@ -78,9 +72,6 @@ class CRM_Consentactivity_Service
     public static function postProcess(string $formName, $form)
     {
         if (!self::formNameIsInFormList($formName)) {
-            return;
-        }
-        if (!self::hasConsentFieldOnTheForm($form->getVar('_submitValues'))) {
             return;
         }
         // on the petition form, the contact id is saved as contactID. on the profiles it is id.
@@ -232,23 +223,6 @@ class CRM_Consentactivity_Service
             ->setLimit(1)
             ->execute();
         return count($tags) === 1;
-    }
-    /*
-     * It returns true if the given form contains field that connected
-     * to the consents.
-     *
-     * @param array $submittedValues the submitted values
-     *
-     * @return bool
-     */
-    private static function hasConsentFieldOnTheForm(array $submittedValues): bool
-    {
-        foreach (self::CONSENT_FIELDS as $f) {
-            if (array_key_exists($f, $submittedValues)) {
-                return true;
-            }
-        }
-        return false;
     }
     /*
      * It returns true if the given formName is in the predefined list.
