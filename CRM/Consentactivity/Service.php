@@ -269,7 +269,6 @@ class CRM_Consentactivity_Service
                     continue;
                 }
                 if ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($key)) {
-                    Civi::log()->debug('Custom field params: '.var_export($value, true));
                     $customGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField', $customFieldId, 'custom_group_id');
                     $customGroupName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'title');
                     $paramOptions[$key] = $value['title'] . ' :: ' . $customGroupName;
