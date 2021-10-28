@@ -19,5 +19,27 @@
             </td>
         </tr>
     </table>
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
+<div id="parameter-mapping">
+    <h3>{ts}Parameter mapping{/ts}</h3>
+    <table id="parameter-mapping-table">
+        <tr>
+            <th>{ts}Custom Field{/ts}</th>
+            <th>{ts}Consent Field{/ts}</th>
+            <th>{ts}Group{/ts}</th>
+        </tr>
+{foreach from=$cfMap key=customFieldId item=mappedField}
+        <tr>
+            <td>{$form.$customFieldId.html}</td>
+            <td>{$form.$mappedField.consent.html}</td>
+            <td>{$form.$mappedField.group.html}</td>
+        </tr>
+{/foreach}
+        <tr id="new-parameter-mapping-row">
+            <td colspan="3">
+                <button type="button" class="ui-button ui-corner-all ui-widget" id="new-parameter-mapping">{icon icon="fa-plus-circle"}{/icon}</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
