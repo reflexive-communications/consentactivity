@@ -6,6 +6,8 @@ use Civi\Api4\Activity;
 use Civi\Api4\SavedSearch;
 use Civi\Api4\Tag;
 use Civi\Api4\EntityTag;
+use Civi\Api4\Contact;
+use Civi\Api4\GroupContact;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -82,6 +84,8 @@ class CRM_Consentactivity_Service
         // on the petition form, the contact id is saved as contactID. on the profiles it is id.
         $cid = $formName === 'CRM_Campaign_Form_Petition_Signature' ? $form->getVar('_contactId') : $form->getVar('_id');
         self::createConsentActivityToContact($cid);
+        // handle the consent field and group insertion
+        self::consentFieldAndGroupMaintenace($cid, $form->getVar('_submitValues'));
     }
     /**
      * This function is responsible for creating the consent activity for the given
@@ -279,6 +283,90 @@ class CRM_Consentactivity_Service
             }
         }
         return $paramOptions;
+    }
+    /*
+     * It checks the form variables and does the actions based on the
+     * settings in the consent admin form.
+     *
+     * @param int $contactId
+     * @param array $submitValues
+     */
+    private static function consentFieldAndGroupMaintenace(int $contactId, array $submitValues): void
+    {
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        foreach ($config['custom-field-map'] as $rule) {
+            $customField = $rule['custom-field-id'];
+            // custom field is not set on the form
+            if (array_key_exists($customField, $submitValues) === false) {
+                continue;
+            }
+            // Expected field contains only one item and not more like the contact consent fields.
+            if ($submitValues[$customField][1] !== '') {
+                self::giveConsentIfNotYetGiven($contactId, $rule['consent-field-id']);
+                $groupId = $rule['group-id'];
+                if ($groupId !== '0') {
+                    self::addContactToGroup($contactId, $groupId);
+                }
+            }
+        }
+    }
+    /*
+     * It handles the group insertion or status update action.
+     *
+     * @param int $contactId
+     * @param int $groupId
+     */
+    private static function addContactToGroup(int $contactId, int $groupId): void
+    {
+        $result = GroupContact::get(false)
+            ->addSelect('id', 'status')
+            ->addWhere('contact_id', '=', $contactId)
+            ->addWhere('group_id', '=', $groupId)
+            ->setLimit(1)
+            ->execute()
+            ->first();
+        // already in the group but not added status, update it.
+        if (is_array($result)) {
+            if ($result['status'] !== 'Added') {
+                // update.
+                GroupContact::update(false)
+                    ->addWhere('id', '=', $result['id'])
+                    ->addValue('status', 'Added')
+                    ->setLimit(1)
+                    ->execute();
+            }
+            return;
+        }
+        GroupContact::create(false)
+            ->addValue('contact_id', $contactId)
+            ->addValue('group_id', $groupId)
+            ->addValue('status', 'Added')
+            ->execute();
+    }
+    /*
+     * It updates the contact consent field to the given state
+     * if it is not yet given.
+     *
+     * @param int $contactId
+     * @param string $consentField
+     */
+    private static function giveConsentIfNotYetGiven(int $contactId, string $consentField): void
+    {
+        $contact = Contact::get(false)
+            ->addWhere('id', '=', $contactId)
+            ->addSelect($consentField)
+            ->setLimit(1)
+            ->execute()
+            ->first();
+        if ($contact[$consentField]) {
+            Contact::update(false)
+                ->addWhere('id', '=', $contactId)
+                ->addValue($consentField, '')
+                ->setLimit(1)
+                ->execute();
+        }
     }
     /*
      * It returns true if the given formName is in the predefined list.
