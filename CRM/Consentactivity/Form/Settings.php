@@ -40,6 +40,13 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->_defaults['tagId'] = $config['tag-id'];
         $this->_defaults['consentExpirationYears'] = $config['consent-expiration-years'];
         $this->_defaults['consentExpirationTaggingDays'] = $config['consent-expiration-tagging-days'];
+        if (isset($config['custom-field-map']) && count($config['custom-field-map']) > 0) {
+            foreach ($config['custom-field-map'] as $k => $v) {
+                $this->_defaults['map_custom_field_id_'.$k] = $v['custom-field-id'];
+                $this->_defaults['map_consent_field_id_'.$k] = $v['consent-field-id'];
+                $this->_defaults['map_group_id_'.$k] = $v['group-id'];
+            }
+        }
 
         return $this->_defaults;
     }
@@ -78,6 +85,25 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->add('text', 'consentExpirationYears', ts('Consent Expiration Years'), [], true);
         $this->add('text', 'consentExpirationTaggingDays', ts('Tag Before Expiration Days'), [], true);
         $this->add('select', 'tagId', ts('Tag contact'), ['' => ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']), true);
+        // select field for the custom-field-map entries.
+        // if we have entries in the map, use the entry length
+        // of the entries for indexing, otherwise use 0 index.
+        $cfMap = [];
+        $config = $this->config->get();
+        if (is_null($config['custom-field-map']) || count($config['custom-field-map']) === 0) {
+            $this->add('select', 'map_custom_field_id_0', '', [0=>ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
+            $this->add('select', 'map_consent_field_id_0', '', [0=>ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
+            $this->add('select', 'map_group_id_0', '', [0=>ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
+            $cfMap['map_custom_field_id_0'] = ['consent' => 'map_consent_field_id_0', 'group' => 'map_group_id_0'];
+        } else {
+            foreach ($config['custom-field-map'] as $k => $v) {
+                $this->add('select', 'map_custom_field_id_'.$k, '', [0=>ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
+                $this->add('select', 'map_consent_field_id_'.$k, '', [0=>ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
+                $this->add('select', 'map_group_id_'.$k, '', [0=>ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
+                $cfMap['map_custom_field_id_'.$k] = ['consent' => 'map_consent_field_id_'.$k, 'group' => 'map_group_id_'.$k];
+            }
+        }
+        $this->assign('cfMap', $cfMap);
 
         // Submit button
         $this->addButtons(
@@ -90,6 +116,8 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
             ]
         );
         $this->setTitle(ts('Consentactivity Settings'));
+        // js file that handles the new map entry event.
+        Civi::resources()->addScriptFile(E::LONG_NAME, 'assets/js/settings.js');
     }
 
     public function postProcess()
@@ -113,6 +141,23 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         } else {
             CRM_Consentactivity_Service::savedSearchTaggingUpdate($activityType['name'], $config['tag-id'], $config['tagging-search-id']);
         }
+        $customFieldMap = [];
+        foreach ($this->_submitValues as $k => $v) {
+            if (substr($k, 0, 4) === 'map_') {
+                $keyWithId = substr($k, 4);
+                $segments = explode('_', $keyWithId);
+                // the last segment is the identifier
+                $id = $segments[count($segments)-1];
+                // unset the identifier
+                unset($segments[count($segments)-1]);
+                $key = implode('-', $segments);
+                if (!isset($customFieldMap[$id])) {
+                    $customFieldMap[$id] = [];
+                }
+                $customFieldMap[$id][$key] = $v;
+            }
+        }
+        $config['custom-field-map'] = $customFieldMap;
         if (!$this->config->update($config)) {
             CRM_Core_Session::setStatus(ts('Error during search update'), 'Consentactivity', 'error');
         } else {
