@@ -19,6 +19,11 @@ class CRM_Consentactivity_Service
     ];
     public const EXPIRED_SEARCH_LABEL = 'Contacts with expired consents';
     public const TAGGING_SEARCH_LABEL = 'Contacts with nearly expired consents for tagging';
+    public const CONSENT_FIELDS = [
+        'do_not_email',
+        'do_not_phone',
+        'is_opt_out',
+    ];
     /*
      * It creates the activity type for the gdpr consent activity.
      * By default it usess the hardcoded values. If an existing activity has to be used as
@@ -240,9 +245,7 @@ class CRM_Consentactivity_Service
             }
             foreach ($v as $key => $value) {
                 // filter the consent fields
-                // is_opt_out, do_not_mail, do_not_phone
-                $consentFields = ['is_opt_out', 'do_not_mail', 'do_not_phone'];
-                if (array_search($key, $consentFields) !== false) {
+                if (array_search($key, self::CONSENT_FIELDS) !== false) {
                     $paramOptions[$key] = $value['title'];
                 }
             }
@@ -257,7 +260,7 @@ class CRM_Consentactivity_Service
      */
     public static function customCheckboxFields(): array
     {
-         $fields = CRM_Core_BAO_UFField::getAvailableFields();
+        $fields = CRM_Core_BAO_UFField::getAvailableFields();
         $contactParamNames = ['Contact', 'Individual'];
         $paramOptions = [];
         foreach ($fields as $k => $v) {
