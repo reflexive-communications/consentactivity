@@ -29,10 +29,12 @@
             <th>{ts}Group{/ts}</th>
         </tr>
 {foreach from=$cfMap key=customFieldId item=mappedField}
+    {assign var="consentName" value=$mappedField.consent}
+    {assign var="groupName" value=$mappedField.group}
         <tr>
             <td>{$form.$customFieldId.html}</td>
-            <td>{$form.$mappedField.consent.html}</td>
-            <td>{$form.$mappedField.group.html}</td>
+            <td>{$form.$consentName.html}</td>
+            <td>{$form.$groupName.html}</td>
         </tr>
 {/foreach}
         <tr id="new-parameter-mapping-row">
