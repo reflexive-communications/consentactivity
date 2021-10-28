@@ -272,7 +272,7 @@ class CRM_Consentactivity_Service
                 continue;
             }
             foreach ($v as $key => $value) {
-                if ($value['html_type'] !== 'CheckBox') {
+                if (!array_key_exists('html_type', $value) || $value['html_type'] !== 'CheckBox') {
                     continue;
                 }
                 if ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($key)) {

@@ -111,7 +111,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         // of the entries for indexing, otherwise use 0 index.
         $cfMap = [];
         $config = $this->config->get();
-        if (is_null($config['custom-field-map']) || count($config['custom-field-map']) === 0) {
+        if (array_key_exists('custom-field-map', $config) === false || count($config['custom-field-map']) === 0) {
             $this->add('select', 'map_custom_field_id_0', '', [0=>ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
             $this->add('select', 'map_consent_field_id_0', '', [0=>ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
             $this->add('select', 'map_group_id_0', '', [0=>ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
