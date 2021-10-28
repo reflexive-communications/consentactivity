@@ -62,6 +62,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->addRule('consentExpirationTaggingDays', ts('Tagging days has to be numeric.'), 'numeric', null, 'client');
         $this->addRule('consentExpirationTaggingDays', ts('Tagging days has to be numeric.'), 'numeric');
         $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'zeroNotAllowed']);
+        $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'customFieldDuplicationNotAllowed']);
     }
 
     /**
@@ -76,6 +77,26 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         }
         if ($values['consentExpirationTaggingDays'] === '0') {
             $errors['consentExpirationTaggingDays'] = ts('Not allowed value.');
+        }
+        return empty($errors) ? true : $errors;
+    }
+
+    /**
+     * It rejects the duplications on the custom fields.
+     * One custom field has to point to one setting.
+     */
+    public static function customFieldDuplicationNotAllowed($values)
+    {
+        $errors = [];
+        $valueList = [];
+        foreach ($values as $k => $v) {
+            if (substr($k, 0, 20) === 'map_custom_field_id_') {
+                if (array_key_exists($v, $valueList)) {
+                    $errors[$valueList[$v]] = ts('Duplication.');
+                } elseif ($v !== '0') {
+                    $valueList[$v] = $k;
+                }
+            }
         }
         return empty($errors) ? true : $errors;
     }
