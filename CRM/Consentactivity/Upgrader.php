@@ -80,6 +80,8 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
                 }
             }
         }
+        // The consent-field-map validation. the consent field, and the group has to be checked.
+        // On case of missing ones, delete the map entry.
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $config->update($cfg);
@@ -141,6 +143,24 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         if (!array_key_exists('saved-search-id', $cfg) || $cfg['saved-search-id'] != CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
             CRM_Consentactivity_Service::deleteSavedSearch($cfg['saved-search-id']);
             $cfg['saved-search-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID;
+        }
+        $config->update($cfg);
+        return true;
+    }
+
+    /**
+     * Upgrader function, that inserts the custom-field-map key.
+     *
+     * @return true on success
+     * @throws Exception
+     */
+    public function upgrade_5101()
+    {
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config->load();
+        $cfg = $config->get();
+        if (!array_key_exists('custom-field-map', $cfg)) {
+            $cfg['custom-field-map'] = CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP;
         }
         $config->update($cfg);
         return true;

@@ -7,6 +7,7 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
     const DEFAULT_TAG_ID = '0';
     const DEFAULT_EXPIRATION_SEARCH_ID = '0';
     const DEFAULT_TAG_SEARCH_ID = '0';
+    const DEFAULT_CUSTOM_FIELD_MAP = [];
     /**
      * Provides a default configuration object.
      * The activity-type defaults to 0, as it is an invalid activity
@@ -31,6 +32,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
             // The number of days before the expiration
             // The tag has to be added at this time.
             'consent-expiration-tagging-days' => self::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS,
+            // The custom field -> [ privacy_field, group] map.
+            'custom-field-map' => self::DEFAULT_CUSTOM_FIELD_MAP,
         ];
     }
 }
