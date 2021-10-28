@@ -225,6 +225,60 @@ class CRM_Consentactivity_Service
         return count($tags) === 1;
     }
     /*
+     * It returns the consend field options for the settings
+     * admin field.
+     *
+     * @return array
+     */
+    public static function consentFields(): array
+    {
+        $fields = CRM_Core_BAO_UFField::getAvailableFields();
+        $paramOptions = [];
+        foreach ($fields as $k => $v) {
+            if ($k !== 'Contact') {
+                continue;
+            }
+            foreach ($v as $key => $value) {
+                // filter the consent fields
+                // is_opt_out, do_not_mail, do_not_phone
+                $consentFields = ['is_opt_out', 'do_not_mail', 'do_not_phone'];
+                if (array_search($key, $consentFields) !== false) {
+                    $paramOptions[$key] = $value['title'];
+                }
+            }
+        }
+        return $paramOptions;
+    }
+    /*
+     * It returns the custom field options for the settings
+     * admin field. Only the checkbox types are returned.
+     *
+     * @return array
+     */
+    public static function customCheckboxFields(): array
+    {
+         $fields = CRM_Core_BAO_UFField::getAvailableFields();
+        $contactParamNames = ['Contact', 'Individual'];
+        $paramOptions = [];
+        foreach ($fields as $k => $v) {
+            if (array_search($k, $contactParamNames) === false) {
+                continue;
+            }
+            foreach ($v as $key => $value) {
+                if ($value['html_type'] !== 'CheckBox') {
+                    continue;
+                }
+                if ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($key)) {
+                    Civi::log()->debug('Custom field params: '.var_export($value, true));
+                    $customGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField', $customFieldId, 'custom_group_id');
+                    $customGroupName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'title');
+                    $paramOptions[$key] = $value['title'] . ' :: ' . $customGroupName;
+                }
+            }
+        }
+        return $paramOptions;
+    }
+    /*
      * It returns true if the given formName is in the predefined list.
      * Otherwise it returns false.
      *
