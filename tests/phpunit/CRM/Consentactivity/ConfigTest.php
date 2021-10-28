@@ -29,6 +29,8 @@ class CRM_Consentactivity_ConfigTest extends CRM_Consentactivity_HeadlessBase
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR, $cfg['consent-expiration-years'], 'Invalid consent-expiration-years initial value.');
         self::assertTrue(array_key_exists('consent-expiration-tagging-days', $cfg), 'consent-expiration-tagging-days key is missing from the config.');
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS, $cfg['consent-expiration-tagging-days'], 'Invalid consent-expiration-tagging-days initial value.');
+        self::assertTrue(array_key_exists('custom-field-map', $cfg), 'custom-field-map key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map'], 'Invalid custom-field-map initial value.');
         self::assertTrue($config->create(), 'Create config has to be successful multiple times.');
     }
 }
