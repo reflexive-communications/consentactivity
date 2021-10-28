@@ -157,7 +157,14 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
                 $customFieldMap[$id][$key] = $v;
             }
         }
-        $config['custom-field-map'] = $customFieldMap;
+        // filter out the empty data
+        $filteredMap = [];
+        foreach ($customFieldMap as $value) {
+            if ($value['custom-field-id'] !== '0' && $value['consent-field-id'] !== '0') {
+                $filteredMap[] = $value;
+            }
+        }
+        $config['custom-field-map'] = $filteredMap;
         if (!$this->config->update($config)) {
             CRM_Core_Session::setStatus(ts('Error during search update'), 'Consentactivity', 'error');
         } else {
