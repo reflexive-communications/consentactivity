@@ -91,7 +91,7 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
         // setup tag and search
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
-        $config['expired-tag-id'] = '1';
+        $config['expired-tag-id'] = '2';
         $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         EntityTag::create(false)
@@ -100,8 +100,8 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
                 ->addValue('tag_id', $config['tag-id'])
                 ->execute();
         $result = civicrm_api3('ConsentactivityExpire', 'process', []);
-        self::assertSame(1, $result['values']['handled'], 'Invalid number of handled: '.$result['values']['handled']);
         self::assertCount(0, $result['values']['errors']);
+        self::assertSame(1, $result['values']['handled'], 'Invalid number of handled: '.$result['values']['handled']);
         $updatedContact = Contact::get(false)
             ->addWhere('id', '=', $contact['id'])
             ->setLimit(1)

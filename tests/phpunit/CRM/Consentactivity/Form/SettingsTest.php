@@ -168,8 +168,8 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
     public function testPostDefaultOriginalValues()
     {
         $_POST['tagId'] = '1';
-        $_POST['expiredTagId'] = '1';
-        $_POST['consentAfterFontribution'] = '1';
+        $_POST['expiredTagId'] = '2';
+        $_POST['consentAfterContribution'] = '1';
         $_POST['consentExpirationYears'] = '2';
         $_POST['consentExpirationTaggingDays'] = '10';
         $this->setupTestDefaultConfig();
@@ -201,8 +201,8 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
     public function testPostDefaultSearchUpdate()
     {
         $_POST['tagId'] = '2';
-        $_POST['expiredTagId'] = '2';
-        $_POST['consentAfterFontribution'] = '1';
+        $_POST['expiredTagId'] = '3';
+        $_POST['consentAfterContribution'] = '1';
         $_POST['consentExpirationYears'] = '2';
         $_POST['consentExpirationTaggingDays'] = '10';
         $this->setupTestDefaultConfig();
@@ -229,7 +229,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $cfgNew = $config->get();
         self::assertSame($_POST['tagId'], $cfgNew['tag-id']);
         self::assertSame($_POST['expiredTagId'], $cfgNew['expired-tag-id']);
-        self::assertSame(true, $cfg['consent-after-contribution']);
+        self::assertSame(true, $cfgNew['consent-after-contribution']);
         self::assertSame($_POST['consentExpirationYears'], $cfgNew['consent-expiration-years']);
         self::assertSame($_POST['consentExpirationTaggingDays'], $cfgNew['consent-expiration-tagging-days']);
         self::assertSame($cfg['saved-search-id'], $cfgNew['saved-search-id']);
@@ -238,8 +238,8 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
     public function testPostMapping()
     {
         $_POST['tagId'] = '2';
-        $_POST['expiredTagId'] = '2';
-        $_POST['consentAfterFontribution'] = '1';
+        $_POST['expiredTagId'] = '3';
+        $_POST['consentAfterContribution'] = '1';
         $_POST['consentExpirationYears'] = '2';
         $_POST['consentExpirationTaggingDays'] = '10';
         $_POST['map_custom_field_id_0'] = '1';
@@ -256,7 +256,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $cfg['tag-id'] = 1;
-        $cfg['expired-tag-id'] = 1;
+        $cfg['expired-tag-id'] = 2;
         $cfg['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
         $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['tag-id'], false)['id'];
         $config->update($cfg);
@@ -272,7 +272,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $cfgNew = $config->get();
         self::assertSame($_POST['tagId'], $cfgNew['tag-id']);
         self::assertSame($_POST['expiredTagId'], $cfgNew['expired-tag-id']);
-        self::assertSame(true, $cfg['consent-after-contribution']);
+        self::assertSame(true, $cfgNew['consent-after-contribution']);
         self::assertSame($_POST['consentExpirationYears'], $cfgNew['consent-expiration-years']);
         self::assertSame($_POST['consentExpirationTaggingDays'], $cfgNew['consent-expiration-tagging-days']);
         self::assertSame($cfg['saved-search-id'], $cfgNew['saved-search-id']);

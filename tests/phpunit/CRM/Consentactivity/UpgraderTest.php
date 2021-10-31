@@ -145,6 +145,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '1';
+        $config['expired-tag-id'] = '2';
         $config['saved-search-id'] = 10;
         $config['tagging-search-id'] = 11;
         $cfg->update($config);
