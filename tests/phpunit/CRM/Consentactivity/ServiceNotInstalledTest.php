@@ -80,7 +80,7 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
     public function testSavedSearchExpired()
     {
         $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
-        $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, false);
+        $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, 1, false);
         self::assertSame('Contact', $search['api_entity']);
     }
     /**
@@ -89,9 +89,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
     public function testSavedSearchExpiredUpdate()
     {
         $activityType = CRM_Consentactivity_Service::createDefaultActivityType();
-        $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, false);
+        $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, 1, false);
         self::assertSame('Contact', $search['api_entity']);
-        $search = CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], 1, $search['id'], false);
+        $search = CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], 1, 1, $search['id'], false);
         self::assertSame('Contact', $search['api_entity']);
     }
     /**
