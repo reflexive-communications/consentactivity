@@ -1,5 +1,6 @@
 <?php
 use CRM_Consentactivity_ExtensionUtil as E;
+use Civi\Api4\EntityTag;
 use Civi\Api4\SavedSearch;
 
 /**
@@ -58,6 +59,11 @@ function civicrm_api3_consentactivity_expire_Process($params)
             $numberOfProcessedContacts += 1;
             try {
                 CRM_Consentactivity_Service::anonymizeContact($contact['id']);
+                EntityTag::create(false)
+                    ->addValue('entity_table', 'civicrm_contact')
+                    ->addValue('entity_id', $contact['id'])
+                    ->addValue('tag_id', $config['expired-tag-id'])
+                    ->execute();
             } catch (Exception $e) {
                 $errors[] = 'Anonymize contact failed. Id: '.$contact['id']. ' Details: '.$e->getMessage();
             }

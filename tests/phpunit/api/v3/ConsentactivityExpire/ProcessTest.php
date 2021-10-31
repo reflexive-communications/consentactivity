@@ -134,5 +134,12 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
                 ->execute();
             self::assertCount(0, $numberOfEntities, 'Invalid number for the '.$entity.' entity.');
         }
+        // check tag on the contact
+        $entityTags = EntityTag::get(false)
+            ->addWhere('entity_table', '=', 'civicrm_contact')
+            ->addWhere('entity_id', '=', $contact['id'])
+            ->addWhere('tag_id', '=', $config['expired-tag-id'])
+            ->execute();
+        self::assertSame(1, count($entityTags));
     }
 }
