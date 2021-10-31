@@ -8,6 +8,11 @@ use Civi\Api4\Tag;
 use Civi\Api4\EntityTag;
 use Civi\Api4\Contact;
 use Civi\Api4\GroupContact;
+use Civi\Api4\Email;
+use Civi\Api4\Address;
+use Civi\Api4\IM;
+use Civi\Api4\Phone;
+use Civi\Api4\Website;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -25,6 +30,13 @@ class CRM_Consentactivity_Service
         'do_not_email',
         'do_not_phone',
         'is_opt_out',
+    ];
+    public const CONTACT_DATA_ENTITIES = [
+        '\Civi\Api4\Website',
+        '\Civi\Api4\IM',
+        '\Civi\Api4\Phone',
+        '\Civi\Api4\Address',
+        '\Civi\Api4\Email',
     ];
     /*
      * It creates the activity type for the gdpr consent activity.
@@ -283,6 +295,57 @@ class CRM_Consentactivity_Service
             }
         }
         return $paramOptions;
+    }
+    /*
+     * It deletes the following contact related data:
+     * - Webpage
+     * - Instant message addresses
+     * - Phones
+     * - Addresses
+     * - Email addresses
+     * Deletes the following contact params:
+     * - first_name, last_name, middle_name, display_name, email_greeting_display,
+     * postal_greeting_display, addressee_display, nick_name, sort_name, external_identifier
+     * image_url, api_key, birth_date, deceased_date, employer_id, job_title, gender_id,
+     * Also sets the privacy flags.
+     *
+     * @param int $contactId
+     */
+    public static function anonymizeContact(int $contactId): void
+    {
+        foreach (self::CONTACT_DATA_ENTITIES as $entity) {
+            $numberOfEntities = $entity::get(false)
+                ->addWhere('contact_id', '=', $contactId)
+                ->selectRowCount()
+                ->execute();
+            if (count($numberOfEntities)) {
+                $entity::delete(false)
+                    ->addWhere('contact_id', '=', $contactId)
+                    ->setLimit(count($numberOfEntities))
+                    ->execute();
+            }
+        }
+        $contactFieldsToDelete = [
+            'first_name', 'last_name', 'middle_name', 'display_name',
+            'email_greeting_display', 'postal_greeting_display',
+            'addressee_display', 'nick_name', 'sort_name',
+            'external_identifier', 'image_url', 'api_key', 'birth_date',
+            'deceased_date', 'employer_id', 'job_title', 'gender_id',
+        ];
+        $privacyFieldsToSet = [
+            'do_not_email', 'do_not_phone', 'do_not_mail',
+            'do_not_sms', 'do_not_trade', 'is_opt_out',
+        ];
+        $contactRequest = Contact::update(false)
+            ->addWhere('id', '=', $contactId)
+            ->setLimit(1);
+        foreach ($contactFieldsToDelete as $field) {
+            $contactRequest = $contactRequest->addValue($field, '');
+        }
+        foreach ($privacyFieldsToSet as $field) {
+            $contactRequest = $contactRequest->addValue($field, true);
+        }
+        $contactRequest->execute();
     }
     /*
      * It checks the form variables and does the actions based on the
