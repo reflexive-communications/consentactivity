@@ -38,7 +38,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $config = $this->config->get();
         // Set defaults
         $this->_defaults['tagId'] = $config['tag-id'];
-        $this->_defaults['terminationGroupId'] = $config['termination-group-id'];
+        $this->_defaults['expiredTagId'] = $config['expired-tag-id'];
         $this->_defaults['consentAfterFontribution'] = $config['consent-after-contribution'] ? '1' : '';
         $this->_defaults['consentExpirationYears'] = $config['consent-expiration-years'];
         $this->_defaults['consentExpirationTaggingDays'] = $config['consent-expiration-tagging-days'];
@@ -108,7 +108,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->add('text', 'consentExpirationYears', ts('Consent Expiration Years'), [], true);
         $this->add('text', 'consentExpirationTaggingDays', ts('Tag Before Expiration Days'), [], true);
         $this->add('select', 'tagId', ts('Tag contact'), ['' => ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']), true);
-        $this->add('select', 'terminationGroupId', E::ts('Termination Group'), ['' => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), true);
+        $this->add('select', 'expiredTagId', E::ts('Anonymized Tag'), ['' => E::ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']), true);
         $this->add('checkbox', 'consentAfterFontribution', E::ts('Consent After Contribution'), [], false);
         // select field for the custom-field-map entries.
         // if we have entries in the map, use the entry length
@@ -149,7 +149,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     {
         $config = $this->config->get();
         $config['tag-id'] = $this->_submitValues['tagId'];
-        $config['termination-group-id'] = $this->_submitValues['terminationGroupId'];
+        $config['expired-tag-id'] = $this->_submitValues['expiredTagId'];
         $config['consent-after-contribution'] = $this->_submitValues['consentAfterFontribution'] == '' ? false : true;
         $config['consent-expiration-years'] = $this->_submitValues['consentExpirationYears'];
         $config['consent-expiration-tagging-days'] = $this->_submitValues['consentExpirationTaggingDays'];

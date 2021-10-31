@@ -69,7 +69,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $config->load();
         $cfg = $config->get();
         unset($cfg['custom-field-map']);
-        unset($cfg['termination-group-id']);
+        unset($cfg['expired-tag-id']);
         unset($cfg['consent-after-contribution']);
 
         $config->update($cfg);
@@ -78,7 +78,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $config->load();
         $cfg = $config->get();
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map']);
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TERMINATION_GROUP_ID, $cfg['termination-group-id']);
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id']);
         self::assertSame(false, $cfg['consent-after-contribution']);
     }
 }
