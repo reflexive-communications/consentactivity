@@ -29,6 +29,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
             'tag-id' => self::DEFAULT_TAG_ID,
             // The group that contans the anonymized contacts.
             'termination-group-id' => self::DEFAULT_TERMINATION_GROUP_ID,
+            // Consent activity after contfibution.
+            'consent-after-contribution' => false,
             // The number of years after the consent gets expired
             // By default it is 3 years
             'consent-expiration-years' => self::DEFAULT_CONSENT_EXPIRATION_YEAR,

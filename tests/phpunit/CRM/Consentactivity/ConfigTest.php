@@ -27,6 +27,8 @@ class CRM_Consentactivity_ConfigTest extends CRM_Consentactivity_HeadlessBase
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_ID, $cfg['tag-id'], 'Invalid tag-id initial value.');
         self::assertTrue(array_key_exists('termination-group-id', $cfg), 'termination-group-id key is missing from the config.');
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_TERMINATION_GROUP_ID, $cfg['termination-group-id'], 'Invalid termination-group-id initial value.');
+        self::assertTrue(array_key_exists('consent-after-contribution', $cfg), 'consent-after-contribution key is missing from the config.');
+        self::assertSame(false, $cfg['consent-after-contribution'], 'Invalid consent-after-contribution key initial value.');
         self::assertTrue(array_key_exists('consent-expiration-years', $cfg), 'consent-expiration-years key is missing from the config.');
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR, $cfg['consent-expiration-years'], 'Invalid consent-expiration-years initial value.');
         self::assertTrue(array_key_exists('consent-expiration-tagging-days', $cfg), 'consent-expiration-tagging-days key is missing from the config.');
