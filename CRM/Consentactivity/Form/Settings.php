@@ -156,10 +156,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
             // create it
-            $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id']);
+            $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id']);
             $config['saved-search-id'] = $savedSearch['id'];
         } else {
-            CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], $config['tag-id'], $config['saved-search-id']);
+            CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], $config['tag-id'], $config['expired-tag-id'], $config['saved-search-id']);
         }
         if ($config['tagging-search-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
             // create it

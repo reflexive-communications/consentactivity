@@ -153,22 +153,22 @@ class CRM_Consentactivity_Service
      *
      * @return array
      */
-    public static function savedSearchExpired(string $activityName, string $tagId, bool $aclFlag = true): array
+    public static function savedSearchExpired(string $activityName, string $tagId, string $anonimizedTagId, bool $aclFlag = true): array
     {
         $results = SavedSearch::create($aclFlag)
             ->addValue('label', self::EXPIRED_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
-            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
+            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId, $anonimizedTagId))
             ->execute();
         return $results->first();
     }
-    public static function savedSearchExpiredUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
+    public static function savedSearchExpiredUpdate(string $activityName, string $tagId, string $anonimizedTagId, int $savedSearchId, bool $aclFlag = true): array
     {
         $results = SavedSearch::update($aclFlag)
             ->addWhere('id', '=', $savedSearchId)
             ->addValue('label', self::EXPIRED_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
-            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId))
+            ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId, $anonimizedTagId))
             ->execute();
         return $results->first();
     }
@@ -550,7 +550,7 @@ class CRM_Consentactivity_Service
             ],
         ];
     }
-    private static function savedSearchExpiredApiParams(string $activityName, string $tagId): array
+    private static function savedSearchExpiredApiParams(string $activityName, string $tagId, string $anonimizedTagId): array
     {
         return [
             'version' => 4,
@@ -603,6 +603,26 @@ class CRM_Consentactivity_Service
                         'Contact_EntityTag_Tag_01.id',
                         '=',
                         '"'.$tagId.'"'
+                    ],
+                ],
+                [
+                    'Tag AS Contact_EntityTag_Tag_02',
+                    'EXCLUDE',
+                    'EntityTag',
+                    [
+                        'id',
+                        '=',
+                        'Contact_EntityTag_Tag_02.entity_id'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_02.entity_table',
+                        '=',
+                        '"civicrm_contact"'
+                    ],
+                    [
+                        'Contact_EntityTag_Tag_02.id',
+                        '=',
+                        '"'.$anonimizedTagId.'"'
                     ],
                 ],
             ],

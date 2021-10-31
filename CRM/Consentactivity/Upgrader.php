@@ -45,13 +45,16 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
             $current = CRM_Consentactivity_Service::createDefaultActivityType();
         }
         CRM_Consentactivity_Service::updateExistingActivityType($current['id']);
-        if (array_key_exists('tag-id', $cfg)) {
+        if (array_key_exists('tag-id', $cfg) && array_key_exists('expired-tag-id', $cfg)) {
             // If the stored tag id is connected to a deleted tag, set the default value.
             if ($cfg['tag-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_ID && !CRM_Consentactivity_Service::tagExists(intval($cfg['tag-id']))) {
                 $cfg['tag-id'] = CRM_Consentactivity_Config::DEFAULT_TAG_ID;
             }
+            if ($cfg['expired-tag-id'] !== CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID && !CRM_Consentactivity_Service::tagExists(intval($cfg['expired-tag-id']))) {
+                $cfg['expired-tag-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID;
+            }
             // At this point, if the tag id is default value, delete the saved searches without thinking.
-            if ($cfg['tag-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_ID) {
+            if ($cfg['tag-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_ID || $cfg['expired-tag-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID) {
                 if (array_key_exists('saved-search-id', $cfg) && $cfg['saved-search-id'] !== CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
                     CRM_Consentactivity_Service::deleteSavedSearch($cfg['saved-search-id']);
                     $cfg['saved-search-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID;
@@ -66,7 +69,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
                     // check that the saved search exists
                     $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['saved-search-id']);
                     if (empty($currentSearch)) {
-                        $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], false);
+                        $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false);
                         $cfg['saved-search-id'] = $savedSearch['id'];
                     }
                 }
