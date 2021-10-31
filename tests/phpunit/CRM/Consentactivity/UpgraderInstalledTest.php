@@ -69,6 +69,8 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $config->load();
         $cfg = $config->get();
         unset($cfg['custom-field-map']);
+        unset($cfg['termination-group-id']);
+        unset($cfg['consent-after-contribution']);
 
         $config->update($cfg);
         $installer = new CRM_Consentactivity_Upgrader(E::LONG_NAME, ".");
@@ -76,5 +78,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $config->load();
         $cfg = $config->get();
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map']);
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TERMINATION_GROUP_ID, $cfg['termination-group-id']);
+        self::assertSame(false, $cfg['consent-after-contribution']);
     }
 }

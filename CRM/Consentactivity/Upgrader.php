@@ -162,6 +162,12 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         if (!array_key_exists('custom-field-map', $cfg)) {
             $cfg['custom-field-map'] = CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP;
         }
+        if (!array_key_exists('termination-group-id', $cfg)) {
+            $cfg['termination-group-id'] = CRM_Consentactivity_Config::DEFAULT_TERMINATION_GROUP_ID;
+        }
+        if (!array_key_exists('consent-after-contribution', $cfg)) {
+            $cfg['consent-after-contribution'] = false;
+        }
         $config->update($cfg);
         return true;
     }
