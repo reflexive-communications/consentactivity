@@ -49,20 +49,30 @@ function civicrm_api3_consentactivity_expire_Process($params)
     // the limit and offset is managed during the requests.
     $search['limit'] = 25;
     $search['offset'] = 0;
+    $errors = [];
     while ($search['limit'] > 0) {
         // Traditional api call solution to be able to pass the api_params.
         $contacts = civicrm_api4('Contact', 'get', $search['api_params']);
+        $numberOfProcessedContacts = 0;
         foreach ($contacts as $contact) {
-            // What needs to be done here?
-            // Currently it cause infinite loop, as the search criteria will always be the same.
-            // The action has to be defined here. (like user deletion or add to a group that will be
-            // to be excluded from this search)
-            return civicrm_api3_create_error('This feature is unimplemented.', []);
+            $numberOfProcessedContacts += 1;
+            try {
+                CRM_Consentactivity_Service::anonymizeContact($contact['id']);
+            } catch (Exception $e) {
+                $errors[] = 'Anonymize contact failed. Id: '.$contact['id']. ' Details: '.$e->getMessage();
+            }
         }
-        $handledContacts = $handledContacts + count($contacts);
-        $search['limit'] = count($contacts);
+        $handledContacts = $handledContacts + $numberOfProcessedContacts;
+        $search['limit'] = $numberOfProcessedContacts;
         $search['offset'] = $search['limit'] + $search['offset'];
     }
-    // Spec: civicrm_api3_create_success($values = 1, $params = [], $entity = NULL, $action = NULL)
-    return civicrm_api3_create_success(['handled' => $handledContacts, 'date' => $search['api_params']['having'][0][2]], $params, 'ConsentactivityExpire', 'Process');
+    $response = [
+        'handled' => $handledContacts,
+        'date' => $search['api_params']['having'][0][2],
+        'errors' => $errors,
+    ];
+    if (count($errors)) {
+        return civicrm_api3_create_error('Errors occured during the execution.', $response);
+    }
+    return civicrm_api3_create_success($response, $params, 'ConsentactivityExpire', 'Process');
 }
