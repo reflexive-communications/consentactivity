@@ -5,6 +5,7 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
     const DEFAULT_CONSENT_EXPIRATION_YEAR = 3;
     const DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS = 30;
     const DEFAULT_TAG_ID = '0';
+    const DEFAULT_TERMINATION_GROUP_ID = '0';
     const DEFAULT_EXPIRATION_SEARCH_ID = '0';
     const DEFAULT_TAG_SEARCH_ID = '0';
     const DEFAULT_CUSTOM_FIELD_MAP = [];
@@ -26,6 +27,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
             'tagging-search-id' => self::DEFAULT_TAG_SEARCH_ID,
             // The tag id that has to be added to the contact
             'tag-id' => self::DEFAULT_TAG_ID,
+            // The group that contans the anonymized contacts.
+            'termination-group-id' => self::DEFAULT_TERMINATION_GROUP_ID,
             // The number of years after the consent gets expired
             // By default it is 3 years
             'consent-expiration-years' => self::DEFAULT_CONSENT_EXPIRATION_YEAR,
