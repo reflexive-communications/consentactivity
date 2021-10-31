@@ -1,15 +1,20 @@
 <?php
 
-use Civi\Api4\OptionValue;
+use CRM_Consentactivity_ExtensionUtil as E;
+use Civi\Api4\Activity;
+use Civi\Api4\Address;
 use Civi\Api4\Contact;
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\Email;
+use Civi\Api4\EntityTag;
 use Civi\Api4\Group;
 use Civi\Api4\GroupContact;
-use Civi\Api4\Activity;
-use Civi\Api4\EntityTag;
-use Civi\Api4\CustomGroup;
-use Civi\Api4\CustomField;
+use Civi\Api4\IM;
 use Civi\Api4\OptionGroup;
-use CRM_Consentactivity_ExtensionUtil as E;
+use Civi\Api4\OptionValue;
+use Civi\Api4\Phone;
+use Civi\Api4\Website;
 
 /**
  * Service class test cases.
@@ -305,5 +310,95 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         ];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+    }
+    public function testAnonymizeContact()
+    {
+        // contact
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->addValue('first_name', 'first')
+            ->addValue('last_name', 'last')
+            ->addValue('middle_name', 'middle')
+            ->addValue('display_name', 'display')
+            ->addValue('email_greeting_display', 'display')
+            ->addValue('postal_greeting_display', 'display')
+            ->addValue('addressee_display', 'display')
+            ->addValue('nick_name', 'nick')
+            ->addValue('sort_name', 'sort')
+            ->addValue('external_identifier', 'ext')
+            ->addValue('image_url', 'http://internet.com/me.png')
+            ->addValue('api_key', 'apk')
+            ->addValue('birth_date', '2000-01-01')
+            ->addValue('deceased_date', '2000-01-02')
+            ->addValue('job_title', 'boss')
+            ->addValue('gender_id', 1)
+            ->addValue('gender_id', 1)
+            ->execute()
+            ->first();
+        // address
+        Address::create(false)
+            ->addValue('location_type_id', 1)
+            ->addValue('contact_id', $contact['id'])
+            ->addValue('street_address', 'sss')
+            ->execute();
+        // email
+        Email::create(false)
+            ->addValue('location_type_id', 1)
+            ->addValue('contact_id', $contact['id'])
+            ->addValue('email', '01@email.com')
+            ->execute();
+        // phone
+        Phone::create(false)
+            ->addValue('location_type_id', 1)
+            ->addValue('contact_id', $contact['id'])
+            ->addValue('phone', '911')
+            ->execute();
+        // instant message
+        IM::create(false)
+            ->addValue('location_type_id', 1)
+            ->addValue('contact_id', $contact['id'])
+            ->addValue('name', 'instant@message.com')
+            ->addValue('provider_id', 4)
+            ->execute();
+        // website
+        Website::create(false)
+            ->addValue('contact_id', $contact['id'])
+            ->addValue('url', 'http://internet.com/me.html')
+            ->addValue('website_type_id', 2)
+            ->execute();
+        // call anonimization
+        self::assertEmpty(CRM_Consentactivity_Service::anonymizeContact($contact['id']));
+        $updatedContact = Contact::get(false)
+            ->addWhere('id', '=', $contact['id'])
+            ->setLimit(1)
+            ->addSelect('do_not_email', 'do_not_phone', 'do_not_mail', 'do_not_sms', 'do_not_trade', 'is_opt_out',
+                'first_name', 'last_name', 'middle_name', 'display_name', 'email_greeting_display', 'postal_greeting_display',
+                'addressee_display', 'nick_name', 'sort_name', 'external_identifier', 'image_url', 'api_key', 'birth_date',
+                'deceased_date', 'employer_id', 'job_title', 'gender_id')
+            ->execute()
+            ->first();
+        $contactFieldsThatNeedsToBeDeleted = [
+            'first_name', 'last_name', 'middle_name', 'display_name',
+            'nick_name', 'sort_name',
+            'external_identifier', 'api_key', 'birth_date',
+            'deceased_date', 'employer_id', 'job_title', 'gender_id',
+        ];
+        foreach ($contactFieldsThatNeedsToBeDeleted as $field) {
+            self::assertEmpty($updatedContact[$field], 'The '.$field.' field should be empty, but it is '.$updatedContact[$field]);
+        }
+        $privacyFieldsThatNeedsToBeSet = [
+            'do_not_email', 'do_not_phone', 'do_not_mail',
+            'do_not_sms', 'do_not_trade', 'is_opt_out',
+        ];
+        foreach ($privacyFieldsThatNeedsToBeSet as $field) {
+            self::assertTrue($updatedContact[$field], 'The consent field '.$field.' should be set.');
+        }
+        foreach (CRM_Consentactivity_Service::CONTACT_DATA_ENTITIES as $entity) {
+            $numberOfEntities = $entity::get(false)
+                ->addWhere('contact_id', '=', $contact['id'])
+                ->selectRowCount()
+                ->execute();
+            self::assertCount(0, $numberOfEntities, 'Invalid number for the '.$entity.' entity.');
+        }
     }
 }
