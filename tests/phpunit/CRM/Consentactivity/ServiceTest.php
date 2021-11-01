@@ -401,4 +401,100 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             self::assertCount(0, $numberOfEntities, 'Invalid number for the '.$entity.' entity.');
         }
     }
+    /*
+     * It tests the post function.
+     */
+    public function testPostNotRelevantData()
+    {
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $activitiesOriginal = Activity::get(false)
+            ->execute();
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        $config['consent-after-contribution'] = true;
+        $cfg->update($config);
+        $refObject = (object)['is_test'=>false, 'receive_date'=>'2020010112131400', 'contact_id' => $contact['id']];
+
+        self::assertEmpty(CRM_Consentactivity_Service::post('delete', 'Contribution', 1, $refObject));
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertCount(count($activitiesOriginal), $activities);
+
+        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contact', 1, $refObject));
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertCount(count($activitiesOriginal), $activities);
+
+        $refObject->is_test = true;
+        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertCount(count($activitiesOriginal), $activities);
+    }
+    public function testPostConfigNotSet()
+    {
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $activitiesOriginal = Activity::get(false)
+            ->execute();
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        $config['consent-after-contribution'] = false;
+        $cfg->update($config);
+        $refObject = (object)['is_test'=>false, 'receive_date'=>'2020010112131400', 'contact_id' => $contact['id']];
+
+        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertCount(count($activitiesOriginal), $activities);
+    }
+    public function testPostOldReceiveDate()
+    {
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $activitiesOriginal = Activity::get(false)
+            ->execute();
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        $config['consent-after-contribution'] = true;
+        $cfg->update($config);
+        $before = $config['consent-expiration-years'];
+        $before += 2;
+        $refObject = (object)['is_test'=>false, 'receive_date'=>date('YmdHis', strtotime($before.' years ago')), 'contact_id' => $contact['id']];
+
+        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertCount(count($activitiesOriginal), $activities);
+    }
+    public function testPostTriggerActivity()
+    {
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $activitiesOriginal = Activity::get(false)
+            ->execute();
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        $config['consent-after-contribution'] = true;
+        $cfg->update($config);
+        $refObject = (object)['is_test'=>false, 'receive_date'=>date('YmdHis'), 'contact_id' => $contact['id']];
+
+        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertCount(count($activitiesOriginal)+1, $activities);
+    }
 }
