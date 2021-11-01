@@ -22,6 +22,7 @@
     </compatibility>
     <requires>
         <ext>rc-base</ext>
+        <ext>org.civicrm.flexmailer</ext>
     </requires>
     <comments>This civicrm extension provides an activity that is triggered when the contact creates or updates the do_not_email, do_not_phone or is_opt_out flags.</comments>
     <classloader>
