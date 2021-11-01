@@ -105,10 +105,31 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
         $updatedContact = Contact::get(false)
             ->addWhere('id', '=', $contact['id'])
             ->setLimit(1)
-            ->addSelect('do_not_email', 'do_not_phone', 'do_not_mail', 'do_not_sms', 'do_not_trade', 'is_opt_out',
-                'first_name', 'last_name', 'middle_name', 'display_name', 'email_greeting_display', 'postal_greeting_display',
-                'addressee_display', 'nick_name', 'sort_name', 'external_identifier', 'image_url', 'api_key', 'birth_date',
-                'deceased_date', 'employer_id', 'job_title', 'gender_id')
+            ->addSelect(
+                'do_not_email',
+                'do_not_phone',
+                'do_not_mail',
+                'do_not_sms',
+                'do_not_trade',
+                'is_opt_out',
+                'first_name',
+                'last_name',
+                'middle_name',
+                'display_name',
+                'email_greeting_display',
+                'postal_greeting_display',
+                'addressee_display',
+                'nick_name',
+                'sort_name',
+                'external_identifier',
+                'image_url',
+                'api_key',
+                'birth_date',
+                'deceased_date',
+                'employer_id',
+                'job_title',
+                'gender_id'
+            )
             ->execute()
             ->first();
         $contactFieldsThatNeedsToBeDeleted = [
