@@ -6,4 +6,10 @@
     <title>Settings</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/consent/renew</path>
+    <page_callback>CRM_Consentactivity_Page_ConsentRenew</page_callback>
+    <title>ConsentRenew</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>
