@@ -65,6 +65,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->addRule('consentExpirationTaggingDays', E::ts('Tagging days has to be numeric.'), 'numeric');
         $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'zeroNotAllowed']);
         $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'customFieldDuplicationNotAllowed']);
+        $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'sameTagsNotAllowed']);
     }
 
     /**
@@ -79,6 +80,19 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         }
         if ($values['consentExpirationTaggingDays'] === '0') {
             $errors['consentExpirationTaggingDays'] = E::ts('Not allowed value.');
+        }
+        return empty($errors) ? true : $errors;
+    }
+
+    /**
+     * It rejects the duplications of the tags.
+     */
+    public static function sameTagsNotAllowed($values)
+    {
+        $errors = [];
+        if ($values['tagId'] === $values['expiredTagId']) {
+            $errors['tagId'] = E::ts('Duplication.');
+            $errors['expiredTagId'] = E::ts('Duplication.');
         }
         return empty($errors) ? true : $errors;
     }

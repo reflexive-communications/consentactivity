@@ -116,6 +116,21 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         }
     }
     /**
+     * sameTagsNotAllowed test case.
+     */
+    public function testSameTagsNotAllowed()
+    {
+        $this->setupTestDefaultConfig();
+        $form = new CRM_Consentactivity_Form_Settings();
+        $testData = [
+            [['tagId' => '1','expiredTagId' => '1'], ['tagId' => E::ts('Duplication.'),'expiredTagId' => E::ts('Duplication.')]],
+            [['tagId' => '1','expiredTagId' => '2'], true],
+        ];
+        foreach ($testData as $t) {
+            self::assertSame($t[1], CRM_Consentactivity_Form_Settings::sameTagsNotAllowed($t[0]));
+        }
+    }
+    /**
      * customFieldDuplicationNotAllowed test case.
      */
     public function testCustomFieldDuplicationNotAllowed()
