@@ -223,3 +223,12 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
         }
     }
 }
+/**
+ * Implements hook_civicrm_post().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_post
+ */
+function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef)
+{
+    CRM_Consentactivity_Service::post($op, $objectName, $objectId, $objectRef);
+}
