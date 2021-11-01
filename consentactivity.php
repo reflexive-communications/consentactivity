@@ -215,7 +215,7 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
         $cfg->load();
         $config = $cfg->get();
         foreach ($ids as $id) {
-            if ($id == $config['tag-id']) {
+            if ($id == $config['tag-id'] || $id == $config['expired-tag-id']) {
                 $errors['tag_id'] = ts('The tag is reserved for the consentactivity.');
                 CRM_Core_Session::setStatus(ts('The tag is reserved for the consentactivity.'), 'Consentactivity', 'error');
                 return;
