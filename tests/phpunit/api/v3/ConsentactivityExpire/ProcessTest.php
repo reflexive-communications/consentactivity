@@ -28,7 +28,7 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
     {
         $result = civicrm_api3('ConsentactivityExpire', 'process', []);
         self::assertSame(0, $result['values']['handled']);
-        self::assertSame(ts('Saved Search is not set.'), $result['values']['message']);
+        self::assertSame(E::ts('Saved Search is not set.'), $result['values']['message']);
     }
 
     /**

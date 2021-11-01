@@ -59,10 +59,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
      */
     public function addRules()
     {
-        $this->addRule('consentExpirationYears', ts('Expiration year has to be numeric.'), 'numeric', null, 'client');
-        $this->addRule('consentExpirationYears', ts('Expiration year has to be numeric.'), 'numeric');
-        $this->addRule('consentExpirationTaggingDays', ts('Tagging days has to be numeric.'), 'numeric', null, 'client');
-        $this->addRule('consentExpirationTaggingDays', ts('Tagging days has to be numeric.'), 'numeric');
+        $this->addRule('consentExpirationYears', E::ts('Expiration year has to be numeric.'), 'numeric', null, 'client');
+        $this->addRule('consentExpirationYears', E::ts('Expiration year has to be numeric.'), 'numeric');
+        $this->addRule('consentExpirationTaggingDays', E::ts('Tagging days has to be numeric.'), 'numeric', null, 'client');
+        $this->addRule('consentExpirationTaggingDays', E::ts('Tagging days has to be numeric.'), 'numeric');
         $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'zeroNotAllowed']);
         $this->addFormRule(['CRM_Consentactivity_Form_Settings', 'customFieldDuplicationNotAllowed']);
     }
@@ -75,10 +75,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     {
         $errors = [];
         if ($values['consentExpirationYears'] === '0') {
-            $errors['consentExpirationYears'] = ts('Not allowed value.');
+            $errors['consentExpirationYears'] = E::ts('Not allowed value.');
         }
         if ($values['consentExpirationTaggingDays'] === '0') {
-            $errors['consentExpirationTaggingDays'] = ts('Not allowed value.');
+            $errors['consentExpirationTaggingDays'] = E::ts('Not allowed value.');
         }
         return empty($errors) ? true : $errors;
     }
@@ -94,7 +94,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         foreach ($values as $k => $v) {
             if (substr($k, 0, 20) === 'map_custom_field_id_') {
                 if (array_key_exists($v, $valueList)) {
-                    $errors[$valueList[$v]] = ts('Duplication.');
+                    $errors[$valueList[$v]] = E::ts('Duplication.');
                 } elseif ($v !== '0') {
                     $valueList[$v] = $k;
                 }
@@ -105,9 +105,9 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
 
     public function buildQuickForm()
     {
-        $this->add('text', 'consentExpirationYears', ts('Consent Expiration Years'), [], true);
-        $this->add('text', 'consentExpirationTaggingDays', ts('Tag Before Expiration Days'), [], true);
-        $this->add('select', 'tagId', ts('Tag contact'), ['' => ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']), true);
+        $this->add('text', 'consentExpirationYears', E::ts('Consent Expiration Years'), [], true);
+        $this->add('text', 'consentExpirationTaggingDays', E::ts('Tag Before Expiration Days'), [], true);
+        $this->add('select', 'tagId', E::ts('Tag contact'), ['' => E::ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']), true);
         $this->add('select', 'expiredTagId', E::ts('Anonymized Tag'), ['' => E::ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']), true);
         $this->add('checkbox', 'consentAfterContribution', E::ts('Consent After Contribution'), [], false);
         // select field for the custom-field-map entries.
@@ -116,15 +116,15 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $cfMap = [];
         $config = $this->config->get();
         if (array_key_exists('custom-field-map', $config) === false || count($config['custom-field-map']) === 0) {
-            $this->add('select', 'map_custom_field_id_0', '', [0=>ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
-            $this->add('select', 'map_consent_field_id_0', '', [0=>ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
-            $this->add('select', 'map_group_id_0', '', [0=>ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
+            $this->add('select', 'map_custom_field_id_0', '', [0=>E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
+            $this->add('select', 'map_consent_field_id_0', '', [0=>E::ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
+            $this->add('select', 'map_group_id_0', '', [0=>E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
             $cfMap['map_custom_field_id_0'] = ['consent' => 'map_consent_field_id_0', 'group' => 'map_group_id_0'];
         } else {
             foreach ($config['custom-field-map'] as $k => $v) {
-                $this->add('select', 'map_custom_field_id_'.$k, '', [0=>ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
-                $this->add('select', 'map_consent_field_id_'.$k, '', [0=>ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
-                $this->add('select', 'map_group_id_'.$k, '', [0=>ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
+                $this->add('select', 'map_custom_field_id_'.$k, '', [0=>E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
+                $this->add('select', 'map_consent_field_id_'.$k, '', [0=>E::ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
+                $this->add('select', 'map_group_id_'.$k, '', [0=>E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
                 $cfMap['map_custom_field_id_'.$k] = ['consent' => 'map_consent_field_id_'.$k, 'group' => 'map_group_id_'.$k];
             }
         }
@@ -135,12 +135,12 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
             [
                 [
                     'type' => 'done',
-                    'name' => ts('Save'),
+                    'name' => E::ts('Save'),
                     'isDefault' => true,
                 ],
             ]
         );
-        $this->setTitle(ts('Consentactivity Settings'));
+        $this->setTitle(E::ts('Consentactivity Settings'));
         // js file that handles the new map entry event.
         Civi::resources()->addScriptFile(E::LONG_NAME, 'assets/js/settings.js');
     }
@@ -193,9 +193,9 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         }
         $config['custom-field-map'] = $filteredMap;
         if (!$this->config->update($config)) {
-            CRM_Core_Session::setStatus(ts('Error during search update'), 'Consentactivity', 'error');
+            CRM_Core_Session::setStatus(E::ts('Error during search update'), 'Consentactivity', 'error');
         } else {
-            CRM_Core_Session::setStatus(ts('The configuration has been updated.'), 'Consentactivity', 'success', ['expires' => 5000,]);
+            CRM_Core_Session::setStatus(E::ts('The configuration has been updated.'), 'Consentactivity', 'success', ['expires' => 5000,]);
         }
         // Redirect to the form after the submit.
         CRM_Core_Session::singleton()->pushUserContext(CRM_Utils_System::url('civicrm/admin/consent-activity', 'reset=1'));

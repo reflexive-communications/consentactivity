@@ -16,7 +16,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         $config = new CRM_Consentactivity_Config($this->extensionName);
         // Create default configs
         if (!$config->create()) {
-            throw new CRM_Core_Exception($this->extensionName.ts(' could not create configs in database'));
+            throw new CRM_Core_Exception($this->extensionName.E::ts(' could not create configs in database'));
         }
     }
 
@@ -100,7 +100,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         $config = new CRM_Consentactivity_Config($this->extensionName);
         // delete current configs
         if (!$config->remove()) {
-            throw new CRM_Core_Exception($this->extensionName.ts(' could not remove configs from database'));
+            throw new CRM_Core_Exception($this->extensionName.E::ts(' could not remove configs from database'));
         }
     }
 

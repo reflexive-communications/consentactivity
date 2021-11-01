@@ -107,9 +107,9 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $form = new CRM_Consentactivity_Form_Settings();
         $testData = [
             [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '1'], true],
-            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '1'], ['consentExpirationYears' => ts('Not allowed value.')]],
-            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '0'], ['consentExpirationYears' => ts('Not allowed value.'),'consentExpirationTaggingDays' => ts('Not allowed value.')]],
-            [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '0'], ['consentExpirationTaggingDays' => ts('Not allowed value.')]],
+            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '1'], ['consentExpirationYears' => E::ts('Not allowed value.')]],
+            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '0'], ['consentExpirationYears' => E::ts('Not allowed value.'),'consentExpirationTaggingDays' => E::ts('Not allowed value.')]],
+            [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '0'], ['consentExpirationTaggingDays' => E::ts('Not allowed value.')]],
         ];
         foreach ($testData as $t) {
             self::assertSame($t[1], CRM_Consentactivity_Form_Settings::zeroNotAllowed($t[0]));
@@ -124,8 +124,8 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $form = new CRM_Consentactivity_Form_Settings();
         $testData = [
             [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '2'], true],
-            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '1'], ['map_custom_field_id_0' => ts('Duplication.')]],
-            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '2', 'map_custom_field_id_2' => '1','map_custom_field_id_3' => '2'], ['map_custom_field_id_0' => ts('Duplication.'), 'map_custom_field_id_1' => ts('Duplication.')]],
+            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '1'], ['map_custom_field_id_0' => E::ts('Duplication.')]],
+            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '2', 'map_custom_field_id_2' => '1','map_custom_field_id_3' => '2'], ['map_custom_field_id_0' => E::ts('Duplication.'), 'map_custom_field_id_1' => E::ts('Duplication.')]],
         ];
         foreach ($testData as $t) {
             self::assertSame($t[1], CRM_Consentactivity_Form_Settings::customFieldDuplicationNotAllowed($t[0]));
@@ -159,7 +159,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         } catch (Exception $e) {
             self::fail('It shouldn\'t throw exception. '.$e->getMessage());
         }
-        self::assertSame(ts('Consentactivity Settings'), $form->getTitle(), 'Invalid form title.');
+        self::assertSame(E::ts('Consentactivity Settings'), $form->getTitle(), 'Invalid form title.');
     }
     /**
      * Post Process test cases.

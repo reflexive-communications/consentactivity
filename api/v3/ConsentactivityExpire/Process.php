@@ -34,7 +34,7 @@ function civicrm_api3_consentactivity_expire_Process($params)
     $config = $cfg->get();
     // Don't need to execute the process if the search query is not set yet.
     if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
-        return civicrm_api3_create_success(['handled' => 0, 'message' => ts('Saved Search is not set.')], $params, 'ConsentactivityExpire', 'Process');
+        return civicrm_api3_create_success(['handled' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'ConsentactivityExpire', 'Process');
     }
     $search = SavedSearch::get(false)
         ->addWhere('id', '=', $config['saved-search-id'])
