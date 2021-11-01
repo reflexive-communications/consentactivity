@@ -232,3 +232,41 @@ function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef)
 {
     CRM_Consentactivity_Service::post($op, $objectName, $objectId, $objectRef);
 }
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
+ */
+function consentactivity_civicrm_tokens(&$tokens)
+{
+    $tokens['Consentactivity'] = [
+        'Consentactivity.consent_renewal' => E::ts('Renew Consent Link'),
+    ];
+}
+/**
+ * Implements hook_civicrm_container()
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container
+ */
+function consentactivity_civicrm_container($container)
+{
+    $container->addResource(new \Symfony\Component\Config\Resource\FileResource(__FILE__));
+    $container->findDefinition('dispatcher')->addMethodCall(
+        'addListener',
+        ['civi.token.eval', 'consentactivity_evaluate_tokens']
+    );
+}
+function consentactivity_evaluate_tokens(\Civi\Token\Event\TokenValueEvent $e)
+{
+    foreach ($e->getRows() as $row) {
+        $urlParams = [
+            'reset' => 1,
+            'jid' => $row->context['mailingJobId'],    // The job id.
+            'qid' => $row->context['mailingActionTarget']['id'] ?? null,    // The queue id.
+            'h' => $row->context['mailingActionTarget']['hash'] ?? null,      // The hash.
+        ];
+        $url = CRM_Utils_System::url('civicrm/consent/renew', $urlParams, true, null, true, true);
+        $row->format('text/html');
+        $row->tokens('Consentactivity', 'consent_renewal', $url);
+    }
+}
