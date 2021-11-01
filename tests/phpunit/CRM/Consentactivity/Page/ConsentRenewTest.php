@@ -22,6 +22,7 @@ use Civi\Api4\Activity;
  */
 class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
 {
+    const DOMAIN_NAME = 'my-domain';
     public function setUpHeadless()
     {
         return \Civi\Test::headless()
@@ -140,9 +141,8 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
     }
     private function setupMailing()
     {
-        $domainName = 'my-domain';
         $result = civicrm_api3('Domain', 'create', [
-            'name' => $domainName,
+            'name' => self::DOMAIN_NAME,
             'domain_version' => '5.37.1',
             'id' => 1,
             'contact_id' => 1,
@@ -151,7 +151,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the domain update.');
         $result = civicrm_api3('MailSettings', 'create', [
             'id' => 1,
-            'domain_id' => $domainName,
+            'domain_id' => self::DOMAIN_NAME,
             'name' => 'myMailerAccount',
             'domain' => 'civicrm-base.com',
             'protocol' => 'POP3',
@@ -174,7 +174,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
             'option_group_id' => 'from_email_address',
             'label' => '"info" <info@civicrm-base.com>',
             'name' => '"info" <info@civicrm-base.com>',
-            'domain_id' => $domainName,
+            'domain_id' => self::DOMAIN_NAME,
             'is_default' => 1,
             'is_active' =>1,
         ]);
@@ -259,6 +259,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
         ];
         $page = new CRM_Consentactivity_Page_ConsentRenew();
         try {
+            self::expectOutputRegex('/The '.self::DOMAIN_NAME.' team./i');
             $page->run();
         } catch (Exception $e) {
             self::fail('Page load should be successful.');
