@@ -105,20 +105,24 @@ class CRM_Consentactivity_Service
      * if the contact update is happening with an API action.
      *
      * @param int $contactId the id of the contact that triggers the activity
+     *
+     * @return array the created activity.
      */
-    public static function createConsentActivityToContact(int $contactId)
+    public static function createConsentActivityToContact(int $contactId): array
     {
         $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
-        $results = Activity::create(false)
+        $activity = Activity::create(false)
             ->addValue('activity_type_id', $config['activity-type-id'])
             ->addValue('source_contact_id', $contactId)
             ->addValue('status_id:name', 'Completed')
-            ->execute();
-        // on case of invalid result (missing id field), it prints error to the log
-        if (count($results) !== 1 || !array_key_exists('id', $results[0])) {
+            ->execute()
+            ->first();
+        // on case of invalid result, it prints error to the log
+        if (is_null($activity)) {
             Civi::log()->error('Consentactivity | Failed to create Activity for the following contact: '.$contactId);
+            $activity = [];
         }
         // Remove the expired tag from the contact if the tag-id is set in the config.
         // The result checking is skipped, because not every contact has this tag, only the old ones.
@@ -129,6 +133,7 @@ class CRM_Consentactivity_Service
                 ->addWhere('tag_id', '=', $config['tag-id'])
                 ->execute();
         }
+        return $activity;
     }
     /*
      * It is a wrapper function for option value get api call.
@@ -346,6 +351,42 @@ class CRM_Consentactivity_Service
             $contactRequest = $contactRequest->addValue($field, true);
         }
         $contactRequest->execute();
+    }
+    /**
+     * On case of contribution create it adds a consentactivity action
+     * to the contributor contact if it is configured on the settings form.
+     *
+     * @param string $op
+     * @param string $objectName
+     * @param $objectId - the unique identifier for the object.
+     * @param $objectRef - the reference to the object if available.
+     */
+    public static function post(string $op, string $objectName, $objectId, &$objectRef): void
+    {
+        if ($op !== 'create' || $objectName !== 'Contribution' || $objectRef->is_test) {
+            return;
+        }
+        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg->load();
+        $config = $cfg->get();
+        if (!$config['consent-after-contribution']) {
+            return;
+        }
+        $receiveDate = date('Y-m-d H:i', strtotime($objectRef->receive_date));
+        $expireDate = date('Y:m-d H:i', strtotime($config['consent-expiration-years'].' years ago'));
+        if ($receiveDate < $expireDate) {
+            return;
+        }
+        $activity = self::createConsentActivityToContact($objectRef->contact_id);
+        if (isset($activity['id'])) {
+            // update activity with sql
+            $sql = "UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2";
+            $params = [
+                1 => [$receiveDate, 'String'],
+                2 => [$activity['id'], 'Int'],
+            ];
+            CRM_Core_DAO::executeQuery($sql, $params);
+        }
     }
     /*
      * It checks the form variables and does the actions based on the
