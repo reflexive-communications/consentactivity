@@ -25,8 +25,8 @@
             </td>
         </tr>
         <tr>
-            <td class="label">{$form.consentAfterFontribution.label}</td>
-            <td class="content">{$form.consentAfterFontribution.html}<br/>
+            <td class="label">{$form.consentAfterContribution.label}</td>
+            <td class="content">{$form.consentAfterContribution.html}<br/>
                 <span class="description">{ts}Add a consent activity after contribution.{/ts}</span>
             </td>
         </tr>
