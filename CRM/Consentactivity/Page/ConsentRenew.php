@@ -21,7 +21,12 @@ class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
         if (!count($activity)) {
             throw new CRM_Core_Exception(E::ts('Failed to renew consent.'));
         }
-        CRM_Utils_System::setTitle(E::ts(''));
+        CRM_Utils_System::setTitle(E::ts(' '));
+        $domain = \Civi\Api4\Domain::get()
+            ->setLimit(1)
+            ->execute()
+            ->first();
+        $this->assign('domainName', $domain['name']);
 
         parent::run();
     }
