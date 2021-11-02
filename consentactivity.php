@@ -215,11 +215,58 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
         $cfg->load();
         $config = $cfg->get();
         foreach ($ids as $id) {
-            if ($id == $config['tag-id']) {
-                $errors['tag_id'] = ts('The tag is reserved for the consentactivity.');
-                CRM_Core_Session::setStatus(ts('The tag is reserved for the consentactivity.'), 'Consentactivity', 'error');
+            if ($id == $config['tag-id'] || $id == $config['expired-tag-id']) {
+                $errors['tag_id'] = E::ts('The tag is reserved for the consentactivity.');
+                CRM_Core_Session::setStatus(E::ts('The tag is reserved for the consentactivity.'), 'Consentactivity', 'error');
                 return;
             }
         }
+    }
+}
+/**
+ * Implements hook_civicrm_post().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_post
+ */
+function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef)
+{
+    CRM_Consentactivity_Service::post($op, $objectName, $objectId, $objectRef);
+}
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
+ */
+function consentactivity_civicrm_tokens(&$tokens)
+{
+    $tokens['Consentactivity'] = [
+        'Consentactivity.consent_renewal' => E::ts('Renew Consent Link'),
+    ];
+}
+/**
+ * Implements hook_civicrm_container()
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container
+ */
+function consentactivity_civicrm_container($container)
+{
+    $container->addResource(new \Symfony\Component\Config\Resource\FileResource(__FILE__));
+    $container->findDefinition('dispatcher')->addMethodCall(
+        'addListener',
+        ['civi.token.eval', 'consentactivity_evaluate_tokens']
+    );
+}
+function consentactivity_evaluate_tokens(\Civi\Token\Event\TokenValueEvent $e)
+{
+    foreach ($e->getRows() as $row) {
+        $urlParams = [
+            'reset' => 1,
+            'jid' => $row->context['mailingJobId'],    // The job id.
+            'qid' => $row->context['mailingActionTarget']['id'] ?? null,    // The queue id.
+            'h' => $row->context['mailingActionTarget']['hash'] ?? null,      // The hash.
+        ];
+        $url = CRM_Utils_System::url('civicrm/consent/renew', $urlParams, true, null, true, true);
+        $row->format('text/html');
+        $row->tokens('Consentactivity', 'consent_renewal', $url);
     }
 }

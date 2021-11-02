@@ -60,4 +60,25 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR, $cfg['consent-expiration-years']);
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS, $cfg['consent-expiration-tagging-days']);
     }
+    /**
+     * Test the upgrade_5101 process.
+     */
+    public function testUpgrade5101()
+    {
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config->load();
+        $cfg = $config->get();
+        unset($cfg['custom-field-map']);
+        unset($cfg['expired-tag-id']);
+        unset($cfg['consent-after-contribution']);
+
+        $config->update($cfg);
+        $installer = new CRM_Consentactivity_Upgrader(E::LONG_NAME, ".");
+        self::assertTrue($installer->upgrade_5101());
+        $config->load();
+        $cfg = $config->get();
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map']);
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id']);
+        self::assertSame(false, $cfg['consent-after-contribution']);
+    }
 }

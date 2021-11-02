@@ -4,6 +4,11 @@ use CRM_Consentactivity_ExtensionUtil as E;
 use Civi\Api4\Contact;
 use Civi\Api4\Activity;
 use Civi\Api4\EntityTag;
+use Civi\Api4\Phone;
+use Civi\Api4\Website;
+use Civi\Api4\IM;
+use Civi\Api4\Email;
+use Civi\Api4\Address;
 
 /**
  * ConsentactivityExpire.Process API Test Case
@@ -23,7 +28,7 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
     {
         $result = civicrm_api3('ConsentactivityExpire', 'process', []);
         self::assertSame(0, $result['values']['handled']);
-        self::assertSame(ts('Saved Search is not set.'), $result['values']['message']);
+        self::assertSame(E::ts('Saved Search is not set.'), $result['values']['message']);
     }
 
     /**
@@ -45,7 +50,8 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
         $config = $cfg->get();
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
-        $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], false)['id'];
+        $config['expired-tag-id'] = '1';
+        $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('ConsentactivityExpire', 'process', []);
         self::assertSame(0, $result['values']['handled']);
@@ -55,8 +61,7 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
     /**
      * Test Process action with setting the search.
      * Actions and tag will be set for 1 contact, so that
-     * it has to return error as that part of the feature
-     * is not implemented yet.
+     * it has to return it as the handled one.
      */
     public function testApiProcessWithContact()
     {
@@ -86,15 +91,76 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
         // setup tag and search
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
-        $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], false)['id'];
+        $config['expired-tag-id'] = '2';
+        $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         EntityTag::create(false)
                 ->addValue('entity_table', 'civicrm_contact')
                 ->addValue('entity_id', $contact['id'])
                 ->addValue('tag_id', $config['tag-id'])
                 ->execute();
-        self::expectException(CiviCRM_API3_Exception::class);
-        self::expectExceptionMessage('This feature is unimplemented.');
-        civicrm_api3('ConsentactivityExpire', 'process', []);
+        $result = civicrm_api3('ConsentactivityExpire', 'process', []);
+        self::assertCount(0, $result['values']['errors']);
+        self::assertSame(1, $result['values']['handled'], 'Invalid number of handled: '.$result['values']['handled']);
+        $updatedContact = Contact::get(false)
+            ->addWhere('id', '=', $contact['id'])
+            ->setLimit(1)
+            ->addSelect(
+                'do_not_email',
+                'do_not_phone',
+                'do_not_mail',
+                'do_not_sms',
+                'do_not_trade',
+                'is_opt_out',
+                'first_name',
+                'last_name',
+                'middle_name',
+                'display_name',
+                'email_greeting_display',
+                'postal_greeting_display',
+                'addressee_display',
+                'nick_name',
+                'sort_name',
+                'external_identifier',
+                'image_url',
+                'api_key',
+                'birth_date',
+                'deceased_date',
+                'employer_id',
+                'job_title',
+                'gender_id'
+            )
+            ->execute()
+            ->first();
+        $contactFieldsThatNeedsToBeDeleted = [
+            'first_name', 'last_name', 'middle_name', 'display_name',
+            'nick_name', 'sort_name',
+            'external_identifier', 'api_key', 'birth_date',
+            'deceased_date', 'employer_id', 'job_title', 'gender_id',
+        ];
+        foreach ($contactFieldsThatNeedsToBeDeleted as $field) {
+            self::assertEmpty($updatedContact[$field], 'The '.$field.' field should be empty, but it is '.$updatedContact[$field]);
+        }
+        $privacyFieldsThatNeedsToBeSet = [
+            'do_not_email', 'do_not_phone', 'do_not_mail',
+            'do_not_sms', 'do_not_trade', 'is_opt_out',
+        ];
+        foreach ($privacyFieldsThatNeedsToBeSet as $field) {
+            self::assertTrue($updatedContact[$field], 'The consent field '.$field.' should be set.');
+        }
+        foreach (CRM_Consentactivity_Service::CONTACT_DATA_ENTITIES as $entity) {
+            $numberOfEntities = $entity::get(false)
+                ->addWhere('contact_id', '=', $contact['id'])
+                ->selectRowCount()
+                ->execute();
+            self::assertCount(0, $numberOfEntities, 'Invalid number for the '.$entity.' entity.');
+        }
+        // check tag on the contact
+        $entityTags = EntityTag::get(false)
+            ->addWhere('entity_table', '=', 'civicrm_contact')
+            ->addWhere('entity_id', '=', $contact['id'])
+            ->addWhere('tag_id', '=', $config['expired-tag-id'])
+            ->execute();
+        self::assertSame(1, count($entityTags));
     }
 }

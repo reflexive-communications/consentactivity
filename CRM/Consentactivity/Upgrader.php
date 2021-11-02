@@ -16,7 +16,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         $config = new CRM_Consentactivity_Config($this->extensionName);
         // Create default configs
         if (!$config->create()) {
-            throw new CRM_Core_Exception($this->extensionName.ts(' could not create configs in database'));
+            throw new CRM_Core_Exception($this->extensionName.E::ts(' could not create configs in database'));
         }
     }
 
@@ -45,13 +45,16 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
             $current = CRM_Consentactivity_Service::createDefaultActivityType();
         }
         CRM_Consentactivity_Service::updateExistingActivityType($current['id']);
-        if (array_key_exists('tag-id', $cfg)) {
+        if (array_key_exists('tag-id', $cfg) && array_key_exists('expired-tag-id', $cfg)) {
             // If the stored tag id is connected to a deleted tag, set the default value.
             if ($cfg['tag-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_ID && !CRM_Consentactivity_Service::tagExists(intval($cfg['tag-id']))) {
                 $cfg['tag-id'] = CRM_Consentactivity_Config::DEFAULT_TAG_ID;
             }
+            if ($cfg['expired-tag-id'] !== CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID && !CRM_Consentactivity_Service::tagExists(intval($cfg['expired-tag-id']))) {
+                $cfg['expired-tag-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID;
+            }
             // At this point, if the tag id is default value, delete the saved searches without thinking.
-            if ($cfg['tag-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_ID) {
+            if ($cfg['tag-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_ID || $cfg['expired-tag-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID) {
                 if (array_key_exists('saved-search-id', $cfg) && $cfg['saved-search-id'] !== CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
                     CRM_Consentactivity_Service::deleteSavedSearch($cfg['saved-search-id']);
                     $cfg['saved-search-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID;
@@ -66,7 +69,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
                     // check that the saved search exists
                     $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['saved-search-id']);
                     if (empty($currentSearch)) {
-                        $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], false);
+                        $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false);
                         $cfg['saved-search-id'] = $savedSearch['id'];
                     }
                 }
@@ -80,6 +83,8 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
                 }
             }
         }
+        // The consent-field-map validation. the consent field, and the group has to be checked.
+        // On case of missing ones, delete the map entry.
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $config->update($cfg);
@@ -95,7 +100,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         $config = new CRM_Consentactivity_Config($this->extensionName);
         // delete current configs
         if (!$config->remove()) {
-            throw new CRM_Core_Exception($this->extensionName.ts(' could not remove configs from database'));
+            throw new CRM_Core_Exception($this->extensionName.E::ts(' could not remove configs from database'));
         }
     }
 
@@ -141,6 +146,30 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
         if (!array_key_exists('saved-search-id', $cfg) || $cfg['saved-search-id'] != CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
             CRM_Consentactivity_Service::deleteSavedSearch($cfg['saved-search-id']);
             $cfg['saved-search-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID;
+        }
+        $config->update($cfg);
+        return true;
+    }
+
+    /**
+     * Upgrader function, that inserts the custom-field-map key.
+     *
+     * @return true on success
+     * @throws Exception
+     */
+    public function upgrade_5101()
+    {
+        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config->load();
+        $cfg = $config->get();
+        if (!array_key_exists('custom-field-map', $cfg)) {
+            $cfg['custom-field-map'] = CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP;
+        }
+        if (!array_key_exists('expired-tag-id', $cfg)) {
+            $cfg['expired-tag-id'] = CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID;
+        }
+        if (!array_key_exists('consent-after-contribution', $cfg)) {
+            $cfg['consent-after-contribution'] = false;
         }
         $config->update($cfg);
         return true;

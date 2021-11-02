@@ -1,0 +1,136 @@
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Expiration year has to be numeric."
+msgstr "A lejárat évének számnak kell lennie."
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Tagging days has to be numeric."
+msgstr "A cimkézés napjának számnak kell lennie."
+
+#: ./CRM/Consentactivity/Form/Settings.php ./tests/phpunit/CRM/Consentactivity/Form/SettingsTest.php
+msgid "Not allowed value."
+msgstr "Nem megengedett érték."
+
+#: ./CRM/Consentactivity/Form/Settings.php ./tests/phpunit/CRM/Consentactivity/Form/SettingsTest.php
+msgid "Duplication."
+msgstr "Többszörös."
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Consent Expiration Years"
+msgstr "Hozzájárulás Lejárati Év"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Tag Before Expiration Days"
+msgstr "Cimkézés Napja Lejárat Előtt"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Tag contact"
+msgstr "Kapcsolat cimkézése"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "- select -"
+msgstr "- válassz -"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Anonymized Tag"
+msgstr "Anonimizált cimke"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Consent After Contribution"
+msgstr "Hozzájárulás Adomány Után"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Save"
+msgstr "Mentés"
+
+#: ./CRM/Consentactivity/Form/Settings.php ./consentactivity.php ./tests/phpunit/CRM/Consentactivity/Form/SettingsTest.php
+msgid "Consentactivity Settings"
+msgstr "Consentactivity Beállítások"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Error during search update"
+msgstr "Hiba a keresés mentése során"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "The configuration has been updated."
+msgstr "A beállítások frissültek."
+
+#: ./CRM/Consentactivity/Page/ConsentRenew.php ./tests/phpunit/CRM/Consentactivity/Page/ConsentRenewTest.php
+msgid "Missing input parameters"
+msgstr "Hiányzó bemeneti paraméterek"
+
+#: ./CRM/Consentactivity/Page/ConsentRenew.php ./tests/phpunit/CRM/Consentactivity/Page/ConsentRenewTest.php
+msgid "There was an error in your request"
+msgstr "Hiba történt a kérés kiszolgálása során."
+
+#: ./CRM/Consentactivity/Page/ConsentRenew.php
+msgid "Failed to renew consent."
+msgstr "Hozzájárulás megújítása sikertelen"
+
+#: ./CRM/Consentactivity/Page/ConsentRenew.php
+msgid "Thank you for staying with us."
+msgstr "Köszönjük, hogy velünk maradsz!"
+
+#: ./CRM/Consentactivity/Upgrader/Base.php
+msgid "Upgrade %1 to revision %2"
+msgstr "Upgrade %1 to revision %2"
+
+#: ./CRM/Consentactivity/Upgrader.php
+msgid " could not create configs in database"
+msgstr " could not create configs in database"
+
+#: ./CRM/Consentactivity/Upgrader.php
+msgid " could not remove configs from database"
+msgstr " could not remove configs from database"
+
+#: ./api/v3/ConsentactivityExpire/Process.php ./api/v3/ConsentactivityTagging/Process.php ./tests/phpunit/api/v3/ConsentactivityExpire/ProcessTest.php ./tests/phpunit/api/v3/ConsentactivityTagging/ProcessTest.php
+msgid "Saved Search is not set."
+msgstr "Mentett keresés nincs beállítva."
+
+#: ./consentactivity.php
+msgid "The tag is reserved for the consentactivity."
+msgstr "A cimke a consentactivity számára fenntartott."
+
+#: ./consentactivity.php
+msgid "Renew Consent Link"
+msgstr "Hozzájárulás Megújítása Link"
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "The contacts will marked as expired after this years since the last consent activity."
+msgstr "A kapcsolat személyes adatai törlésre fognak kerülni ennyi évvel az utolsó consent activity után."
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "This tag will applied on the contact on the tagging action."
+msgstr "Ez a cimke lesz a kapcsolathoz hozzárendelve az cimkézési lépés után."
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "This tag will applied on the contact on the anonymization action."
+msgstr "Ez a cimke lesz a kapcsolathoz hozzárendelve az anonimizálási lépés után."
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "The tag will applied on the contact before this days of the expiration date."
+msgstr ""
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Add a consent activity after contribution."
+msgstr "Adomány után consent activity hozzáadása az adományozónak."
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Parameter mapping"
+msgstr "Paraméter beállítás"
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Custom Field"
+msgstr "Custom Field"
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Consent Field"
+msgstr "Consent Field"
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Group"
+msgstr "Csoport"
+
+#: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
+msgid "The %1 team."
+msgstr "Üdvözlettel: %1 csapata."
+
