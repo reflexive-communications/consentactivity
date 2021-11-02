@@ -1,6 +1,6 @@
 #: ./CRM/Consentactivity/Form/Settings.php
 msgid "Expiration year has to be numeric."
-msgstr "A lejárat évéenek szának kell lennie."
+msgstr "A lejárat évének számnak kell lennie."
 
 #: ./CRM/Consentactivity/Form/Settings.php
 msgid "Tagging days has to be numeric."
