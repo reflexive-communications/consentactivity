@@ -1,24 +1,24 @@
 name: CI
 
 on:
-    pull_request:
-        branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   code-style:
-    name:    Code style check
+    name: Code style check
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v2
-    - name: PHP-CS-Fixer
-      uses: docker://oskarstark/php-cs-fixer-ga
-      with:
-        args: --rules=@PSR2 --dry-run -v .
+      - uses: actions/checkout@v2
+      - name: PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --rules=@PSR2 --dry-run -v .
 
   tests:
     name: Unit tests
     runs-on: ubuntu-18.04
-    needs:   code-style
+    needs: code-style
     env:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: drupal
@@ -26,6 +26,7 @@ jobs:
       SITE_NAME: "composer-site.com"
       LOCAL_DEPLOY_TARGET: "/var/www/html"
       EXTENSION_NAME: "consentactivity"
+      PHP_VERSION: 7.4
     services:
       mysql:
         image: mysql:5.7
@@ -34,82 +35,82 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
         ports:
-         - 3306
+          - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-    - name: Setup PHP and the extensions also the tools
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.3'
-        tools: composer:v1, phpunit:8.5.0
-        extensions: cli fpm mysql json opcache mbstring xml gd curl intl xdebug
-        coverage: xdebug
+      - name: Setup PHP and the extensions also the tools
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer:v1, phpunit:8.5.0
+          extensions: cli fpm mysql json opcache mbstring xml gd curl intl xdebug
+          coverage: xdebug
 
-    - name: Start mysql daemon.
-      run: |
+      - name: Start mysql daemon.
+        run: |
           sudo systemctl start mysql
 
-    - name: Install CV command
-      run: |
+      - name: Install CV command
+        run: |
           curl -LsS https://download.civicrm.org/cv/cv.phar -o cv
           sudo mv cv /usr/local/bin/
           sudo chmod +x /usr/local/bin/cv
 
-    - name: Basic apache module and config
-      run: |
+      - name: Basic apache module and config
+        run: |
           sudo add-apt-repository ppa:ondrej/php
           sudo apt-get update
-          sudo apt-get install libapache2-mod-php7.3
+          sudo apt-get install libapache2-mod-php${{ env.PHP_VERSION }}
           sudo a2enmod rewrite
 
-    - name: Get DSG application.
-      uses: actions/checkout@v2
-      with:
+      - name: Get DSG application.
+        uses: actions/checkout@v2
+        with:
           repository: akosgarai/dsg
           path: dsg
 
-    - name: Build drupal site with civicrm.
-      env:
-        PROJECT_BASE_PATH: "."
-        SITE_NAME: ${{ env.SITE_NAME }}
-        DB_NAME: ${{ env.MYSQL_DATABASE }}
-        DB_HOST: "127.0.0.1"
-        DB_PORT: ${{ job.services.mysql.ports['3306'] }}
-        DB_USER: "root@localhost"
-        MYSQL_DB_PASS: ${{ env.MYSQL_ROOT_PASSWORD }}
-        SITE_ADMIN_NAME: "admin"
-        SITE_ADMIN_PW: "jPoLvGGGV5"
-        APACHE_CONF_DIR: ${{ env.APACHE_DIR }}
-        LOCAL_DEPLOY_TARGET: ${{ env.LOCAL_DEPLOY_TARGET }}
-        COMPOSER_APP: composer
-      run: |
+      - name: Build drupal site with civicrm.
+        env:
+          PROJECT_BASE_PATH: "."
+          SITE_NAME: ${{ env.SITE_NAME }}
+          DB_NAME: ${{ env.MYSQL_DATABASE }}
+          DB_HOST: "127.0.0.1"
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+          DB_USER: "root@localhost"
+          MYSQL_DB_PASS: ${{ env.MYSQL_ROOT_PASSWORD }}
+          SITE_ADMIN_NAME: "admin"
+          SITE_ADMIN_PW: "jPoLvGGGV5"
+          APACHE_CONF_DIR: ${{ env.APACHE_DIR }}
+          LOCAL_DEPLOY_TARGET: ${{ env.LOCAL_DEPLOY_TARGET }}
+          COMPOSER_APP: composer
+        run: |
           sudo mv dsg/apache2.conf ${{ env.APACHE_DIR }}/apache2.conf
           ./dsg/scripts.sh ci-build --project-base-path "${PROJECT_BASE_PATH}" --project-name "${SITE_NAME}" --db-name "${DB_NAME}" --db-user-name "${DB_USER}" --site-admin-user-name "${SITE_ADMIN_NAME}" --site-admin-password "${SITE_ADMIN_PW}" --apache-conf-dir "${APACHE_CONF_DIR}" --db-host "${DB_HOST}" --db-port "${DB_PORT}" --root-db-user-pw "${MYSQL_DB_PASS}" --local-deploy-target "${LOCAL_DEPLOY_TARGET}" -s --composer-app "${COMPOSER_APP}"
 
-    - name: Get rc-base as it is required for this.
-      uses: actions/checkout@v2
-      with:
+      - name: Get rc-base as it is required for this.
+        uses: actions/checkout@v2
+        with:
           repository: reflexive-communications/rc-base
           path: rc-base
 
-    - name: Move rc-base to the extensions directory.
-      run: |
+      - name: Move rc-base to the extensions directory.
+        run: |
           sudo mv rc-base ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}"/web/sites/default/files/civicrm/ext"
           cd ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}
           cv --no-interaction --cwd=${{ env.LOCAL_DEPLOY_TARGET }}/${{ env.SITE_NAME }} ext:enable rc-base
 
-    - name: Check out the code
-      uses: actions/checkout@v2
-      with:
+      - name: Check out the code
+        uses: actions/checkout@v2
+        with:
           path: ${{ env.EXTENSION_NAME }}
 
-    - name: Move code under extensions directory and enable extension
-      run: |
+      - name: Move code under extensions directory and enable extension
+        run: |
           sudo mv ${{ env.EXTENSION_NAME }} ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}"/web/sites/default/files/civicrm/ext"
           cd ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}
           cv --no-interaction --cwd=${{ env.LOCAL_DEPLOY_TARGET }}/${{ env.SITE_NAME }} ext:enable ${{ env.EXTENSION_NAME }}
 
-    - name: Run unit tests
-      run: |
+      - name: Run unit tests
+        run: |
           cd ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}"/web/sites/default/files/civicrm/ext/"${{ env.EXTENSION_NAME }}
           XDEBUG_MODE=coverage XDEBUG_MODE_COVERAGE=coverage phpunit --verbose --coverage-text
