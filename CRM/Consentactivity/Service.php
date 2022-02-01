@@ -116,6 +116,7 @@ class CRM_Consentactivity_Service
         $activity = Activity::create(false)
             ->addValue('activity_type_id', $config['activity-type-id'])
             ->addValue('source_contact_id', $contactId)
+            ->addValue('target_contact_id', $contactId)
             ->addValue('status_id:name', 'Completed')
             ->execute()
             ->first();
