@@ -106,7 +106,7 @@ class CRM_Consentactivity_Service
                 return;
             }
             $cid = $values['participant']['contact_id'];
-        } else if ($formName === 'CRM_Event_Form_Registration_Confirm') {
+        } elseif ($formName === 'CRM_Event_Form_Registration_Confirm') {
             $values = $form->getVar('_values');
             $cid = $values['participant']['contact_id'];
         }
