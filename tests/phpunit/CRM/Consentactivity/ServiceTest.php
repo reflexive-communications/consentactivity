@@ -102,6 +102,57 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute();
         self::assertSame(0, count($tags));
     }
+    public function testPostProcessEventConfirmForm()
+    {
+        $form = new CRM_Event_Form_Registration_Confirm();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_values', ['participant' => ['contact_id' => $contact['id']]]);
+        $submit = [
+            'is_opt_out' => ''
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Confirm::class, $form), 'PostProcess supposed to be empty.');
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertSame(1, count($activities));
+    }
+    public function testPostProcessEventRegisterFormConfirmEnabled()
+    {
+        $form = new CRM_Event_Form_Registration_Register();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_values', ['event' => ['is_confirm_enabled' => 1], 'participant' => ['contact_id' => $contact['id']]]);
+        $submit = [
+            'is_opt_out' => ''
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertSame(0, count($activities));
+    }
+    public function testPostProcessEventRegisterFormConfirmDisabled()
+    {
+        $form = new CRM_Event_Form_Registration_Register();
+        $contact = Contact::create(false)
+            ->addValue('contact_type', 'Individual')
+            ->execute()
+            ->first();
+        $form->setVar('_values', ['event' => ['is_confirm_enabled' => 0], 'participant' => ['contact_id' => $contact['id']]]);
+        $submit = [
+            'is_opt_out' => ''
+        ];
+        $form->setVar('_submitValues', $submit);
+        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
+        $activities = Activity::get(false)
+            ->execute();
+        self::assertSame(1, count($activities));
+    }
     /*
      * The previously created checkbox will be returned.
      */
