@@ -22,6 +22,7 @@ class CRM_Consentactivity_Service
     public const FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS = [
         'CRM_Campaign_Form_Petition_Signature',
         'CRM_Profile_Form_Edit',
+        'CRM_Event_Form_Registration_Register',
         'CRM_Event_Form_Registration_Confirm',
     ];
     public const EXPIRED_SEARCH_LABEL = 'Contacts with expired consents';
@@ -95,6 +96,20 @@ class CRM_Consentactivity_Service
         }
         // on the petition form, the contact id is saved as contactID. on the profiles it is id.
         $cid = $formName === 'CRM_Campaign_Form_Petition_Signature' ? $form->getVar('_contactId') : $form->getVar('_id');
+        // when the form name is event registration register and the event registration process
+        // also contains confirm screen, we can return, as it will be handled on that screen
+        // without the confirm screen, we have to process it now.
+        // On the event forms the contact id could be found under the participant.
+        if ($formName === 'CRM_Event_Form_Registration_Register') {
+            $values = $form->getVar('_values');
+            if ($values['event']['is_confirm_enabled']) {
+                return;
+            }
+            $cid = $values['participant']['contact_id'];
+        } elseif ($formName === 'CRM_Event_Form_Registration_Confirm') {
+            $values = $form->getVar('_values');
+            $cid = $values['participant']['contact_id'];
+        }
         self::createConsentActivityToContact($cid);
         // handle the consent field and group insertion
         self::consentFieldAndGroupMaintenace($cid, $form->getVar('_submitValues'));
