@@ -4,7 +4,8 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          convertDeprecationsToExceptions="true"
-         bootstrap="tests/phpunit/bootstrap.php">
+         bootstrap="tests/phpunit/bootstrap.php"
+         testdox="true">
     <testsuites>
         <testsuite name="My Test Suite">
             <directory>./tests/phpunit</directory>
