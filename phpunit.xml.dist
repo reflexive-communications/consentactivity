@@ -1,32 +1,34 @@
 <?xml version="1.0"?>
-<phpunit colors="true"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          convertDeprecationsToExceptions="true"
          bootstrap="tests/phpunit/bootstrap.php"
          testdox="true">
+    <coverage>
+        <include>
+            <directory suffix=".php">./</directory>
+        </include>
+        <exclude>
+            <!-- Skip test directory -->
+            <directory>./tests</directory>
+            <!-- Skip generated files -->
+            <file>./consentactivity.php</file>
+            <file>./consentactivity.civix.php</file>
+            <file>./CRM/Consentactivity/Upgrader/Base.php</file>
+            <!-- Skip mgd files managed database record -->
+            <directory suffix="mgd.php">./api/v3/ConsentactivityExpire/</directory>
+            <directory suffix="mgd.php">./api/v3/ConsentactivityTagging/</directory>
+        </exclude>
+    </coverage>
     <testsuites>
         <testsuite name="My Test Suite">
             <directory>./tests/phpunit</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./</directory>
-            <exclude>
-                <!-- Skip the test directory -->
-                <directory>./tests</directory>
-                <!-- Skip the generated files -->
-                <file>./consentactivity.php</file>
-                <file>./consentactivity.civix.php</file>
-                <file>./CRM/Consentactivity/Upgrader/Base.php</file>
-                <!-- Skip the mgd files managed database record -->
-                <directory suffix="mgd.php">./api/v3/ConsentactivityExpire/</directory>
-                <directory suffix="mgd.php">./api/v3/ConsentactivityTagging/</directory>
-            </exclude>
-        </whitelist>
-    </filter>
     <listeners>
         <listener class="Civi\Test\CiviTestListener">
             <arguments/>
