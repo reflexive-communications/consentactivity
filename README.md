@@ -1,5 +1,7 @@
 # consentactivity
 
+[![CI](https://github.com/reflexive-communications/consentactivity/actions/workflows/main.yml/badge.svg)](https://github.com/reflexive-communications/consentactivity/actions/workflows/main.yml)
+
 This extension could be used for tracking GDPR related activities. It supports the following use case:
 - The contact data could be used for N years after the consent.
 
