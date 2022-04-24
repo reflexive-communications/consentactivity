@@ -35,15 +35,15 @@ jobs:
 
       - name: Move civi-zero to web root
         run: |
-          sudo mkdir -p "${{ env.WEBROOT }}"
-          sudo mv "${{ env.CIVI_DIR }}" "${{ env.WEBROOT }}/"
-          sudo chown -R "${USER}" "${{ env.WEBROOT }}/${{ env.CIVI_DIR }}"
+          sudo mkdir -p "${WEBROOT}"
+          sudo mv "${CIVI_DIR}" "${WEBROOT}/"
+          sudo chown -R "${USER}" "${WEBROOT}/${CIVI_DIR}"
 
       - name: Setup environment
-        run: "${{ env.WEBROOT }}/${{ env.CIVI_DIR }}/bin/prepare.sh"
+        run: "${WEBROOT}/${CIVI_DIR}/bin/prepare.sh"
 
       - name: Install CiviCRM
-        run: "${{ env.WEBROOT }}/${{ env.CIVI_DIR }}/bin/install.sh ${{ env.WEBROOT }}/${{ env.CIVI_DIR }}"
+        run: "${WEBROOT}/${CIVI_DIR}/bin/install.sh ${WEBROOT}/${CIVI_DIR}"
 
       - name: Get required extension (rc-base)
         uses: actions/checkout@v3
@@ -58,8 +58,8 @@ jobs:
 
       - name: Install extensions
         run: |
-          ${{ env.WEBROOT }}/${{ env.CIVI_DIR }}/bin/extension.sh ${{ env.WEBROOT }}/${{ env.CIVI_DIR }} rc-base
-          ${{ env.WEBROOT }}/${{ env.CIVI_DIR }}/bin/extension.sh ${{ env.WEBROOT }}/${{ env.CIVI_DIR }} ${{ env.EXTENSION_NAME }}
+          ${WEBROOT}/${CIVI_DIR}/bin/extension.sh ${WEBROOT}/${CIVI_DIR} rc-base
+          ${WEBROOT}/${CIVI_DIR}/bin/extension.sh ${WEBROOT}/${CIVI_DIR} ${EXTENSION_NAME}
 
       - name: Run unit tests
-        run: "${{ env.WEBROOT }}/${{ env.CIVI_DIR }}/bin/tests.sh ${{ env.WEBROOT }}/${{ env.CIVI_DIR }} ${{ env.EXTENSION_NAME }}"
+        run: "${WEBROOT}/${CIVI_DIR}/bin/tests.sh ${WEBROOT}/${CIVI_DIR} ${EXTENSION_NAME}"
