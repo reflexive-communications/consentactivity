@@ -4,46 +4,41 @@ on:
     branches:
       - main
 env:
-  WEBROOT: "/srv/www"
-  CIVI_DIR: "civi-zero"
-  EXTENSION_NAME: "consentactivity"
+  INSTALL_DIR: /srv/www/civi-zero
+  EXTENSION_NAME: consentactivity
 jobs:
-  code-style:
-    name: Code style check
+  format:
+    name: Check format
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - name: PHP-CS-Fixer
+      - name: Self checkout
+        uses: actions/checkout@v3
+
+      - name: Check code-style (PHP)
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
           args: --rules=@PSR2 --dry-run -v .
+
+      - name: Check code-style (other)
+        uses: creyD/prettier_action@v4.2
+        with:
+          dry: true
+          prettier_options: --check **/*.{js,css,md,yml,json,html}
   tests:
     name: Unit tests
     runs-on: ubuntu-20.04
-    needs: code-style
+    needs: format
     steps:
-      - name: Purge MySQL databases
-        run: |
-          sudo systemctl stop mysql
-          sudo rm -rf /var/lib/mysql
-
       - name: Get civi-zero
         uses: actions/checkout@v3
         with:
           repository: reflexive-communications/civicrm-zero
-          path: "${{ env.CIVI_DIR }}"
-
-      - name: Move civi-zero to web root
-        run: |
-          sudo mkdir -p "${WEBROOT}"
-          sudo mv "${CIVI_DIR}" "${WEBROOT}/"
-          sudo chown -R "${USER}" "${WEBROOT}/${CIVI_DIR}"
 
       - name: Setup environment
-        run: "${WEBROOT}/${CIVI_DIR}/bin/prepare.sh"
+        run: ./bin/prepare.sh
 
       - name: Install CiviCRM
-        run: "${WEBROOT}/${CIVI_DIR}/bin/install.sh ${WEBROOT}/${CIVI_DIR}"
+        run: ./bin/install.sh ${INSTALL_DIR}
 
       - name: Get required extension (rc-base)
         uses: actions/checkout@v3
@@ -58,8 +53,8 @@ jobs:
 
       - name: Install extensions
         run: |
-          ${WEBROOT}/${CIVI_DIR}/bin/extension.sh ${WEBROOT}/${CIVI_DIR} rc-base
-          ${WEBROOT}/${CIVI_DIR}/bin/extension.sh ${WEBROOT}/${CIVI_DIR} ${EXTENSION_NAME}
+          ./bin/extension.sh ${INSTALL_DIR} rc-base
+          ./bin/extension.sh ${INSTALL_DIR} ${EXTENSION_NAME}
 
       - name: Run unit tests
-        run: "${WEBROOT}/${CIVI_DIR}/bin/tests.sh ${WEBROOT}/${CIVI_DIR} ${EXTENSION_NAME}"
+        run: ./bin/tests.sh ${INSTALL_DIR} ${EXTENSION_NAME}
