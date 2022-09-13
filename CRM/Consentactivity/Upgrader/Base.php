@@ -8,10 +8,9 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class CRM_Consentactivity_Upgrader_Base
 {
-
-  /**
-   * @var CRM_Consentactivity_Upgrader_Base
-   */
+    /**
+     * @var CRM_Consentactivity_Upgrader_Base
+     */
     public static $instance;
 
     /**
@@ -409,13 +408,13 @@ class CRM_Consentactivity_Upgrader_Base
     public function onUpgrade($op, CRM_Queue_Queue $queue = null)
     {
         switch ($op) {
-      case 'check':
-        return [$this->hasPendingRevisions()];
+            case 'check':
+                return [$this->hasPendingRevisions()];
 
-      case 'enqueue':
-        return $this->enqueuePendingRevisions($queue);
+            case 'enqueue':
+                return $this->enqueuePendingRevisions($queue);
 
-      default:
-    }
+            default:
+        }
     }
 }

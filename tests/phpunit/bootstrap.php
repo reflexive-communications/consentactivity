@@ -45,20 +45,20 @@ function cv($cmd, $decode = 'json')
         throw new RuntimeException("Command failed ($cmd):\n$result");
     }
     switch ($decode) {
-    case 'raw':
-      return $result;
+        case 'raw':
+            return $result;
 
-    case 'phpcode':
-      // If the last output is /*PHPCODE*/, then we managed to complete execution.
-      if (substr(trim($result), 0, 12) !== "/*BEGINPHP*/" || substr(trim($result), -10) !== "/*ENDPHP*/") {
-          throw new \RuntimeException("Command failed ($cmd):\n$result");
-      }
-      return $result;
+        case 'phpcode':
+            // If the last output is /*PHPCODE*/, then we managed to complete execution.
+            if (substr(trim($result), 0, 12) !== "/*BEGINPHP*/" || substr(trim($result), -10) !== "/*ENDPHP*/") {
+                throw new \RuntimeException("Command failed ($cmd):\n$result");
+            }
+            return $result;
 
-    case 'json':
-      return json_decode($result, 1);
+        case 'json':
+            return json_decode($result, 1);
 
-    default:
-      throw new RuntimeException("Bad decoder format ($decode)");
-  }
+        default:
+            throw new RuntimeException("Bad decoder format ($decode)");
+    }
 }
