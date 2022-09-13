@@ -3,15 +3,16 @@
 [![CI](https://github.com/reflexive-communications/consentactivity/actions/workflows/main.yml/badge.svg)](https://github.com/reflexive-communications/consentactivity/actions/workflows/main.yml)
 
 This extension could be used for tracking GDPR related activities. It supports the following use case:
-- The contact data could be used for N years after the consent.
+
+-   The contact data could be used for N years after the consent.
 
 ## Consent
 
 A contact gives consent when
 
-- submits a profile, a petition or event form.
-- creates a contribution from a form of with import (if the contribution is created in the last N years, and the feature is enabled).
-- clicks to the link that is evaluated from the `Consentactivity.consent_renewal` email token.
+-   submits a profile, a petition or event form.
+-   creates a contribution from a form of with import (if the contribution is created in the last N years, and the feature is enabled).
+-   clicks to the link that is evaluated from the `Consentactivity.consent_renewal` email token.
 
 An activity is added to the contact when the consent is given. The date of the activity is the date of the consent. The status of the activity will be completed.
 The activity type is created by the extension. If an existing activity type has to be used, you can make it happen if you change the label of the type to the extension default value, that is `GDPR Consent Activity`. Activity source and target are set to the contact, who gives consent.
@@ -38,10 +39,10 @@ The settings form could be reached from the `Administer > Consentactivity Settin
 
 ## Requirements
 
-* PHP v7.3+
-* CiviCRM v5.37.1
-* RcBase v0.8.2
-* Flexmailer
+-   PHP v7.3+
+-   CiviCRM v5.37.1
+-   RcBase v0.8.2
+-   Flexmailer
 
 ## Installation (CLI, Git)
 
@@ -67,23 +68,23 @@ When the upgrade-db task is running, it checks for the existance of the setting 
 
 The extension has in internal setting database where the following parameters are stored:
 
-- `activity-type-id`
-- `option-value-id`
-- `saved-search-id` The search for the expiration.
-- `tagging-search-id` The search for the tagging.
-- `tag-id` The tag id that has to be added to the contact.
-- `expired-tag-id` The tag id that has to be added to the contact after the consent expiration.
-- `consent-after-contribution` If this flag is set true, the consent activity will be triggered after the contribution.
-- `consent-expiration-years` The number of years after the consent gets expired. By default it is 3 years.
-- `consent-expiration-tagging-days` The number of days before the expiration. The tag has to be added at this time.
-- `custom-field-map` This array contains the associations between the pseudo consent fields and the actual consent fields and groups.
+-   `activity-type-id`
+-   `option-value-id`
+-   `saved-search-id` The search for the expiration.
+-   `tagging-search-id` The search for the tagging.
+-   `tag-id` The tag id that has to be added to the contact.
+-   `expired-tag-id` The tag id that has to be added to the contact after the consent expiration.
+-   `consent-after-contribution` If this flag is set true, the consent activity will be triggered after the contribution.
+-   `consent-expiration-years` The number of years after the consent gets expired. By default it is 3 years.
+-   `consent-expiration-tagging-days` The number of days before the expiration. The tag has to be added at this time.
+-   `custom-field-map` This array contains the associations between the pseudo consent fields and the actual consent fields and groups.
 
 ### Scheduled jobs
 
 The extension provides two API endpoints and daily scheduled processes.
 
-- The tagging job applies a given tag to the contacts that are found by the tagging saved search. The tag is added if the lates consent activity is older than `Now - consent-expiration-years + consent-expiration-tagging-days`.
-- The expiration job deletes the contact data, sets the privacy field to not given consent state and adds the expiration-tag to the contact that are found by the expiration saved search. (The lates consent activity is older than `Now - consent-expiration-years`.)
+-   The tagging job applies a given tag to the contacts that are found by the tagging saved search. The tag is added if the lates consent activity is older than `Now - consent-expiration-years + consent-expiration-tagging-days`.
+-   The expiration job deletes the contact data, sets the privacy field to not given consent state and adds the expiration-tag to the contact that are found by the expiration saved search. (The lates consent activity is older than `Now - consent-expiration-years`.)
 
 ### Deleted saved search
 
@@ -91,4 +92,4 @@ If the saved searches have been accidentally deleted (eg from the search kit), y
 
 ## Database schema changes
 
-- The setting database has been extended with the custom-field-map, the expired-tag-id and the consent-after-contribution keys in v1.1.0.
+-   The setting database has been extended with the custom-field-map, the expired-tag-id and the consent-after-contribution keys in v1.1.0.

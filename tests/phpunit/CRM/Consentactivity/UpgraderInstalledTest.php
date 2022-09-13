@@ -9,7 +9,6 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_HeadlessBase
 {
-
     /**
      * Test the upgrade_5000 process.
      */
