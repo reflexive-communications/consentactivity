@@ -32,7 +32,7 @@ jobs:
       - name: Get civi-zero
         uses: actions/checkout@v3
         with:
-          repository: reflexive-communications/civicrm-zero
+          repository: reflexive-communications/civi-zero
 
       - name: Setup environment
         run: ./bin/prepare.sh

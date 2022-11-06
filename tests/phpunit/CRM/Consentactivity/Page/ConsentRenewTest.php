@@ -37,11 +37,6 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
         Civi::settings()->add(['flexmailer_traditional' => 'flexmailer']);
     }
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * Apply a forced rebuild of DB, thus
      * create a clean DB before running tests
@@ -54,19 +49,6 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
         \Civi\Test::headless()
             ->install('org.civicrm.flexmailer')
             ->installMe(__DIR__)
-            ->apply(true);
-    }
-
-    /**
-     * Create a clean DB before running tests
-     *
-     * @throws CRM_Extension_Exception_ParseException
-     */
-    public static function tearDownAfterClass(): void
-    {
-        \Civi\Test::headless()
-            ->uninstallMe(__DIR__)
-            ->uninstall('org.civicrm.flexmailer')
             ->apply(true);
     }
 

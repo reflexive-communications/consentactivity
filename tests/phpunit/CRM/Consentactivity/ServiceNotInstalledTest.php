@@ -33,28 +33,6 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
         self::assertSame(CRM_Consentactivity_Service::DEFAULT_CONSENT_ACTIVITY_TYPE_ICON, $activityType['icon']);
         self::assertTrue($activityType['is_active']);
         self::assertTrue($activityType['is_reserved']);
-        // when we want to create the type again without changing the label, it will return the same;
-        $newActivityType = CRM_Consentactivity_Service::createDefaultActivityType();
-        // If the existing one is returned from this function, the list of the keys is
-        // extended, so that only those keys could be checked that were set in the original.
-        foreach ($activityType as $k => $v) {
-            self::assertSame($v, $newActivityType[$k]);
-        }
-        // Update the option value manually, then create again. The values has to be set back.
-        $result = OptionValue::update(false)
-            ->addWhere('id', '=', $activityType['id'])
-            ->addValue('is_active', false)
-            ->addValue('is_reserved', false)
-            ->execute()
-            ->first();
-        self::assertFalse($result['is_active']);
-        self::assertFalse($result['is_reserved']);
-        $newActivityType = CRM_Consentactivity_Service::createDefaultActivityType();
-        self::assertSame($activityType['id'], $newActivityType['id']);
-        $newActivityType = CRM_Consentactivity_Service::getActivityType($newActivityType['id']);
-        foreach ($activityType as $k => $v) {
-            self::assertSame($v, $newActivityType[$k]);
-        }
     }
 
     /**
