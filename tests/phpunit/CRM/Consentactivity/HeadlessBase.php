@@ -14,10 +14,6 @@ class CRM_Consentactivity_HeadlessBase extends \PHPUnit\Framework\TestCase imple
 {
     public function setUpHeadless()
     {
-        return \Civi\Test::headless()
-            ->install('rc-base')
-            ->installMe(__DIR__)
-            ->apply();
     }
 
     /**
@@ -33,10 +29,5 @@ class CRM_Consentactivity_HeadlessBase extends \PHPUnit\Framework\TestCase imple
             ->install('rc-base')
             ->installMe(__DIR__)
             ->apply(true);
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
     }
 }
