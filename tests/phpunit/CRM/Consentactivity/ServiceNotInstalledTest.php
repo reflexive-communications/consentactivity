@@ -1,8 +1,7 @@
 <?php
 
-use Civi\Api4\OptionValue;
 use Civi\Api4\Contact;
-use Civi\Api4\Activity;
+use Civi\Test;
 
 /**
  * Service class test cases.
@@ -12,14 +11,14 @@ use Civi\Api4\Activity;
 class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_HeadlessBase
 {
     /*
-     * Overwrite setup function to skip the install of the current extenstion
+     * Overwrite setup function to skip the install of the current extension
      * to be able to test the create steps of the service.
      */
-    public function setUpHeadless()
+    public static function setUpBeforeClass(): void
     {
-        return \Civi\Test::headless()
+        Test::headless()
             ->install('rc-base')
-            ->apply();
+            ->apply(true);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Test;
+
 /**
  * Tests for the Upgrader process.
  *
@@ -8,14 +10,14 @@
 class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 {
     /*
-     * Overwrite setup function to skip the install of the current extenstion
+     * Overwrite setup function to skip the install of the current extension
      * to be able to test the create steps of the service.
      */
-    public function setUpHeadless()
+    public static function setUpBeforeClass(): void
     {
-        return \Civi\Test::headless()
+        Test::headless()
             ->install('rc-base')
-            ->apply();
+            ->apply(true);
     }
     /**
      * Test the install process.
