@@ -1,9 +1,6 @@
 <?php
 
 use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 use Civi\Api4\Activity;
 
 /**
@@ -20,37 +17,9 @@ use Civi\Api4\Activity;
  *
  * @group headless
  */
-class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_HeadlessBase
 {
     const DOMAIN_NAME = 'my-domain';
-    public function setUpHeadless()
-    {
-        return \Civi\Test::headless()
-            ->install('org.civicrm.flexmailer')
-            ->installMe(__DIR__)
-            ->apply();
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        Civi::settings()->add(['flexmailer_traditional' => 'flexmailer']);
-    }
-
-    /**
-     * Apply a forced rebuild of DB, thus
-     * create a clean DB before running tests
-     *
-     * @throws \CRM_Extension_Exception_ParseException
-     */
-    public static function setUpBeforeClass(): void
-    {
-        // Resets DB and install depended extension
-        \Civi\Test::headless()
-            ->install('org.civicrm.flexmailer')
-            ->installMe(__DIR__)
-            ->apply(true);
-    }
 
     /*
      * On case of missing parameters (jid, qid, h) it has to throw exception.
@@ -135,7 +104,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
             'id' => 1,
             'domain_id' => self::DOMAIN_NAME,
             'name' => 'myMailerAccount',
-            'domain' => 'civicrm-base.com',
+            'domain' => 'example.org',
             'protocol' => 'POP3',
             'username' => 'admin',
             'password' => 'admin',
@@ -154,8 +123,8 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends \PHPUnit\Framework\TestC
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the mailing_backend update.');
         $result = civicrm_api3('OptionValue', 'create', [
             'option_group_id' => 'from_email_address',
-            'label' => '"info" <info@civicrm-base.com>',
-            'name' => '"info" <info@civicrm-base.com>',
+            'label' => '"info" <info@example.org>',
+            'name' => '"info" <info@example.org>',
             'domain_id' => self::DOMAIN_NAME,
             'is_default' => 1,
             'is_active' =>1,
