@@ -569,7 +569,7 @@ class CRM_Consentactivity_Service
                     [
                         'Contact_ActivityContact_Activity_01.record_type_id:name',
                         '=',
-                        '"Activity Source"'
+                        '"Activity Targets"'
                     ],
                     [
                         'Contact_ActivityContact_Activity_01.activity_type_id:name',
@@ -634,7 +634,7 @@ class CRM_Consentactivity_Service
                     [
                         'Contact_ActivityContact_Activity_01.record_type_id:name',
                         '=',
-                        '"Activity Source"'
+                        '"Activity Targets"'
                     ],
                     [
                         'Contact_ActivityContact_Activity_01.activity_type_id:name',
