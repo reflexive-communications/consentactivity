@@ -73,6 +73,7 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
         $activity = Activity::create(false)
             ->addValue('activity_type_id', $config['activity-type-id'])
             ->addValue('source_contact_id', $contact['id'])
+            ->addValue('target_contact_id', $contact['id'])
             ->addValue('status_id:name', 'Completed')
             ->execute();
         // update activity with sql
