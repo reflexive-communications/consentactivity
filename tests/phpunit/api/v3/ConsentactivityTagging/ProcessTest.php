@@ -8,6 +8,7 @@ use Civi\Api4\EntityTag;
 /**
  * ConsentactivityTagging.Process API Test Case
  * This is a generic test class implemented with PHPUnit.
+ *
  * @group headless
  */
 class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_HeadlessBase
@@ -21,7 +22,7 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
      */
     public function testApiProcessDefaultSearchId()
     {
-        $result = civicrm_api3('ConsentactivityTagging', 'process', []);
+        $result = civicrm_api3('ConsentactivityTagging', 'process');
         self::assertSame(0, $result['values']['tagged']);
         self::assertSame(ts('Saved Search is not set.'), $result['values']['message']);
     }
@@ -69,20 +70,14 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
         $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
-        $activityDate = date('Y-m-d H:i', strtotime(date('Y-m-d H:i') . '- '.$config['consent-expiration-years'].' years'));
-        $activity = Activity::create(false)
+        $activityDate = date('Y-m-d H:i', strtotime(date('Y-m-d H:i').'- '.$config['consent-expiration-years'].' years'));
+        Activity::create(false)
             ->addValue('activity_type_id', $config['activity-type-id'])
             ->addValue('source_contact_id', $contact['id'])
             ->addValue('target_contact_id', $contact['id'])
             ->addValue('status_id:name', 'Completed')
+            ->addValue('activity_date_time', $activityDate)
             ->execute();
-        // update activity with sql
-        $sql = "UPDATE civicrm_activity SET created_date = %1 WHERE id =  %2";
-        $params = [
-            1 => [$activityDate, 'String'],
-            2 => [$activity[0]['id'], 'Int'],
-        ];
-        CRM_Core_DAO::executeQuery($sql, $params);
         // setup tag and search
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
