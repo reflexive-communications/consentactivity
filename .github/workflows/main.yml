@@ -20,7 +20,7 @@ jobs:
           args: --rules=@PSR2 --dry-run -v .
 
       - name: Check code-style (other)
-        uses: creyD/prettier_action@v4.2
+        uses: creyD/prettier_action@v4.3
         with:
           dry: true
           prettier_options: --check **/*.{js,css,md,yml,json,html}
