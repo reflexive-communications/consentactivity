@@ -610,12 +610,12 @@ class CRM_Consentactivity_Service
             'select' => [
                 'id',
                 'GROUP_CONCAT(Contact_ActivityContact_Activity_01.activity_type_id:label) AS GROUP_CONCAT_Contact_ActivityContact_Activity_01_activity_type_id_label',
-                'MAX(Contact_ActivityContact_Activity_01.created_date) AS MAX_Contact_ActivityContact_Activity_01_created_date',
+                'MAX(Contact_ActivityContact_Activity_01.activity_date_time) AS MAX_Contact_ActivityContact_Activity_01_activity_date_time',
             ],
             'orderBy' => [],
             'where' => [],
             'groupBy' => [
-                'id'
+                'id',
             ],
             'join' => [
                 [
@@ -625,18 +625,18 @@ class CRM_Consentactivity_Service
                     [
                         'id',
                         '=',
-                        'Contact_ActivityContact_Activity_01.contact_id'
+                        'Contact_ActivityContact_Activity_01.contact_id',
                     ],
                     [
                         'Contact_ActivityContact_Activity_01.record_type_id:name',
                         '=',
-                        '"Activity Targets"'
+                        '"Activity Targets"',
                     ],
                     [
                         'Contact_ActivityContact_Activity_01.activity_type_id:name',
                         '=',
-                        '"'.$activityName.'"'
-                    ]
+                        '"'.$activityName.'"',
+                    ],
                 ],
                 [
                     'Tag AS Contact_EntityTag_Tag_01',
@@ -645,25 +645,25 @@ class CRM_Consentactivity_Service
                     [
                         'id',
                         '=',
-                        'Contact_EntityTag_Tag_01.entity_id'
+                        'Contact_EntityTag_Tag_01.entity_id',
                     ],
                     [
                         'Contact_EntityTag_Tag_01.entity_table',
                         '=',
-                        '"civicrm_contact"'
+                        '"civicrm_contact"',
                     ],
                     [
                         'Contact_EntityTag_Tag_01.id',
                         '=',
-                        '"'.$tagId.'"'
+                        '"'.$tagId.'"',
                     ],
                 ],
             ],
             'having' => [
                 [
-                    'MAX_Contact_ActivityContact_Activity_01_created_date',
+                    'MAX_Contact_ActivityContact_Activity_01_activity_date_time',
                     '<',
-                    '2021-06-17 11:50'
+                    '2021-06-17 11:50',
                 ],
             ],
         ];
