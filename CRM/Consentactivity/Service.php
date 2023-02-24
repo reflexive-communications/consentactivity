@@ -18,20 +18,26 @@ use CRM_Consentactivity_ExtensionUtil as E;
 class CRM_Consentactivity_Service
 {
     public const DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL = 'GDPR Consent Activity';
+
     public const DEFAULT_CONSENT_ACTIVITY_TYPE_ICON = 'fa-thumbs-o-up';
+
     public const FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS = [
         'CRM_Campaign_Form_Petition_Signature',
         'CRM_Profile_Form_Edit',
         'CRM_Event_Form_Registration_Register',
         'CRM_Event_Form_Registration_Confirm',
     ];
+
     public const EXPIRED_SEARCH_LABEL = 'Contacts with expired consents';
+
     public const TAGGING_SEARCH_LABEL = 'Contacts with nearly expired consents for tagging';
+
     public const CONSENT_FIELDS = [
         'do_not_email',
         'do_not_phone',
         'is_opt_out',
     ];
+
     public const CONTACT_DATA_ENTITIES = [
         '\Civi\Api4\Website',
         '\Civi\Api4\IM',
@@ -39,6 +45,7 @@ class CRM_Consentactivity_Service
         '\Civi\Api4\Address',
         '\Civi\Api4\Email',
     ];
+
     /*
      * It creates the activity type for the gdpr consent activity.
      * By default it usess the hardcoded values. If an existing activity has to be used as
@@ -62,8 +69,10 @@ class CRM_Consentactivity_Service
             ->addValue('icon', self::DEFAULT_CONSENT_ACTIVITY_TYPE_ICON)
             ->execute()
             ->first();
+
         return $result;
     }
+
     /*
      * It updates an existing activity type with making it reserved and active.
      * As the update does not return all fields, the getActivityType function is
@@ -80,8 +89,10 @@ class CRM_Consentactivity_Service
             ->addValue('is_active', true)
             ->addValue('is_reserved', true)
             ->execute();
+
         return self::getActivityType($optionValueId);
     }
+
     /**
      * This function is responsible for triggering a consent activity on case a petition
      * profile or event form has been submitted.
@@ -114,6 +125,7 @@ class CRM_Consentactivity_Service
         // handle the consent field and group insertion
         self::consentFieldAndGroupMaintenace($cid, $form->getVar('_submitValues'));
     }
+
     /**
      * This function is responsible for creating the consent activity for the given
      * contact. The visibility of this function is public, so that it could be called
@@ -149,8 +161,10 @@ class CRM_Consentactivity_Service
                 ->addWhere('tag_id', '=', $config['tag-id'])
                 ->execute();
         }
+
         return $activity;
     }
+
     /*
      * It is a wrapper function for option value get api call.
      *
@@ -164,8 +178,10 @@ class CRM_Consentactivity_Service
             ->addWhere('id', '=', $optionValueId)
             ->execute()
             ->first();
+
         return $result ?? [];
     }
+
     /*
      * This function creates a saved search, that could be the base query of the
      * gathering process of the contacts with old consents.
@@ -181,8 +197,10 @@ class CRM_Consentactivity_Service
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId, $anonimizedTagId))
             ->execute();
+
         return $results->first();
     }
+
     public static function savedSearchExpiredUpdate(string $activityName, string $tagId, string $anonimizedTagId, int $savedSearchId, bool $aclFlag = true): array
     {
         $results = SavedSearch::update($aclFlag)
@@ -191,8 +209,10 @@ class CRM_Consentactivity_Service
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchExpiredApiParams($activityName, $tagId, $anonimizedTagId))
             ->execute();
+
         return $results->first();
     }
+
     /*
      * This function creates a saved search, that could be the base query of the
      * gathering process of the contacts with old consents.
@@ -208,8 +228,10 @@ class CRM_Consentactivity_Service
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
             ->execute();
+
         return $results->first();
     }
+
     public static function savedSearchTaggingUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
     {
         $results = SavedSearch::update($aclFlag)
@@ -218,8 +240,10 @@ class CRM_Consentactivity_Service
             ->addValue('api_entity', 'Contact')
             ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
             ->execute();
+
         return $results->first();
     }
+
     /*
      * It is a wrapper function for saved search get api call.
      *
@@ -233,8 +257,10 @@ class CRM_Consentactivity_Service
             ->addWhere('id', '=', $savedSearchId)
             ->execute()
             ->first();
+
         return $result ?? [];
     }
+
     /*
      * It is a wrapper function for saved searchdelete api call.
      *
@@ -248,8 +274,10 @@ class CRM_Consentactivity_Service
             ->addWhere('id', '=', $savedSearchId)
             ->execute()
             ->first();
+
         return $result ?? [];
     }
+
     /*
      * It checks that the tag with the given tagId exists
      * or not.
@@ -264,8 +292,10 @@ class CRM_Consentactivity_Service
             ->addWhere('id', '=', $tagId)
             ->setLimit(1)
             ->execute();
+
         return count($tags) === 1;
     }
+
     /*
      * It returns the consend field options for the settings
      * admin field.
@@ -287,8 +317,10 @@ class CRM_Consentactivity_Service
                 }
             }
         }
+
         return $paramOptions;
     }
+
     /*
      * It returns the custom field options for the settings
      * admin field. Only the checkbox types are returned.
@@ -311,12 +343,14 @@ class CRM_Consentactivity_Service
                 if ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($key)) {
                     $customGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField', $customFieldId, 'custom_group_id');
                     $customGroupName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'title');
-                    $paramOptions[$key] = $value['title'] . ' :: ' . $customGroupName;
+                    $paramOptions[$key] = $value['title'].' :: '.$customGroupName;
                 }
             }
         }
+
         return $paramOptions;
     }
+
     /*
      * It deletes the following contact related data:
      * - Webpage
@@ -347,15 +381,31 @@ class CRM_Consentactivity_Service
             }
         }
         $contactFieldsToDelete = [
-            'first_name', 'last_name', 'middle_name', 'display_name',
-            'email_greeting_display', 'postal_greeting_display',
-            'addressee_display', 'nick_name', 'sort_name',
-            'external_identifier', 'image_url', 'api_key', 'birth_date',
-            'deceased_date', 'employer_id', 'job_title', 'gender_id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'display_name',
+            'email_greeting_display',
+            'postal_greeting_display',
+            'addressee_display',
+            'nick_name',
+            'sort_name',
+            'external_identifier',
+            'image_url',
+            'api_key',
+            'birth_date',
+            'deceased_date',
+            'employer_id',
+            'job_title',
+            'gender_id',
         ];
         $privacyFieldsToSet = [
-            'do_not_email', 'do_not_phone', 'do_not_mail',
-            'do_not_sms', 'do_not_trade', 'is_opt_out',
+            'do_not_email',
+            'do_not_phone',
+            'do_not_mail',
+            'do_not_sms',
+            'do_not_trade',
+            'is_opt_out',
         ];
         $contactRequest = Contact::update(false)
             ->addWhere('id', '=', $contactId)
@@ -368,6 +418,7 @@ class CRM_Consentactivity_Service
         }
         $contactRequest->execute();
     }
+
     /**
      * On case of contribution create it adds a consentactivity action
      * to the contributor contact if it is configured on the settings form.
@@ -404,6 +455,7 @@ class CRM_Consentactivity_Service
             CRM_Core_DAO::executeQuery($sql, $params);
         }
     }
+
     /*
      * It checks the form variables and does the actions based on the
      * settings in the consent admin form.
@@ -432,6 +484,7 @@ class CRM_Consentactivity_Service
             }
         }
     }
+
     /*
      * It handles the group insertion or status update action.
      *
@@ -457,6 +510,7 @@ class CRM_Consentactivity_Service
                     ->setLimit(1)
                     ->execute();
             }
+
             return;
         }
         GroupContact::create(false)
@@ -465,6 +519,7 @@ class CRM_Consentactivity_Service
             ->addValue('status', 'Added')
             ->execute();
     }
+
     /*
      * It updates the contact consent field to the given state
      * if it is not yet given.
@@ -488,6 +543,7 @@ class CRM_Consentactivity_Service
                 ->execute();
         }
     }
+
     /*
      * It returns true if the given formName is in the predefined list.
      * Otherwise it returns false.
@@ -500,6 +556,7 @@ class CRM_Consentactivity_Service
     {
         return array_search($formName, self::FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS) > -1;
     }
+
     /*
      * This function gets the option group id of the activity_type option group.
      * It will be necessary for finding the option value.
@@ -514,8 +571,10 @@ class CRM_Consentactivity_Service
             ->setLimit(1)
             ->execute()
             ->first();
+
         return $optionGroup['id'];
     }
+
     /*
      * It returns an array as activity type.
      * It tries to find the existing activity type. If not found
@@ -539,9 +598,11 @@ class CRM_Consentactivity_Service
         if ($optionValue['is_active'] && $optionValue['is_reserved']) {
             return $optionValue;
         }
+
         // Set it active to be able to use it later.
         return self::updateExistingActivityType($optionValue['id']);
     }
+
     private static function savedSearchTaggingApiParams(string $activityName, string $tagId): array
     {
         return [
@@ -607,6 +668,7 @@ class CRM_Consentactivity_Service
             ],
         ];
     }
+
     private static function savedSearchExpiredApiParams(string $activityName, string $tagId, string $anonimizedTagId): array
     {
         return [
