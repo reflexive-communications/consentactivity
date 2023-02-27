@@ -5,11 +5,6 @@ use CRM_Consentactivity_ExtensionUtil as E;
 use Civi\Api4\Contact;
 use Civi\Api4\Activity;
 use Civi\Api4\EntityTag;
-use Civi\Api4\Phone;
-use Civi\Api4\Website;
-use Civi\Api4\IM;
-use Civi\Api4\Email;
-use Civi\Api4\Address;
 
 /**
  * ConsentactivityExpire.Process API Test Case
@@ -169,8 +164,14 @@ class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_Headl
         $entityTags = EntityTag::get(false)
             ->addWhere('entity_table', '=', 'civicrm_contact')
             ->addWhere('entity_id', '=', $contact['id'])
+            ->addWhere('tag_id', '=', $config['tag-id'])
+            ->execute();
+        self::assertCount(0, $entityTags, 'Nearly expired tag not removed');
+        $entityTags = EntityTag::get(false)
+            ->addWhere('entity_table', '=', 'civicrm_contact')
+            ->addWhere('entity_id', '=', $contact['id'])
             ->addWhere('tag_id', '=', $config['expired-tag-id'])
             ->execute();
-        self::assertSame(1, count($entityTags));
+        self::assertCount(1, $entityTags, 'Anonymized tag not added');
     }
 }

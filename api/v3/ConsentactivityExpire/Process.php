@@ -1,6 +1,8 @@
 <?php
+
+use Civi\RcBase\ApiWrapper\Remove;
+use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Api4\EntityTag;
 use Civi\Api4\SavedSearch;
 
 /**
@@ -20,12 +22,9 @@ function _civicrm_api3_consentactivity_expire_Process_spec(&$spec)
  *
  * @param array $params
  *
- * @return array
- *   API result descriptor
- *
- * @see civicrm_api3_create_success
- *
+ * @return array API result descriptor
  * @throws API_Exception
+ * @see civicrm_api3_create_success
  */
 function civicrm_api3_consentactivity_expire_Process($params)
 {
@@ -44,9 +43,9 @@ function civicrm_api3_consentactivity_expire_Process($params)
     // calculate the saved search timestamp
     // - date('Y-m-d H:i') - interval expire
     // - it has to be used in the having condition
-    $search['api_params']['having'][0][2] = date('Y-m-d H:i', strtotime(date('Y-m-d H:i') . '- '.$config['consent-expiration-years'].' years'));
+    $search['api_params']['having'][0][2] = date('Y-m-d H:i', strtotime(date('Y-m-d H:i').'- '.$config['consent-expiration-years'].' years'));
     $handledContacts = 0;
-    // To prevent the API timeout issues caused by big resultset,
+    // To prevent the API timeout issues caused by big result set,
     // the limit and offset is managed during the requests.
     $search['limit'] = 25;
     $search['offset'] = 0;
@@ -59,13 +58,10 @@ function civicrm_api3_consentactivity_expire_Process($params)
             $numberOfProcessedContacts += 1;
             try {
                 CRM_Consentactivity_Service::anonymizeContact($contact['id']);
-                EntityTag::create(false)
-                    ->addValue('entity_table', 'civicrm_contact')
-                    ->addValue('entity_id', $contact['id'])
-                    ->addValue('tag_id', $config['expired-tag-id'])
-                    ->execute();
+                Save::tagContact($contact['id'], $config['expired-tag-id']);
+                Remove::tagFromContact($contact['id'], $config['tag-id']);
             } catch (Exception $e) {
-                $errors[] = 'Anonymize contact failed. Id: '.$contact['id']. ' Details: '.$e->getMessage();
+                $errors[] = 'Anonymize contact failed. Id: '.$contact['id'].' Details: '.$e->getMessage();
             }
         }
         $handledContacts = $handledContacts + $numberOfProcessedContacts;
@@ -78,7 +74,8 @@ function civicrm_api3_consentactivity_expire_Process($params)
         'errors' => $errors,
     ];
     if (count($errors)) {
-        return civicrm_api3_create_error('Errors occured during the execution.', $response);
+        return civicrm_api3_create_error('Errors occurred during the execution.', $response);
     }
+
     return civicrm_api3_create_success($response, $params, 'ConsentactivityExpire', 'Process');
 }
