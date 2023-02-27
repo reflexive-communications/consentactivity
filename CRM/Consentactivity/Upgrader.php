@@ -77,7 +77,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
                     // check that the saved search exists
                     $currentSearch = CRM_Consentactivity_Service::getSavedSearch($cfg['tagging-search-id']);
                     if (empty($currentSearch)) {
-                        $savedSearch = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['tag-id'], false);
+                        $savedSearch = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false);
                         $cfg['tagging-search-id'] = $savedSearch['id'];
                     }
                 }

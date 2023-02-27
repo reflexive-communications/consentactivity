@@ -221,24 +221,24 @@ class CRM_Consentactivity_Service
      *
      * @return array
      */
-    public static function savedSearchTagging(string $activityName, string $tagId, bool $aclFlag = true): array
+    public static function savedSearchTagging(string $activityName, string $anonimizedTagId, bool $aclFlag = true): array
     {
         $results = SavedSearch::create($aclFlag)
             ->addValue('label', self::TAGGING_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
-            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
+            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $anonimizedTagId))
             ->execute();
 
         return $results->first();
     }
 
-    public static function savedSearchTaggingUpdate(string $activityName, string $tagId, int $savedSearchId, bool $aclFlag = true): array
+    public static function savedSearchTaggingUpdate(string $activityName, string $anonimizedTagId, int $savedSearchId, bool $aclFlag = true): array
     {
         $results = SavedSearch::update($aclFlag)
             ->addWhere('id', '=', $savedSearchId)
             ->addValue('label', self::TAGGING_SEARCH_LABEL)
             ->addValue('api_entity', 'Contact')
-            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $tagId))
+            ->addValue('api_params', self::savedSearchTaggingApiParams($activityName, $anonimizedTagId))
             ->execute();
 
         return $results->first();
@@ -603,7 +603,7 @@ class CRM_Consentactivity_Service
         return self::updateExistingActivityType($optionValue['id']);
     }
 
-    private static function savedSearchTaggingApiParams(string $activityName, string $tagId): array
+    private static function savedSearchTaggingApiParams(string $activityName, string $anonimizedTagId): array
     {
         return [
             'version' => 4,
@@ -655,7 +655,7 @@ class CRM_Consentactivity_Service
                     [
                         'Contact_EntityTag_Tag_01.id',
                         '=',
-                        '"'.$tagId.'"',
+                        '"'.$anonimizedTagId.'"',
                     ],
                 ],
             ],

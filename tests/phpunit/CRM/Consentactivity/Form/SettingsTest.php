@@ -230,7 +230,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $cfg['tag-id'] = 1;
         $cfg['expired-tag-id'] = 1;
         $cfg['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
-        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['tag-id'], false)['id'];
+        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false)['id'];
         $config->update($cfg);
 
         $form = new CRM_Consentactivity_Form_Settings();
@@ -273,7 +273,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $cfg['tag-id'] = 1;
         $cfg['expired-tag-id'] = 2;
         $cfg['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
-        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['tag-id'], false)['id'];
+        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false)['id'];
         $config->update($cfg);
 
         $form = new CRM_Consentactivity_Form_Settings();

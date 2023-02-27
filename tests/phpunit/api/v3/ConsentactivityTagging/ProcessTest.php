@@ -45,8 +45,8 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
         $cfg->load();
         $config = $cfg->get();
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
-        $config['tag-id'] = '1';
-        $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['tag-id'], false)['id'];
+        $config['expired-tag-id'] = '1';
+        $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('ConsentactivityTagging', 'process', []);
         self::assertSame(0, $result['values']['tagged']);
@@ -81,9 +81,10 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
         // setup tag and search
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
-        $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['tag-id'], false)['id'];
+        $config['expired-tag-id'] = '1';
+        $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
-        $result = civicrm_api3('ConsentactivityTagging', 'process', []);
+        $result = civicrm_api3('ConsentactivityTagging', 'process');
         self::assertSame(1, $result['values']['tagged']);
         self::assertTrue(array_key_exists('date', $result['values']));
         // check tag on the contact
