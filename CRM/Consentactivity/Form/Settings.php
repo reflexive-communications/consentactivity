@@ -177,10 +177,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         }
         if ($config['tagging-search-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
             // create it
-            $savedSearch = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['tag-id']);
+            $savedSearch = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id']);
             $config['tagging-search-id'] = $savedSearch['id'];
         } else {
-            CRM_Consentactivity_Service::savedSearchTaggingUpdate($activityType['name'], $config['tag-id'], $config['tagging-search-id']);
+            CRM_Consentactivity_Service::savedSearchTaggingUpdate($activityType['name'], $config['expired-tag-id'], $config['tagging-search-id']);
         }
         $customFieldMap = [];
         foreach ($this->_submitValues as $k => $v) {
