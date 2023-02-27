@@ -1,6 +1,7 @@
 <?php
+
+use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Api4\EntityTag;
 use Civi\Api4\SavedSearch;
 
 /**
@@ -55,11 +56,7 @@ function civicrm_api3_consentactivity_tagging_Process($params)
         // Traditional api call solution to be able to pass the api_params.
         $contacts = civicrm_api4('Contact', 'get', $search['api_params']);
         foreach ($contacts as $contact) {
-            $results = EntityTag::create(false)
-                ->addValue('entity_table', 'civicrm_contact')
-                ->addValue('entity_id', $contact['id'])
-                ->addValue('tag_id', $config['tag-id'])
-                ->execute();
+            Save::tagContact($contact['id'], $config['tag-id']);
         }
         $taggedContacts = $taggedContacts + count($contacts);
         $search['limit'] = count($contacts);
