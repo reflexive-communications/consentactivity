@@ -36,6 +36,8 @@ class CRM_Consentactivity_ConfigTest extends HeadlessTestCase
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS, $cfg['consent-expiration-tagging-days'], 'Invalid consent-expiration-tagging-days initial value.');
         self::assertTrue(array_key_exists('custom-field-map', $cfg), 'custom-field-map key is missing from the config.');
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map'], 'Invalid custom-field-map initial value.');
+        self::assertTrue(array_key_exists('landing-page', $cfg), 'landing-page key is missing from the config.');
+        self::assertSame(CRM_Consentactivity_Config::DEFAULT_LANDING_PAGE, $cfg['landing-page'], 'Invalid landing-page initial value.');
         self::assertTrue($config->create(), 'Create config has to be successful multiple times.');
     }
 }

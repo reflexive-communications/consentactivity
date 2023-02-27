@@ -16,6 +16,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
 
     const DEFAULT_CUSTOM_FIELD_MAP = [];
 
+    const DEFAULT_LANDING_PAGE = '';
+
     /**
      * Provides a default configuration object.
      * The activity-type defaults to 0, as it is an invalid activity
@@ -34,9 +36,9 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
             'tagging-search-id' => self::DEFAULT_TAG_SEARCH_ID,
             // The tag id that has to be added to the contact
             'tag-id' => self::DEFAULT_TAG_ID,
-            // The tag that contans the anonymized contacts.
+            // The tag that contains the anonymized contacts.
             'expired-tag-id' => self::DEFAULT_EXPIRED_TAG_ID,
-            // Consent activity after contfibution.
+            // Consent activity after contribution.
             'consent-after-contribution' => false,
             // The number of years after the consent gets expired
             // By default it is 3 years
@@ -46,6 +48,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
             'consent-expiration-tagging-days' => self::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS,
             // The custom field -> [ privacy_field, group] map.
             'custom-field-map' => self::DEFAULT_CUSTOM_FIELD_MAP,
+            // Custom landing page, redirect here after consent renewal
+            'landing-page' => self::DEFAULT_LANDING_PAGE,
         ];
     }
 }
