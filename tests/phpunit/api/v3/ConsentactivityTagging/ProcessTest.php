@@ -49,7 +49,7 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
         $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('ConsentactivityTagging', 'process', []);
-        self::assertSame(0, $result['values']['tagged']);
+        self::assertSame(0, $result['values']['found']);
         self::assertTrue(array_key_exists('date', $result['values']));
     }
 
@@ -85,7 +85,7 @@ class api_v3_ConsentactivityTagging_ProcessTest extends CRM_Consentactivity_Head
         $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('ConsentactivityTagging', 'process');
-        self::assertSame(1, $result['values']['tagged']);
+        self::assertSame(1, $result['values']['found']);
         self::assertTrue(array_key_exists('date', $result['values']));
         // check tag on the contact
         $entityTags = EntityTag::get()

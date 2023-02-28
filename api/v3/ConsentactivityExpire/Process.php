@@ -45,28 +45,27 @@ function civicrm_api3_consentactivity_expire_Process($params)
     // - it has to be used in the having condition
     $search['api_params']['having'][0][2] = date('Y-m-d H:i', strtotime(date('Y-m-d H:i').'- '.$config['consent-expiration-years'].' years'));
     $handledContacts = 0;
-    // To prevent the API timeout issues caused by big result set,
-    // the limit and offset is managed during the requests.
-    $search['limit'] = 25;
-    $search['offset'] = 0;
     $errors = [];
-    while ($search['limit'] > 0) {
-        // Traditional api call solution to be able to pass the api_params.
+    $contact_id = 0;
+    $search['api_params']['limit'] = 1000;
+    while (true) {
+        $search['api_params']['where'] = [['id', '>', $contact_id]];
         $contacts = civicrm_api4('Contact', 'get', $search['api_params']);
-        $numberOfProcessedContacts = 0;
+
+        if (count($contacts) < 1) {
+            break;
+        }
         foreach ($contacts as $contact) {
-            $numberOfProcessedContacts += 1;
             try {
                 CRM_Consentactivity_Service::anonymizeContact($contact['id']);
                 Save::tagContact($contact['id'], $config['expired-tag-id']);
                 Remove::tagFromContact($contact['id'], $config['tag-id']);
+                $handledContacts++;
             } catch (Exception $e) {
                 $errors[] = 'Anonymize contact failed. Id: '.$contact['id'].' Details: '.$e->getMessage();
             }
+            $contact_id = $contact['id'];
         }
-        $handledContacts = $handledContacts + $numberOfProcessedContacts;
-        $search['limit'] = $numberOfProcessedContacts;
-        $search['offset'] = $search['limit'] + $search['offset'];
     }
     $response = [
         'handled' => $handledContacts,
