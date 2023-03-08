@@ -1,6 +1,7 @@
 <?php
 
 require_once 'consentactivity.civix.php';
+
 // phpcs:disable
 use CRM_Consentactivity_ExtensionUtil as E;
 
@@ -88,7 +89,6 @@ function consentactivity_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
 
 /**
  * Implements hook_civicrm_managed().
- *
  * Generate a list of entities to create/deactivate/delete when this module
  * is installed, disabled, uninstalled.
  *
@@ -101,9 +101,7 @@ function consentactivity_civicrm_managed(&$entities)
 
 /**
  * Implements hook_civicrm_caseTypes().
- *
  * Generate a list of case-types.
- *
  * Note: This hook only runs in CiviCRM 4.4+.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
@@ -115,9 +113,7 @@ function consentactivity_civicrm_caseTypes(&$caseTypes)
 
 /**
  * Implements hook_civicrm_angularModules().
- *
  * Generate a list of Angular modules.
- *
  * Note: This hook only runs in CiviCRM 4.5+. It may
  * use features only available in v4.6+.
  *
@@ -140,7 +136,6 @@ function consentactivity_civicrm_alterSettingsFolders(&$metaDataFolders = null)
 
 /**
  * Implements hook_civicrm_entityTypes().
- *
  * Declare entity types provided by this module.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
@@ -197,6 +192,7 @@ function consentactivity_civicrm_navigationMenu(&$menu)
     ]);
     _consentactivity_civix_navigationMenu($menu);
 }
+
 /**
  * Implements hook_civicrm_validateForm().
  *
@@ -218,11 +214,13 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
             if ($id == $config['tag-id'] || $id == $config['expired-tag-id']) {
                 $errors['tag_id'] = E::ts('The tag is reserved for the consentactivity.');
                 CRM_Core_Session::setStatus(E::ts('The tag is reserved for the consentactivity.'), 'Consentactivity', 'error');
+
                 return;
             }
         }
     }
 }
+
 /**
  * Implements hook_civicrm_post().
  *
@@ -232,6 +230,7 @@ function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef)
 {
     CRM_Consentactivity_Service::post($op, $objectName, $objectId, $objectRef);
 }
+
 /**
  * Implements hook_civicrm_tokens().
  *
@@ -243,6 +242,7 @@ function consentactivity_civicrm_tokens(&$tokens)
         'Consentactivity.consent_renewal' => E::ts('Renew Consent Link'),
     ];
 }
+
 /**
  * Implements hook_civicrm_container()
  *
@@ -256,6 +256,7 @@ function consentactivity_civicrm_container($container)
         ['civi.token.eval', 'consentactivity_evaluate_tokens']
     );
 }
+
 function consentactivity_evaluate_tokens(\Civi\Token\Event\TokenValueEvent $e)
 {
     foreach ($e->getRows() as $row) {

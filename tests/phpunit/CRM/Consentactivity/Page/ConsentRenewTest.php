@@ -34,6 +34,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
         self::expectExceptionMessage(E::ts('Missing input parameters'));
         $page->run();
     }
+
     public function testRunInvalidParameters()
     {
         $_GET = [
@@ -52,6 +53,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
         self::expectExceptionMessage(E::ts('There was an error in your request'));
         $page->run();
     }
+
     private function createGroup(string $title): int
     {
         $result = civicrm_api3('Group', 'create', [
@@ -61,8 +63,10 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
         ]);
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing group id.');
+
         return $result['id'];
     }
+
     private function addNewContactWithEmailToGroup(int $groupId): int
     {
         $result = civicrm_api3('Contact', 'create', [
@@ -88,8 +92,10 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
         ]);
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing email id.');
+
         return $contactId;
     }
+
     private function setupMailing()
     {
         $result = civicrm_api3('Domain', 'create', [
@@ -117,7 +123,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the MailSettings update.');
         $result = civicrm_api3('Setting', 'create', [
-            'mailing_backend' => ["outBound_option"=>5,"smtpUsername"=>"admin","smtpPassword"=>"admin"]
+            'mailing_backend' => ["outBound_option" => 5, "smtpUsername" => "admin", "smtpPassword" => "admin"],
         ]);
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the mailing_backend update.');
@@ -127,11 +133,12 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
             'name' => '"info" <info@example.org>',
             'domain_id' => self::DOMAIN_NAME,
             'is_default' => 1,
-            'is_active' =>1,
+            'is_active' => 1,
         ]);
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the OptionValue update.');
     }
+
     private function processMailing(int $groupId, int $contactId): array
     {
         $result = civicrm_api3('Mailing', 'create', [
@@ -164,8 +171,10 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_Head
         self::assertSame(1, count($result['values']), 'Invalid number of email recipients.');
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the MailingRecipients get.');
         self::assertSame($contactId, intval($result['values'][$result['id']]['contact_id'], 10), 'Missing contact from the recipients.');
+
         return civicrm_api3('Mailing', 'get', ['id' => $mailingId]);
     }
+
     public function testRunAddActivity()
     {
         $_GET = [];

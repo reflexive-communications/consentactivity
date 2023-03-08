@@ -1,4 +1,5 @@
 <?php
+
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
@@ -23,11 +24,13 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
             'custom-field-map' => CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP,
         ];
     }
+
     private function setupTestDefaultConfig()
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         self::assertTrue($config->update(self::testDefaultSetting()), 'Config update has to be successful.');
     }
+
     /**
      * PreProcess test case with existing config.
      * Setup test configuration then call the function.
@@ -58,6 +61,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         self::expectExceptionMessage(E::LONG_NAME.'_config config invalid.');
         self::assertEmpty($form->preProcess(), 'PreProcess supposed to be empty.');
     }
+
     /**
      * setDefaultValues test case. It has to return
      * the config values.
@@ -82,6 +86,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         self::assertSame($testSettings['custom-field-map'][0]['consent-field-id'], $defaults['map_consent_field_id_0']);
         self::assertSame($testSettings['custom-field-map'][0]['group-id'], $defaults['map_group_id_0']);
     }
+
     /**
      * addRules test case with existing config.
      * It shouldn't throw exception.
@@ -98,6 +103,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
             self::fail('Shouldn\'t throw exception with valid db. '.$e->getMessage());
         }
     }
+
     /**
      * zeroNotAllowed test case.
      */
@@ -106,15 +112,19 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $this->setupTestDefaultConfig();
         $form = new CRM_Consentactivity_Form_Settings();
         $testData = [
-            [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '1'], true],
-            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '1'], ['consentExpirationYears' => E::ts('Not allowed value.')]],
-            [['consentExpirationYears' => '0','consentExpirationTaggingDays' => '0'], ['consentExpirationYears' => E::ts('Not allowed value.'),'consentExpirationTaggingDays' => E::ts('Not allowed value.')]],
-            [['consentExpirationYears' => '1','consentExpirationTaggingDays' => '0'], ['consentExpirationTaggingDays' => E::ts('Not allowed value.')]],
+            [['consentExpirationYears' => '1', 'consentExpirationTaggingDays' => '1'], true],
+            [['consentExpirationYears' => '0', 'consentExpirationTaggingDays' => '1'], ['consentExpirationYears' => E::ts('Not allowed value.')]],
+            [
+                ['consentExpirationYears' => '0', 'consentExpirationTaggingDays' => '0'],
+                ['consentExpirationYears' => E::ts('Not allowed value.'), 'consentExpirationTaggingDays' => E::ts('Not allowed value.')],
+            ],
+            [['consentExpirationYears' => '1', 'consentExpirationTaggingDays' => '0'], ['consentExpirationTaggingDays' => E::ts('Not allowed value.')]],
         ];
         foreach ($testData as $t) {
             self::assertSame($t[1], CRM_Consentactivity_Form_Settings::zeroNotAllowed($t[0]));
         }
     }
+
     /**
      * sameTagsNotAllowed test case.
      */
@@ -123,13 +133,14 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $this->setupTestDefaultConfig();
         $form = new CRM_Consentactivity_Form_Settings();
         $testData = [
-            [['tagId' => '1','expiredTagId' => '1'], ['tagId' => E::ts('Duplication.'),'expiredTagId' => E::ts('Duplication.')]],
-            [['tagId' => '1','expiredTagId' => '2'], true],
+            [['tagId' => '1', 'expiredTagId' => '1'], ['tagId' => E::ts('Duplication.'), 'expiredTagId' => E::ts('Duplication.')]],
+            [['tagId' => '1', 'expiredTagId' => '2'], true],
         ];
         foreach ($testData as $t) {
             self::assertSame($t[1], CRM_Consentactivity_Form_Settings::sameTagsNotAllowed($t[0]));
         }
     }
+
     /**
      * customFieldDuplicationNotAllowed test case.
      */
@@ -138,14 +149,18 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         $this->setupTestDefaultConfig();
         $form = new CRM_Consentactivity_Form_Settings();
         $testData = [
-            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '2'], true],
-            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '1'], ['map_custom_field_id_0' => E::ts('Duplication.')]],
-            [['map_custom_field_id_0' => '1','map_custom_field_id_1' => '2', 'map_custom_field_id_2' => '1','map_custom_field_id_3' => '2'], ['map_custom_field_id_0' => E::ts('Duplication.'), 'map_custom_field_id_1' => E::ts('Duplication.')]],
+            [['map_custom_field_id_0' => '1', 'map_custom_field_id_1' => '2'], true],
+            [['map_custom_field_id_0' => '1', 'map_custom_field_id_1' => '1'], ['map_custom_field_id_0' => E::ts('Duplication.')]],
+            [
+                ['map_custom_field_id_0' => '1', 'map_custom_field_id_1' => '2', 'map_custom_field_id_2' => '1', 'map_custom_field_id_3' => '2'],
+                ['map_custom_field_id_0' => E::ts('Duplication.'), 'map_custom_field_id_1' => E::ts('Duplication.')],
+            ],
         ];
         foreach ($testData as $t) {
             self::assertSame($t[1], CRM_Consentactivity_Form_Settings::customFieldDuplicationNotAllowed($t[0]));
         }
     }
+
     /**
      * Build quick form test case.
      * Setup test configuration, preProcess then call the function.
@@ -176,6 +191,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         }
         self::assertSame(E::ts('Consentactivity Settings'), $form->getTitle(), 'Invalid form title.');
     }
+
     /**
      * Post Process test cases.
      * The necessary params are updated manually.
@@ -213,6 +229,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id']);
         self::assertSame(true, $cfg['consent-after-contribution']);
     }
+
     public function testPostDefaultSearchUpdate()
     {
         $_POST['tagId'] = '2';
@@ -250,6 +267,7 @@ class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_Headless
         self::assertSame($cfg['saved-search-id'], $cfgNew['saved-search-id']);
         self::assertSame($cfg['tagging-search-id'], $cfgNew['tagging-search-id']);
     }
+
     public function testPostMapping()
     {
         $_POST['tagId'] = '2';

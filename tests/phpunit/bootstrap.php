@@ -20,6 +20,7 @@ $loader->register();
  *   The rest of the command to send.
  * @param string $decode
  *   Ex: 'json' or 'phpcode'.
+ *
  * @return string
  *   Response output (if the command executed normally).
  * @throws \RuntimeException
@@ -27,8 +28,8 @@ $loader->register();
  */
 function cv($cmd, $decode = 'json')
 {
-    $cmd = 'cv ' . $cmd;
-    $descriptorSpec = array(0 => array("pipe", "r"), 1 => array("pipe", "w"), 2 => STDERR);
+    $cmd = 'cv '.$cmd;
+    $descriptorSpec = [0 => ["pipe", "r"], 1 => ["pipe", "w"], 2 => STDERR];
     $oldOutput = getenv('CV_OUTPUT');
     putenv("CV_OUTPUT=json");
 
@@ -53,6 +54,7 @@ function cv($cmd, $decode = 'json')
             if (substr(trim($result), 0, 12) !== "/*BEGINPHP*/" || substr(trim($result), -10) !== "/*ENDPHP*/") {
                 throw new \RuntimeException("Command failed ($cmd):\n$result");
             }
+
             return $result;
 
         case 'json':

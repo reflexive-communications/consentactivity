@@ -19,6 +19,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             ->install('rc-base')
             ->apply(true);
     }
+
     /**
      * Test the install process.
      */
@@ -60,6 +61,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
+
     public function testEnableOldVersionOptionValue()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
@@ -77,6 +79,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
+
     public function testEnableOldVersionTagNotSet()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
@@ -97,6 +100,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
+
     public function testEnableOldVersionTagDeleted()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
@@ -114,6 +118,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
             $this->fail("Should not throw exception. ".$e->getMessage());
         }
     }
+
     public function testEnableOldVersionDeletedTagSearchDeletion()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
@@ -137,6 +142,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
     }
+
     public function testEnableOldVersionValidTagDeletedSearch()
     {
         $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
