@@ -218,7 +218,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         if (!$this->config->update($config)) {
             CRM_Core_Session::setStatus(E::ts('Error during search update'), 'Consentactivity', 'error');
         } else {
-            CRM_Core_Session::setStatus(E::ts('The configuration has been updated.'), 'Consentactivity', 'success', ['expires' => 5000,]);
+            CRM_Core_Session::setStatus(E::ts('The configuration has been updated.'), 'Consentactivity', 'success', ['expires' => 5000]);
         }
         // Redirect to the form after the submit.
         CRM_Core_Session::singleton()->pushUserContext(CRM_Utils_System::url('civicrm/admin/consent-activity', 'reset=1'));
