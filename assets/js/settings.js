@@ -5,9 +5,7 @@
  * updated to a uniq value.
  */
 function mapParameterMappingHandler(event) {
-    let newRow = document
-        .querySelector('#parameter-mapping table tr:nth-of-type(2)')
-        .cloneNode(true);
+    let newRow = document.querySelector('#parameter-mapping table tr:nth-of-type(2)').cloneNode(true);
     let numberOfItems = document.querySelectorAll('#parameter-mapping table tr').length - 2;
     newRow.querySelectorAll('select[name*="map_custom_field_id_"]').forEach(function (element) {
         element.value = '0';
@@ -31,7 +29,5 @@ function mapParameterMappingHandler(event) {
     buttonRow.parentNode.insertBefore(newRow, buttonRow);
 }
 (function () {
-    document
-        .querySelector('#new-parameter-mapping')
-        .addEventListener('click', mapParameterMappingHandler);
+    document.querySelector('#new-parameter-mapping').addEventListener('click', mapParameterMappingHandler);
 })();
