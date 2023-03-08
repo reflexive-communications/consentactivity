@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <menu>
-  <item>
-    <path>civicrm/admin/consent-activity</path>
-    <page_callback>CRM_Consentactivity_Form_Settings</page_callback>
-    <title>Settings</title>
-    <access_arguments>administer CiviCRM</access_arguments>
-  </item>
-  <item>
-    <path>civicrm/consent/renew</path>
-    <page_callback>CRM_Consentactivity_Page_ConsentRenew</page_callback>
-    <title>Consent Renew</title>
-    <is_public>true</is_public>
-    <access_callback>1</access_callback>
-    <weight>0</weight>
-  </item>
+    <item>
+        <path>civicrm/admin/consent-activity</path>
+        <page_callback>CRM_Consentactivity_Form_Settings</page_callback>
+        <title>Settings</title>
+        <access_arguments>administer CiviCRM</access_arguments>
+    </item>
+    <item>
+        <path>civicrm/consent/renew</path>
+        <page_callback>CRM_Consentactivity_Page_ConsentRenew</page_callback>
+        <title>Consent Renew</title>
+        <is_public>true</is_public>
+        <access_callback>1</access_callback>
+        <weight>0</weight>
+    </item>
 </menu>
