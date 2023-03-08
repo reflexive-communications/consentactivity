@@ -45,12 +45,11 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
             ->execute()
             ->first();
         $form->setVar('_id', $contact['id']);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess('Not_Intrested_In_This_Class', $form), 'PostProcess supposed to be empty.');
     }
+
     /**
      * Test the savedSearchExpired function.
      */
@@ -60,6 +59,7 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
         $search = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], 1, 1, false);
         self::assertSame('Contact', $search['api_entity']);
     }
+
     /**
      * Test the savedSearchExpiredUpdate function.
      */
@@ -71,6 +71,7 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
         $search = CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], 1, 1, $search['id'], false);
         self::assertSame('Contact', $search['api_entity']);
     }
+
     /**
      * Test the savedSearchTagging function.
      */
@@ -80,6 +81,7 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_He
         $search = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], 1, false);
         self::assertSame('Contact', $search['api_entity']);
     }
+
     /**
      * Test the savedSearchTaggingUpdate function.
      */

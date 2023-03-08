@@ -1,4 +1,5 @@
 <?php
+
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page

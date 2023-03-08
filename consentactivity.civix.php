@@ -9,18 +9,20 @@
 class CRM_Consentactivity_ExtensionUtil
 {
     const SHORT_NAME = 'consentactivity';
+
     const LONG_NAME = 'consentactivity';
+
     const CLASS_PREFIX = 'CRM_Consentactivity';
 
     /**
      * Translate a string using the extension's domain.
-     *
      * If the extension doesn't have a specific translation
      * for the string, fallback to the default translations.
      *
      * @param string $text
      *   Canonical message text (generally en_US).
      * @param array $params
+     *
      * @return string
      *   Translated text.
      * @see ts
@@ -30,6 +32,7 @@ class CRM_Consentactivity_ExtensionUtil
         if (!array_key_exists('domain', $params)) {
             $params['domain'] = [self::LONG_NAME, null];
         }
+
         return ts($text, $params);
     }
 
@@ -39,6 +42,7 @@ class CRM_Consentactivity_ExtensionUtil
      * @param string|NULL $file
      *   Ex: NULL.
      *   Ex: 'css/foo.css'.
+     *
      * @return string
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo'.
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo/css/foo.css'.
@@ -48,6 +52,7 @@ class CRM_Consentactivity_ExtensionUtil
         if ($file === null) {
             return rtrim(CRM_Core_Resources::singleton()->getUrl(self::LONG_NAME), '/');
         }
+
         return CRM_Core_Resources::singleton()->getUrl(self::LONG_NAME, $file);
     }
 
@@ -57,6 +62,7 @@ class CRM_Consentactivity_ExtensionUtil
      * @param string|NULL $file
      *   Ex: NULL.
      *   Ex: 'css/foo.css'.
+     *
      * @return string
      *   Ex: '/var/www/example.org/sites/default/ext/org.example.foo'.
      *   Ex: '/var/www/example.org/sites/default/ext/org.example.foo/css/foo.css'.
@@ -64,7 +70,7 @@ class CRM_Consentactivity_ExtensionUtil
     public static function path($file = null)
     {
         // return CRM_Core_Resources::singleton()->getPath(self::LONG_NAME, $file);
-        return __DIR__ . ($file === null ? '' : (DIRECTORY_SEPARATOR . $file));
+        return __DIR__.($file === null ? '' : (DIRECTORY_SEPARATOR.$file));
     }
 
     /**
@@ -72,12 +78,13 @@ class CRM_Consentactivity_ExtensionUtil
      *
      * @param string $suffix
      *   Ex: 'Page_HelloWorld' or 'Page\\HelloWorld'.
+     *
      * @return string
      *   Ex: 'CRM_Foo_Page_HelloWorld'.
      */
     public static function findClass($suffix)
     {
-        return self::CLASS_PREFIX . '_' . str_replace('\\', '_', $suffix);
+        return self::CLASS_PREFIX.'_'.str_replace('\\', '_', $suffix);
     }
 }
 
@@ -98,8 +105,8 @@ function _consentactivity_civix_civicrm_config(&$config = null)
 
     $template =& CRM_Core_Smarty::singleton();
 
-    $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-    $extDir = $extRoot . 'templates';
+    $extRoot = dirname(__FILE__).DIRECTORY_SEPARATOR;
+    $extDir = $extRoot.'templates';
 
     if (is_array($template->template_dir)) {
         array_unshift($template->template_dir, $extDir);
@@ -107,7 +114,7 @@ function _consentactivity_civix_civicrm_config(&$config = null)
         $template->template_dir = [$extDir, $template->template_dir];
     }
 
-    $include_path = $extRoot . PATH_SEPARATOR . get_include_path();
+    $include_path = $extRoot.PATH_SEPARATOR.get_include_path();
     set_include_path($include_path);
 }
 
@@ -120,7 +127,7 @@ function _consentactivity_civix_civicrm_config(&$config = null)
  */
 function _consentactivity_civix_civicrm_xmlMenu(&$files)
 {
-    foreach (_consentactivity_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
+    foreach (_consentactivity_civix_glob(__DIR__.'/xml/Menu/*.xml') as $file) {
         $files[] = $file;
     }
 }
@@ -206,7 +213,6 @@ function _consentactivity_civix_civicrm_disable()
  * @return mixed
  *   based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
  *   for 'enqueue', returns void
- *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_upgrade
  */
 function _consentactivity_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
@@ -221,7 +227,7 @@ function _consentactivity_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = nu
  */
 function _consentactivity_civix_upgrader()
 {
-    if (!file_exists(__DIR__ . '/CRM/Consentactivity/Upgrader.php')) {
+    if (!file_exists(__DIR__.'/CRM/Consentactivity/Upgrader.php')) {
         return null;
     } else {
         return CRM_Consentactivity_Upgrader_Base::instance();
@@ -230,7 +236,6 @@ function _consentactivity_civix_upgrader()
 
 /**
  * Search directory tree for files which match a glob pattern.
- *
  * Note: Dot-directories (like "..", ".git", or ".svn") will be ignored.
  * Note: In Civi 4.3+, delegate to CRM_Utils_File::findFiles()
  *
@@ -256,7 +261,7 @@ function _consentactivity_civix_find_files($dir, $pattern)
         }
         if ($dh = opendir($subdir)) {
             while (false !== ($entry = readdir($dh))) {
-                $path = $subdir . DIRECTORY_SEPARATOR . $entry;
+                $path = $subdir.DIRECTORY_SEPARATOR.$entry;
                 if ($entry[0] == '.') {
                 } elseif (is_dir($path)) {
                     $todos[] = $path;
@@ -265,12 +270,12 @@ function _consentactivity_civix_find_files($dir, $pattern)
             closedir($dh);
         }
     }
+
     return $result;
 }
 
 /**
  * (Delegated) Implements hook_civicrm_managed().
- *
  * Find any *.mgd.php files, merge their content, and return.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
@@ -295,49 +300,45 @@ function _consentactivity_civix_civicrm_managed(&$entities)
 
 /**
  * (Delegated) Implements hook_civicrm_caseTypes().
- *
  * Find any and return any files matching "xml/case/*.xml"
- *
  * Note: This hook only runs in CiviCRM 4.4+.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
  */
 function _consentactivity_civix_civicrm_caseTypes(&$caseTypes)
 {
-    if (!is_dir(__DIR__ . '/xml/case')) {
+    if (!is_dir(__DIR__.'/xml/case')) {
         return;
     }
 
-    foreach (_consentactivity_civix_glob(__DIR__ . '/xml/case/*.xml') as $file) {
+    foreach (_consentactivity_civix_glob(__DIR__.'/xml/case/*.xml') as $file) {
         $name = preg_replace('/\.xml$/', '', basename($file));
         if ($name != CRM_Case_XMLProcessor::mungeCaseType($name)) {
             $errorMessage = sprintf("Case-type file name is malformed (%s vs %s)", $name, CRM_Case_XMLProcessor::mungeCaseType($name));
             throw new CRM_Core_Exception($errorMessage);
         }
         $caseTypes[$name] = [
-      'module' => E::LONG_NAME,
-      'name' => $name,
-      'file' => $file,
-    ];
+            'module' => E::LONG_NAME,
+            'name' => $name,
+            'file' => $file,
+        ];
     }
 }
 
 /**
  * (Delegated) Implements hook_civicrm_angularModules().
- *
  * Find any and return any files matching "ang/*.ang.php"
- *
  * Note: This hook only runs in CiviCRM 4.5+.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
  */
 function _consentactivity_civix_civicrm_angularModules(&$angularModules)
 {
-    if (!is_dir(__DIR__ . '/ang')) {
+    if (!is_dir(__DIR__.'/ang')) {
         return;
     }
 
-    $files = _consentactivity_civix_glob(__DIR__ . '/ang/*.ang.php');
+    $files = _consentactivity_civix_glob(__DIR__.'/ang/*.ang.php');
     foreach ($files as $file) {
         $name = preg_replace(':\.ang\.php$:', '', basename($file));
         $module = include $file;
@@ -350,12 +351,11 @@ function _consentactivity_civix_civicrm_angularModules(&$angularModules)
 
 /**
  * (Delegated) Implements hook_civicrm_themes().
- *
  * Find any and return any files matching "*.theme.php"
  */
 function _consentactivity_civix_civicrm_themes(&$themes)
 {
-    $files = _consentactivity_civix_glob(__DIR__ . '/*.theme.php');
+    $files = _consentactivity_civix_glob(__DIR__.'/*.theme.php');
     foreach ($files as $file) {
         $themeMeta = include $file;
         if (empty($themeMeta['name'])) {
@@ -370,13 +370,13 @@ function _consentactivity_civix_civicrm_themes(&$themes)
 
 /**
  * Glob wrapper which is guaranteed to return an array.
- *
  * The documentation for glob() says, "On some systems it is impossible to
  * distinguish between empty match and an error." Anecdotally, the return
  * result for an empty match is sometimes array() and sometimes FALSE.
  * This wrapper provides consistency.
  *
  * @link http://php.net/glob
+ *
  * @param string $pattern
  *
  * @return array
@@ -384,6 +384,7 @@ function _consentactivity_civix_civicrm_themes(&$themes)
 function _consentactivity_civix_glob($pattern)
 {
     $result = glob($pattern);
+
     return is_array($result) ? $result : [];
 }
 
@@ -403,11 +404,12 @@ function _consentactivity_civix_insert_navigation_menu(&$menu, $path, $item)
     // If we are done going down the path, insert menu
     if (empty($path)) {
         $menu[] = [
-      'attributes' => array_merge([
-        'label'      => CRM_Utils_Array::value('name', $item),
-        'active'     => 1,
-      ], $item),
-    ];
+            'attributes' => array_merge([
+                'label' => CRM_Utils_Array::value('name', $item),
+                'active' => 1,
+            ], $item),
+        ];
+
         return true;
     } else {
         // Find an recurse into the next level down
@@ -422,6 +424,7 @@ function _consentactivity_civix_insert_navigation_menu(&$menu, $path, $item)
                 $found = _consentactivity_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item);
             }
         }
+
         return $found;
     }
 }
@@ -479,7 +482,7 @@ function _consentactivity_civix_fixNavigationMenuItems(&$nodes, &$maxNavID, $par
  */
 function _consentactivity_civix_civicrm_alterSettingsFolders(&$metaDataFolders = null)
 {
-    $settingsDir = __DIR__ . DIRECTORY_SEPARATOR . 'settings';
+    $settingsDir = __DIR__.DIRECTORY_SEPARATOR.'settings';
     if (!in_array($settingsDir, $metaDataFolders) && is_dir($settingsDir)) {
         $metaDataFolders[] = $settingsDir;
     }
@@ -487,7 +490,6 @@ function _consentactivity_civix_civicrm_alterSettingsFolders(&$metaDataFolders =
 
 /**
  * (Delegated) Implements hook_civicrm_entityTypes().
- *
  * Find any *.entityType.php files, merge their content, and return.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes

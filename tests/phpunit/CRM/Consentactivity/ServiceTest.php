@@ -39,17 +39,17 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute();
         self::assertSame(1, count($activities));
     }
+
     public function testPostProcessInvalidContactId()
     {
         $form = new CRM_Profile_Form_Edit();
         $form->setVar('_id', 0);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::expectException(CRM_Core_Exception::class);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
+
     public function testPostProcess()
     {
         $form = new CRM_Profile_Form_Edit();
@@ -58,15 +58,14 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute()
             ->first();
         $form->setVar('_id', $contact['id']);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
     }
+
     public function testPostProcessWithUpdatedTagId()
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
@@ -86,9 +85,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->addValue('tag_id', $cfg['tag-id'])
             ->execute();
         $form->setVar('_id', $contact['id']);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
@@ -102,6 +99,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute();
         self::assertSame(0, count($tags));
     }
+
     public function testPostProcessEventConfirmForm()
     {
         $form = new CRM_Event_Form_Registration_Confirm();
@@ -110,15 +108,14 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute()
             ->first();
         $form->setVar('_values', ['participant' => ['contact_id' => $contact['id']]]);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Confirm::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
     }
+
     public function testPostProcessEventRegisterFormConfirmEnabled()
     {
         $form = new CRM_Event_Form_Registration_Register();
@@ -127,15 +124,14 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute()
             ->first();
         $form->setVar('_values', ['event' => ['is_confirm_enabled' => 1], 'participant' => ['contact_id' => $contact['id']]]);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(0, count($activities));
     }
+
     public function testPostProcessEventRegisterFormConfirmDisabled()
     {
         $form = new CRM_Event_Form_Registration_Register();
@@ -144,15 +140,14 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute()
             ->first();
         $form->setVar('_values', ['event' => ['is_confirm_enabled' => 0], 'participant' => ['contact_id' => $contact['id']]]);
-        $submit = [
-            'is_opt_out' => ''
-        ];
+        $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
     }
+
     /*
      * The previously created checkbox will be returned.
      */
@@ -198,6 +193,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $params = CRM_Consentactivity_Service::customCheckboxFields();
         self::assertSame(1, count($params));
     }
+
     public function testPostProcessWithCustomFields()
     {
         $customGroup = CustomGroup::create(false)
@@ -260,6 +256,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
+
     public function testPostProcessWithCustomFieldsUpdateGroupStatus()
     {
         $customGroup = CustomGroup::create(false)
@@ -362,6 +359,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $form->setVar('_submitValues', $submit);
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
+
     public function testAnonymizeContact()
     {
         // contact
@@ -450,17 +448,30 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute()
             ->first();
         $contactFieldsThatNeedsToBeDeleted = [
-            'first_name', 'last_name', 'middle_name', 'display_name',
-            'nick_name', 'sort_name',
-            'external_identifier', 'api_key', 'birth_date',
-            'deceased_date', 'employer_id', 'job_title', 'gender_id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'display_name',
+            'nick_name',
+            'sort_name',
+            'external_identifier',
+            'api_key',
+            'birth_date',
+            'deceased_date',
+            'employer_id',
+            'job_title',
+            'gender_id',
         ];
         foreach ($contactFieldsThatNeedsToBeDeleted as $field) {
             self::assertEmpty($updatedContact[$field], 'The '.$field.' field should be empty, but it is '.$updatedContact[$field]);
         }
         $privacyFieldsThatNeedsToBeSet = [
-            'do_not_email', 'do_not_phone', 'do_not_mail',
-            'do_not_sms', 'do_not_trade', 'is_opt_out',
+            'do_not_email',
+            'do_not_phone',
+            'do_not_mail',
+            'do_not_sms',
+            'do_not_trade',
+            'is_opt_out',
         ];
         foreach ($privacyFieldsThatNeedsToBeSet as $field) {
             self::assertTrue($updatedContact[$field], 'The consent field '.$field.' should be set.');
@@ -473,6 +484,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             self::assertCount(0, $numberOfEntities, 'Invalid number for the '.$entity.' entity.');
         }
     }
+
     /*
      * It tests the post function.
      */
@@ -489,7 +501,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $config = $cfg->get();
         $config['consent-after-contribution'] = true;
         $cfg->update($config);
-        $refObject = (object)['is_test'=>false, 'receive_date'=>'2020010112131400', 'contact_id' => $contact['id']];
+        $refObject = (object)['is_test' => false, 'receive_date' => '2020010112131400', 'contact_id' => $contact['id']];
 
         self::assertEmpty(CRM_Consentactivity_Service::post('delete', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
@@ -507,6 +519,7 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
     }
+
     public function testPostConfigNotSet()
     {
         $contact = Contact::create(false)
@@ -520,13 +533,14 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $config = $cfg->get();
         $config['consent-after-contribution'] = false;
         $cfg->update($config);
-        $refObject = (object)['is_test'=>false, 'receive_date'=>'2020010112131400', 'contact_id' => $contact['id']];
+        $refObject = (object)['is_test' => false, 'receive_date' => '2020010112131400', 'contact_id' => $contact['id']];
 
         self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
     }
+
     public function testPostOldReceiveDate()
     {
         $contact = Contact::create(false)
@@ -542,13 +556,14 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $cfg->update($config);
         $before = $config['consent-expiration-years'];
         $before += 2;
-        $refObject = (object)['is_test'=>false, 'receive_date'=>date('YmdHis', strtotime($before.' years ago')), 'contact_id' => $contact['id']];
+        $refObject = (object)['is_test' => false, 'receive_date' => date('YmdHis', strtotime($before.' years ago')), 'contact_id' => $contact['id']];
 
         self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
     }
+
     public function testPostTriggerActivity()
     {
         $contact = Contact::create(false)
@@ -562,11 +577,11 @@ class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
         $config = $cfg->get();
         $config['consent-after-contribution'] = true;
         $cfg->update($config);
-        $refObject = (object)['is_test'=>false, 'receive_date'=>date('YmdHis'), 'contact_id' => $contact['id']];
+        $refObject = (object)['is_test' => false, 'receive_date' => date('YmdHis'), 'contact_id' => $contact['id']];
 
         self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
-        self::assertCount(count($activitiesOriginal)+1, $activities);
+        self::assertCount(count($activitiesOriginal) + 1, $activities);
     }
 }
