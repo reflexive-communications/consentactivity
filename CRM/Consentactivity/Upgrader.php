@@ -5,7 +5,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
+class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
 {
     /**
      * Install process. Init database.

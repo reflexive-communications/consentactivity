@@ -26,7 +26,7 @@
     <version>1.4.2</version>
     <develStage>stable</develStage>
     <compatibility>
-        <ver>5.0</ver>
+        <ver>5.38</ver>
     </compatibility>
     <requires>
         <ext>rc-base</ext>
@@ -36,7 +36,12 @@
         <psr0 prefix="CRM_" path=""/>
         <psr4 prefix="Civi\" path="Civi"/>
     </classloader>
+    <mixins>
+        <mixin>menu-xml@1.0.0</mixin>
+    </mixins>
+    <upgrader>CRM_Consentactivity_Upgrader</upgrader>
     <civix>
         <namespace>CRM/Consentactivity</namespace>
+        <format>22.12.1</format>
     </civix>
 </extension>
