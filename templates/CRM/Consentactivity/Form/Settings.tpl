@@ -40,15 +40,15 @@
             <th>{ts}Consent Field{/ts}</th>
             <th>{ts}Group{/ts}</th>
         </tr>
-{foreach from=$cfMap key=customFieldId item=mappedField}
-    {assign var="consentName" value=$mappedField.consent}
-    {assign var="groupName" value=$mappedField.group}
-        <tr>
-            <td>{$form.$customFieldId.html}</td>
-            <td>{$form.$consentName.html}</td>
-            <td>{$form.$groupName.html}</td>
-        </tr>
-{/foreach}
+        {foreach from=$cfMap key=customFieldId item=mappedField}
+            {assign var="consentName" value=$mappedField.consent}
+            {assign var="groupName" value=$mappedField.group}
+            <tr>
+                <td>{$form.$customFieldId.html}</td>
+                <td>{$form.$consentName.html}</td>
+                <td>{$form.$groupName.html}</td>
+            </tr>
+        {/foreach}
         <tr id="new-parameter-mapping-row">
             <td colspan="3">
                 <button type="button" class="ui-button ui-corner-all ui-widget" id="new-parameter-mapping">{icon icon="fa-plus-circle"}{/icon}</button>
