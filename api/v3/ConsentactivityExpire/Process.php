@@ -13,7 +13,9 @@ use Civi\Api4\SavedSearch;
  *
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
-function _civicrm_api3_consentactivity_expire_Process_spec(&$spec) {}
+function _civicrm_api3_consentactivity_expire_Process_spec(&$spec)
+{
+}
 
 /**
  * ConsentactivityExpire.Process API

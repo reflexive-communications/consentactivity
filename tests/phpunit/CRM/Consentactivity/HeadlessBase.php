@@ -12,7 +12,9 @@ use Civi\Test\TransactionalInterface;
  */
 class CRM_Consentactivity_HeadlessBase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
 {
-    public function setUpHeadless() {}
+    public function setUpHeadless()
+    {
+    }
 
     /**
      * Apply a forced rebuild of DB, thus

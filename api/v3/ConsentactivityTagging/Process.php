@@ -12,7 +12,9 @@ use Civi\Api4\SavedSearch;
  *
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
-function _civicrm_api3_consentactivity_tagging_Process_spec(&$spec) {}
+function _civicrm_api3_consentactivity_tagging_Process_spec(&$spec)
+{
+}
 
 /**
  * ConsentactivityTagging.Process API

@@ -25,7 +25,9 @@ class CRM_Consentactivity_Upgrader extends CRM_Consentactivity_Upgrader_Base
      * After the installation, the activityType is created and stored in the
      * setting db.
      */
-    public function postInstall() {}
+    public function postInstall()
+    {
+    }
 
     /**
      * When the extension is enabled, we have to make sure that the setup is still valid.
