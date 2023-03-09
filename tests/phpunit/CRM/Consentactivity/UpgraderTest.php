@@ -9,23 +9,12 @@ use Civi\Test;
  */
 class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 {
-    /*
-     * Overwrite setup function to skip the install of the current extension
-     * to be able to test the create steps of the service.
-     */
-    public static function setUpBeforeClass(): void
-    {
-        Test::headless()
-            ->install('rc-base')
-            ->apply(true);
-    }
-
     /**
      * Test the install process.
      */
     public function testInstall()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         try {
             $this->assertEmpty($installer->install());
         } catch (Exception $e) {
@@ -38,7 +27,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
      */
     public function testPostInstall()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         try {
             $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->enable());
@@ -53,7 +42,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
      */
     public function testEnableNoIssue()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         try {
             $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->enable());
@@ -64,11 +53,11 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 
     public function testEnableOldVersionOptionValue()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
         $this->assertEmpty($installer->postInstall());
-        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['option-value-id'] = $config['option-value-id'] + 1;
@@ -82,11 +71,11 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 
     public function testEnableOldVersionTagNotSet()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
         $this->assertEmpty($installer->postInstall());
-        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         unset($config['tag-id']);
@@ -103,11 +92,11 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 
     public function testEnableOldVersionTagDeleted()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
         $this->assertEmpty($installer->postInstall());
-        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '100000';
@@ -121,11 +110,11 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 
     public function testEnableOldVersionDeletedTagSearchDeletion()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
         $this->assertEmpty($installer->postInstall());
-        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '100000';
@@ -145,11 +134,11 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
 
     public function testEnableOldVersionValidTagDeletedSearch()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
         $this->assertEmpty($installer->postInstall());
-        $cfg = new CRM_Consentactivity_Config("consentactivity_test");
+        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '1';
@@ -175,7 +164,7 @@ class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
      */
     public function testUninstall()
     {
-        $installer = new CRM_Consentactivity_Upgrader("consentactivity_test", ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         try {
             $this->assertEmpty($installer->uninstall());

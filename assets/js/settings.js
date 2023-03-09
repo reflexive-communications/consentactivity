@@ -28,6 +28,7 @@ function mapParameterMappingHandler(event) {
     let buttonRow = document.querySelector('#new-parameter-mapping-row');
     buttonRow.parentNode.insertBefore(newRow, buttonRow);
 }
+
 (function () {
     document.querySelector('#new-parameter-mapping').addEventListener('click', mapParameterMappingHandler);
 })();
