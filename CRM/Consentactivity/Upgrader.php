@@ -14,10 +14,10 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function install()
     {
-        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         // Create default configs
         if (!$config->create()) {
-            throw new CRM_Core_Exception($this->extensionName.E::ts(' could not create configs in database'));
+            throw new CRM_Core_Exception(E::LONG_NAME.E::ts(' could not create configs in database'));
         }
     }
 
@@ -36,7 +36,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function enable()
     {
-        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
         $current = CRM_Consentactivity_Service::getActivityType($cfg['option-value-id']);
@@ -97,10 +97,10 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function uninstall()
     {
-        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         // delete current configs
         if (!$config->remove()) {
-            throw new CRM_Core_Exception($this->extensionName.E::ts(' could not remove configs from database'));
+            throw new CRM_Core_Exception(E::LONG_NAME.E::ts(' could not remove configs from database'));
         }
     }
 
@@ -125,7 +125,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function upgrade_5100()
     {
-        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
         if (!array_key_exists('tag-id', $cfg)) {
@@ -158,7 +158,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function upgrade_5101()
     {
-        $config = new CRM_Consentactivity_Config($this->extensionName);
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
         if (!array_key_exists('custom-field-map', $cfg)) {
