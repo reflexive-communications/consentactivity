@@ -16,7 +16,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->install());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception.");
+            $this->fail('Should not throw exception.');
         }
     }
 
@@ -31,7 +31,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
             $this->assertEmpty($installer->enable());
             $this->assertEmpty($installer->postInstall());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
             $this->assertEmpty($installer->install());
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
         $cfg->load();
         $config = $cfg->get();
@@ -147,7 +147,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->enable());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
         $cfg->load();
         $config = $cfg->get();
@@ -167,7 +167,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         try {
             $this->assertEmpty($installer->uninstall());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
     }
 }

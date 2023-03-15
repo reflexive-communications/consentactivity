@@ -113,7 +113,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the MailSettings update.');
         $result = civicrm_api3('Setting', 'create', [
-            'mailing_backend' => ["outBound_option" => 5, "smtpUsername" => "admin", "smtpPassword" => "admin"],
+            'mailing_backend' => ['outBound_option' => 5, 'smtpUsername' => 'admin', 'smtpPassword' => 'admin'],
         ]);
         self::assertSame(0, $result['is_error']);
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the mailing_backend update.');
@@ -134,7 +134,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         $result = civicrm_api3('Mailing', 'create', [
             'subject' => 'email subject',
             'name' => 'email name',
-            'template_type' => "traditional",
+            'template_type' => 'traditional',
             'body_html' => '<div>{Consentactivity.consent_renewal}. {action.optOutUrl}. {domain.address}</div>',
             'body_text' => '{Consentactivity.consent_renewal}. {action.optOutUrl}. {domain.address}',
             'groups' => ['include' => [$groupId], 'exclude' => []],

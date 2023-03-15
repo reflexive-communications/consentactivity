@@ -11,8 +11,6 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class api_v3_ConsentactivityTagging_ProcessTest extends HeadlessTestCase
 {
-    use \Civi\Test\Api3TestTrait;
-
     /**
      * Test Process action without setting the search.
      * In this case it has to return 0 tagged contact

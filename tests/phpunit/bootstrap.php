@@ -1,12 +1,14 @@
 <?php
 
+use Composer\Autoload\ClassLoader;
+
 ini_set('memory_limit', '2G');
 ini_set('safe_mode', 0);
 // phpcs:disable
 eval(cv('php:boot --level=classloader', 'phpcode'));
 // phpcs:enable
 // Allow autoloading of PHPUnit helper classes in this extension.
-$loader = new \Composer\Autoload\ClassLoader();
+$loader = new ClassLoader();
 $loader->add('CRM_', __DIR__);
 $loader->add('Civi\\', __DIR__);
 $loader->add('api_', __DIR__);
@@ -29,9 +31,9 @@ $loader->register();
 function cv($cmd, $decode = 'json')
 {
     $cmd = 'cv '.$cmd;
-    $descriptorSpec = [0 => ["pipe", "r"], 1 => ["pipe", "w"], 2 => STDERR];
+    $descriptorSpec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => STDERR];
     $oldOutput = getenv('CV_OUTPUT');
-    putenv("CV_OUTPUT=json");
+    putenv('CV_OUTPUT=json');
 
     // Execute `cv` in the original folder. This is a work-around for
     // phpunit/codeception, which seem to manipulate PWD.
@@ -51,8 +53,8 @@ function cv($cmd, $decode = 'json')
 
         case 'phpcode':
             // If the last output is /*PHPCODE*/, then we managed to complete execution.
-            if (substr(trim($result), 0, 12) !== "/*BEGINPHP*/" || substr(trim($result), -10) !== "/*ENDPHP*/") {
-                throw new \RuntimeException("Command failed ($cmd):\n$result");
+            if (substr(trim($result), 0, 12) !== '/*BEGINPHP*/' || substr(trim($result), -10) !== '/*ENDPHP*/') {
+                throw new RuntimeException("Command failed ($cmd):\n$result");
             }
 
             return $result;
