@@ -5,17 +5,6 @@ use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * It checks the opt out process.
- * Given:
- * - contact
- * - email
- * - group
- * - contact is added to the group
- * - mosaico message, with the group as include group
- * - process mailing jobs
- * When:
- * - call the easy-opt-out landing
- *
  * @group headless
  */
 class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase

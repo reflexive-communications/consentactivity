@@ -8,9 +8,6 @@ use Civi\Test\Api3TestTrait;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * ConsentactivityExpire.Process API Test Case
- * This is a generic test class implemented with PHPUnit.
- *
  * @group headless
  */
 class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase

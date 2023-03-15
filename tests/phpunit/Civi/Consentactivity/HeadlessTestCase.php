@@ -9,9 +9,6 @@ use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Base class for headless tests.
- * It implements the before and teardown functions
- *
  * @group headless
  */
 class HeadlessTestCase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface

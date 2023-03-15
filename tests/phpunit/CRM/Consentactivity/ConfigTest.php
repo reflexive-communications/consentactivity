@@ -3,8 +3,6 @@
 use Civi\Consentactivity\HeadlessTestCase;
 
 /**
- * Config class base test cases.
- *
  * @group headless
  */
 class CRM_Consentactivity_ConfigTest extends HeadlessTestCase

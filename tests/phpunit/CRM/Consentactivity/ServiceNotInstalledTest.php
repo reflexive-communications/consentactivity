@@ -5,8 +5,6 @@ use Civi\Consentactivity\HeadlessTestCase;
 use Civi\Test;
 
 /**
- * Service class test cases.
- *
  * @group headless
  */
 class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase

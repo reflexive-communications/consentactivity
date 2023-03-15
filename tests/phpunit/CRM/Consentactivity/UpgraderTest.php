@@ -3,8 +3,6 @@
 use Civi\Consentactivity\HeadlessTestCase;
 
 /**
- * Tests for the Upgrader process.
- *
  * @group headless
  */
 class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase

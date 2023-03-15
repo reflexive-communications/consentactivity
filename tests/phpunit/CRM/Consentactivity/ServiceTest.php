@@ -18,8 +18,6 @@ use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * Service class test cases.
- *
  * @group headless
  */
 class CRM_Consentactivity_ServiceTest extends HeadlessTestCase

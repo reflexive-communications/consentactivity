@@ -4,8 +4,6 @@ use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * Settings form test cases.
- *
  * @group headless
  */
 class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
