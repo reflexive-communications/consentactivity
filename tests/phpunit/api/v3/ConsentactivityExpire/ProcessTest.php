@@ -4,7 +4,6 @@ use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\EntityTag;
 use Civi\Consentactivity\HeadlessTestCase;
-use Civi\Test\Api3TestTrait;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
@@ -12,8 +11,6 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
 {
-    use Api3TestTrait;
-
     /**
      * Test Process action without setting the search.
      * In this case it has to return 0 tagged contact
