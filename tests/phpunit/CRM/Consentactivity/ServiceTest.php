@@ -15,12 +15,13 @@ use Civi\Api4\OptionValue;
 use Civi\Api4\Phone;
 use Civi\Api4\Website;
 use Civi\Consentactivity\HeadlessTestCase;
+use Civi\Test\TransactionalInterface;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
  * @group headless
  */
-class CRM_Consentactivity_ServiceTest extends HeadlessTestCase
+class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements TransactionalInterface
 {
     public function testPostProcessMissingParameter()
     {

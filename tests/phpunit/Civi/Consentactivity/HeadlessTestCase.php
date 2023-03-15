@@ -4,14 +4,12 @@ namespace Civi\Consentactivity;
 
 use Civi\Test;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @group headless
  */
-class HeadlessTestCase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class HeadlessTestCase extends TestCase implements HeadlessInterface
 {
     /**
      * Apply a forced rebuild of DB, thus
