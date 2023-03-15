@@ -1,5 +1,7 @@
 <?php
 
+namespace Civi\Consentactivity;
+
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
@@ -10,7 +12,7 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class CRM_Consentactivity_HeadlessBase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class HeadlessTestCase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
 {
     public function setUpHeadless()
     {

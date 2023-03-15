@@ -1,13 +1,13 @@
 <?php
 
-use Civi\Test;
+use Civi\Consentactivity\HeadlessTestCase;
 
 /**
  * Tests for the Upgrader process.
  *
  * @group headless
  */
-class CRM_Consentactivity_UpgraderTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
 {
     /**
      * Test the install process.

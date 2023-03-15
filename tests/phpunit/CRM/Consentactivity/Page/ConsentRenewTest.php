@@ -1,7 +1,8 @@
 <?php
 
-use CRM_Consentactivity_ExtensionUtil as E;
 use Civi\Api4\Activity;
+use Civi\Consentactivity\HeadlessTestCase;
+use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
  * It checks the opt out process.
@@ -17,7 +18,7 @@ use Civi\Api4\Activity;
  *
  * @group headless
  */
-class CRM_Consentactivity_Page_ConsentRenewTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
 {
     const DOMAIN_NAME = 'my-domain';
 

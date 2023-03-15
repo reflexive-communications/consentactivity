@@ -1,10 +1,11 @@
 <?php
 
+use Civi\Api4\Activity;
+use Civi\Api4\Contact;
+use Civi\Api4\EntityTag;
+use Civi\Consentactivity\HeadlessTestCase;
 use Civi\Test\Api3TestTrait;
 use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Api4\Contact;
-use Civi\Api4\Activity;
-use Civi\Api4\EntityTag;
 
 /**
  * ConsentactivityExpire.Process API Test Case
@@ -12,7 +13,7 @@ use Civi\Api4\EntityTag;
  *
  * @group headless
  */
-class api_v3_ConsentactivityExpire_ProcessTest extends CRM_Consentactivity_HeadlessBase
+class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
 {
     use Api3TestTrait;
 

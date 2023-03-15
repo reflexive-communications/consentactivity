@@ -1,5 +1,6 @@
 <?php
 
+use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
@@ -7,7 +8,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
  *
  * @group headless
  */
-class CRM_Consentactivity_Form_SettingsTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
 {
     private static function testDefaultSetting(): array
     {

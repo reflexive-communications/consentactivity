@@ -1,6 +1,7 @@
 <?php
 
 use Civi\Api4\Contact;
+use Civi\Consentactivity\HeadlessTestCase;
 use Civi\Test;
 
 /**
@@ -8,7 +9,7 @@ use Civi\Test;
  *
  * @group headless
  */
-class CRM_Consentactivity_ServiceNotInstalledTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
 {
     /*
      * Overwrite setup function to skip the install of the current extension
