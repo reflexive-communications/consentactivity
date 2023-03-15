@@ -2,9 +2,11 @@
 
 namespace Civi\Consentactivity;
 
+use Civi\Test;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base class for headless tests.
@@ -12,12 +14,8 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class HeadlessTestCase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class HeadlessTestCase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
 {
-    public function setUpHeadless()
-    {
-    }
-
     /**
      * Apply a forced rebuild of DB, thus
      * create a clean DB before running tests
@@ -26,10 +24,17 @@ class HeadlessTestCase extends \PHPUnit\Framework\TestCase implements HeadlessIn
      */
     public static function setUpBeforeClass(): void
     {
-        // Resets DB and install depended extension
-        \Civi\Test::headless()
+        // Resets DB
+        Test::headless()
             ->install('rc-base')
             ->installMe(__DIR__)
             ->apply(true);
+    }
+
+    /**
+     * @return void
+     */
+    public function setUpHeadless(): void
+    {
     }
 }
