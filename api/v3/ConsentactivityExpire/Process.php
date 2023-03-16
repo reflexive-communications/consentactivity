@@ -1,21 +1,9 @@
 <?php
 
+use Civi\Api4\SavedSearch;
 use Civi\RcBase\ApiWrapper\Remove;
 use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
-use Civi\Api4\SavedSearch;
-
-/**
- * ConsentactivityExpire.Process API specification (optional)
- * This is used for documentation and validation.
- *
- * @param array $spec description of fields supported by this API call
- *
- * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
- */
-function _civicrm_api3_consentactivity_expire_Process_spec(&$spec)
-{
-}
 
 /**
  * ConsentactivityExpire.Process API
@@ -26,7 +14,7 @@ function _civicrm_api3_consentactivity_expire_Process_spec(&$spec)
  * @throws API_Exception
  * @see civicrm_api3_create_success
  */
-function civicrm_api3_consentactivity_expire_Process($params)
+function civicrm_api3_consentactivity_expire_Process($params): array
 {
     $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
     $cfg->load();

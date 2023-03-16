@@ -21,7 +21,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
      *
      * @throws CRM_Core_Exception
      */
-    public function preProcess()
+    public function preProcess(): void
     {
         // Get current settings
         $this->config = new CRM_Consentactivity_Config(E::LONG_NAME);
@@ -33,7 +33,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
      *
      * @return array
      */
-    public function setDefaultValues()
+    public function setDefaultValues(): array
     {
         $config = $this->config->get();
         // Set defaults
@@ -57,7 +57,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
      * Register validation rules
      * The import limit has to be numeric value. Client + server side validation.
      */
-    public function addRules()
+    public function addRules(): void
     {
         $this->addRule('consentExpirationYears', E::ts('Expiration year has to be numeric.'), 'numeric', null, 'client');
         $this->addRule('consentExpirationYears', E::ts('Expiration year has to be numeric.'), 'numeric');
@@ -120,7 +120,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         return empty($errors) ? true : $errors;
     }
 
-    public function buildQuickForm()
+    public function buildQuickForm(): void
     {
         $this->add('text', 'consentExpirationYears', E::ts('Consent Expiration Years'), [], true);
         $this->add('text', 'consentExpirationTaggingDays', E::ts('Tag Before Expiration Days'), [], true);
@@ -168,7 +168,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         Civi::resources()->addScriptFile(E::LONG_NAME, 'assets/js/settings.js');
     }
 
-    public function postProcess()
+    public function postProcess(): void
     {
         $config = $this->config->get();
         $config['tag-id'] = $this->_submitValues['tagId'];

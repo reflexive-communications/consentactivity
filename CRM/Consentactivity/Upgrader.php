@@ -12,7 +12,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      *
      * @throws CRM_Core_Exception
      */
-    public function install()
+    public function install(): void
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         // Create default configs
@@ -22,19 +22,11 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
     }
 
     /**
-     * After the installation, the activityType is created and stored in the
-     * setting db.
-     */
-    public function postInstall()
-    {
-    }
-
-    /**
      * When the extension is enabled, we have to make sure that the setup is still valid.
      * If the activity type has been changed manually, it has to be changed back to the
      * default values. If the activity type is missing, it has to be created again.
      */
-    public function enable()
+    public function enable(): void
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
@@ -95,7 +87,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      *
      * @throws CRM_Core_Exception
      */
-    public function uninstall()
+    public function uninstall(): void
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         // delete current configs
@@ -111,7 +103,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5000()
+    public function upgrade_5000(): bool
     {
         return true;
     }
@@ -123,7 +115,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5100()
+    public function upgrade_5100(): bool
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
@@ -156,7 +148,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5101()
+    public function upgrade_5101(): bool
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();

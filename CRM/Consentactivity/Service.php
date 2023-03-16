@@ -100,7 +100,7 @@ class CRM_Consentactivity_Service
      * @param string $formName the name of the current form
      * @param CRM_Core_Form $form
      */
-    public static function postProcess(string $formName, $form)
+    public static function postProcess(string $formName, $form):void
     {
         if (!self::formNameIsInFormList($formName)) {
             return;

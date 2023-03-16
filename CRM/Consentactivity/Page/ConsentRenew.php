@@ -4,7 +4,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
 {
-    public function run()
+    public function run(): void
     {
         // URL validation.
         $jobId = CRM_Utils_Request::retrieve('jid', 'Int');
