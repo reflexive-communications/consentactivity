@@ -1,13 +1,12 @@
 <?php
 
+use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * Tests for the Upgrader process.
- *
  * @group headless
  */
-class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
 {
     /**
      * Test the upgrade_5000 process.
@@ -19,11 +18,11 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $cfg = $config->get();
         unset($cfg['saved-search-id']);
         $config->update($cfg);
-        $installer = new CRM_Consentactivity_Upgrader(E::LONG_NAME, ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         try {
             $this->assertTrue($installer->upgrade_5000());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
         // should do nothing.
         $config->load();
@@ -46,11 +45,11 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         $cfg['saved-search-id'] = 10;
 
         $config->update($cfg);
-        $installer = new CRM_Consentactivity_Upgrader(E::LONG_NAME, ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         try {
             $this->assertTrue($installer->upgrade_5100());
         } catch (Exception $e) {
-            $this->fail("Should not throw exception. ".$e->getMessage());
+            $this->fail('Should not throw exception. '.$e->getMessage());
         }
         $config->load();
         $cfg = $config->get();
@@ -74,7 +73,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends CRM_Consentactivity_Head
         unset($cfg['consent-after-contribution']);
 
         $config->update($cfg);
-        $installer = new CRM_Consentactivity_Upgrader(E::LONG_NAME, ".");
+        $installer = new CRM_Consentactivity_Upgrader();
         self::assertTrue($installer->upgrade_5101());
         $config->load();
         $cfg = $config->get();

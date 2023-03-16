@@ -1,11 +1,11 @@
 <?php
 
+use Civi\Consentactivity\HeadlessTestCase;
+
 /**
- * Config class base test cases.
- *
  * @group headless
  */
-class CRM_Consentactivity_ConfigTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_ConfigTest extends HeadlessTestCase
 {
     /**
      * It checks that the create function works well.

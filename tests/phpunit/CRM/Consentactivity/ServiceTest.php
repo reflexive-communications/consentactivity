@@ -1,6 +1,5 @@
 <?php
 
-use CRM_Consentactivity_ExtensionUtil as E;
 use Civi\Api4\Activity;
 use Civi\Api4\Address;
 use Civi\Api4\Contact;
@@ -15,13 +14,14 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\Phone;
 use Civi\Api4\Website;
+use Civi\Consentactivity\HeadlessTestCase;
+use Civi\Test\TransactionalInterface;
+use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * Service class test cases.
- *
  * @group headless
  */
-class CRM_Consentactivity_ServiceTest extends CRM_Consentactivity_HeadlessBase
+class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements TransactionalInterface
 {
     public function testPostProcessMissingParameter()
     {
