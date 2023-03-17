@@ -1,18 +1,13 @@
 <?php
 
+use Civi\Api4\Activity;
+use Civi\Api4\Contact;
+use Civi\Api4\EntityTag;
+use Civi\Api4\GroupContact;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
-use Civi\Api4\Activity;
 use Civi\Api4\SavedSearch;
 use Civi\Api4\Tag;
-use Civi\Api4\EntityTag;
-use Civi\Api4\Contact;
-use Civi\Api4\GroupContact;
-use Civi\Api4\Email;
-use Civi\Api4\Address;
-use Civi\Api4\IM;
-use Civi\Api4\Phone;
-use Civi\Api4\Website;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -103,8 +98,12 @@ class CRM_Consentactivity_Service
      *
      * @param string $formName the name of the current form
      * @param CRM_Core_Form $form
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
-    public static function postProcess(string $formName, $form):void
+    public static function postProcess(string $formName, $form): void
     {
         if (!self::formNameIsInFormList($formName)) {
             return;
@@ -500,7 +499,7 @@ class CRM_Consentactivity_Service
         $activity = self::createConsentActivityToContact($objectRef->contact_id);
         if (isset($activity['id'])) {
             // update activity with sql
-            $sql = "UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2";
+            $sql = 'UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2';
             $params = [
                 1 => [$receiveDate, 'String'],
                 2 => [$activity['id'], 'Int'],

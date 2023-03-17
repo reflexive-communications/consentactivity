@@ -4,6 +4,7 @@ require_once 'consentactivity.civix.php';
 
 use Civi\Token\Event\TokenValueEvent;
 use CRM_Consentactivity_ExtensionUtil as E;
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * Implements hook_civicrm_config().
@@ -100,7 +101,7 @@ function consentactivity_civicrm_tokens(&$tokens): void
  */
 function consentactivity_civicrm_container($container): void
 {
-    $container->addResource(new \Symfony\Component\Config\Resource\FileResource(__FILE__));
+    $container->addResource(new FileResource(__FILE__));
     $container->findDefinition('dispatcher')->addMethodCall(
         'addListener',
         ['civi.token.eval', 'consentactivity_evaluate_tokens']
