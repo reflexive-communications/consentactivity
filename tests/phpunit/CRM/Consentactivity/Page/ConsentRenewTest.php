@@ -11,8 +11,11 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
 {
     const DOMAIN_NAME = 'my-domain';
 
-    /*
-     * On case of missing parameters (jid, qid, h) it has to throw exception.
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testRunMissingParameters()
     {
@@ -25,6 +28,12 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         $page->run();
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testRunInvalidParameters()
     {
         $_GET = [
@@ -44,6 +53,12 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         $page->run();
     }
 
+    /**
+     * @param string $title
+     *
+     * @return int
+     * @throws \CiviCRM_API3_Exception
+     */
     private function createGroup(string $title): int
     {
         $result = civicrm_api3('Group', 'create', [
@@ -57,6 +72,12 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         return $result['id'];
     }
 
+    /**
+     * @param int $groupId
+     *
+     * @return int
+     * @throws \CiviCRM_API3_Exception
+     */
     private function addNewContactWithEmailToGroup(int $groupId): int
     {
         $result = civicrm_api3('Contact', 'create', [
@@ -86,6 +107,10 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         return $contactId;
     }
 
+    /**
+     * @return void
+     * @throws \CiviCRM_API3_Exception
+     */
     private function setupMailing()
     {
         $result = civicrm_api3('Domain', 'create', [
@@ -129,6 +154,13 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         self::assertTrue(array_key_exists('id', $result), 'Missing id from the OptionValue update.');
     }
 
+    /**
+     * @param int $groupId
+     * @param int $contactId
+     *
+     * @return array
+     * @throws \CiviCRM_API3_Exception
+     */
     private function processMailing(int $groupId, int $contactId): array
     {
         $result = civicrm_api3('Mailing', 'create', [
@@ -165,6 +197,12 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         return civicrm_api3('Mailing', 'get', ['id' => $mailingId]);
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CiviCRM_API3_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testRunAddActivity()
     {
         $_GET = [];

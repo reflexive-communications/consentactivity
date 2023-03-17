@@ -8,7 +8,7 @@ use Civi\Consentactivity\HeadlessTestCase;
 class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
 {
     /**
-     * Test the install process.
+     * @return void
      */
     public function testInstall()
     {
@@ -21,7 +21,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
     }
 
     /**
-     * Test the postInstall process.
+     * @return void
      */
     public function testPostInstall()
     {
@@ -36,7 +36,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
     }
 
     /**
-     * Test the enable process.
+     * @return void
      */
     public function testEnableNoIssue()
     {
@@ -49,6 +49,10 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         }
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function testEnableOldVersionOptionValue()
     {
         $installer = new CRM_Consentactivity_Upgrader();
@@ -67,6 +71,10 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         }
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function testEnableOldVersionTagNotSet()
     {
         $installer = new CRM_Consentactivity_Upgrader();
@@ -88,6 +96,10 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         }
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function testEnableOldVersionTagDeleted()
     {
         $installer = new CRM_Consentactivity_Upgrader();
@@ -106,6 +118,10 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         }
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function testEnableOldVersionDeletedTagSearchDeletion()
     {
         $installer = new CRM_Consentactivity_Upgrader();
@@ -130,6 +146,10 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function testEnableOldVersionValidTagDeletedSearch()
     {
         $installer = new CRM_Consentactivity_Upgrader();
@@ -158,7 +178,8 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
     }
 
     /**
-     * Test the uninstall process.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testUninstall()
     {

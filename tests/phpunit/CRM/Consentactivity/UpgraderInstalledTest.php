@@ -9,7 +9,8 @@ use CRM_Consentactivity_ExtensionUtil as E;
 class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
 {
     /**
-     * Test the upgrade_5000 process.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testUpgrade5000()
     {
@@ -31,7 +32,8 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the upgrade_5100 process.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testUpgrade5100()
     {
@@ -61,7 +63,8 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the upgrade_5101 process.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testUpgrade5101()
     {

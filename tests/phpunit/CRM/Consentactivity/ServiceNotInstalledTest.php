@@ -9,9 +9,8 @@ use Civi\Test;
  */
 class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
 {
-    /*
-     * Overwrite setup function to skip the install of the current extension
-     * to be able to test the create steps of the service.
+    /**
+     * @return void
      */
     public static function setUpBeforeClass(): void
     {
@@ -21,7 +20,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the createDefaultActivityType function.
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testCreateDefaultActivityType()
     {
@@ -34,7 +35,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the postProcess function.
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testPostProcessInvalidFormName()
     {
@@ -50,7 +53,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the savedSearchExpired function.
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testSavedSearchExpired()
     {
@@ -60,7 +65,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the savedSearchExpiredUpdate function.
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testSavedSearchExpiredUpdate()
     {
@@ -72,7 +79,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the savedSearchTagging function.
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testSavedSearchTagging()
     {
@@ -82,7 +91,9 @@ class CRM_Consentactivity_ServiceNotInstalledTest extends HeadlessTestCase
     }
 
     /**
-     * Test the savedSearchTaggingUpdate function.
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testSavedSearchTaggingUpdate()
     {

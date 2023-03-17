@@ -4,6 +4,12 @@ use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
 {
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function run(): void
     {
         // URL validation.

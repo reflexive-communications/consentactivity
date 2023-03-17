@@ -25,6 +25,8 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * When the extension is enabled, we have to make sure that the setup is still valid.
      * If the activity type has been changed manually, it has to be changed back to the
      * default values. If the activity type is missing, it has to be created again.
+     *
+     * @throws \CRM_Core_Exception
      */
     public function enable(): void
     {

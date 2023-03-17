@@ -17,9 +17,8 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     private $config;
 
     /**
-     * Preprocess form
-     *
-     * @throws CRM_Core_Exception
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function preProcess(): void
     {
@@ -29,9 +28,8 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     }
 
     /**
-     * Set default values
-     *
      * @return array
+     * @throws \CRM_Core_Exception
      */
     public function setDefaultValues(): array
     {
@@ -54,8 +52,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     }
 
     /**
-     * Register validation rules
-     * The import limit has to be numeric value. Client + server side validation.
+     * @return void
      */
     public function addRules(): void
     {
@@ -71,6 +68,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     /**
      * Here's our custom validation callback for rejecting
      * the 0 as value for the years or days.
+     *
+     * @param $values
+     *
+     * @return array|true
      */
     public static function zeroNotAllowed($values)
     {
@@ -87,6 +88,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
 
     /**
      * It rejects the duplications of the tags.
+     *
+     * @param $values
+     *
+     * @return array|true
      */
     public static function sameTagsNotAllowed($values)
     {
@@ -102,6 +107,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     /**
      * It rejects the duplications on the custom fields.
      * One custom field has to point to one setting.
+     *
+     * @param $values
+     *
+     * @return array|true
      */
     public static function customFieldDuplicationNotAllowed($values)
     {
@@ -120,6 +129,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         return empty($errors) ? true : $errors;
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function buildQuickForm(): void
     {
         $this->add('text', 'consentExpirationYears', E::ts('Consent Expiration Years'), [], true);
@@ -168,6 +181,10 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         Civi::resources()->addScriptFile(E::LONG_NAME, 'assets/js/settings.js');
     }
 
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function postProcess(): void
     {
         $config = $this->config->get();

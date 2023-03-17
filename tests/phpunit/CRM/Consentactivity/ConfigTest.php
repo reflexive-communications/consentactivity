@@ -8,7 +8,8 @@ use Civi\Consentactivity\HeadlessTestCase;
 class CRM_Consentactivity_ConfigTest extends HeadlessTestCase
 {
     /**
-     * It checks that the create function works well.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testCreate()
     {

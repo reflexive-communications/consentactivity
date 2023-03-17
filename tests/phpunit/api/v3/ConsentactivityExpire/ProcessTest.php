@@ -12,9 +12,8 @@ use CRM_Consentactivity_ExtensionUtil as E;
 class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
 {
     /**
-     * Test Process action without setting the search.
-     * In this case it has to return 0 tagged contact
-     * and a message.
+     * @return void
+     * @throws \CiviCRM_API3_Exception
      */
     public function testApiProcessDefaultSearchId()
     {
@@ -24,9 +23,11 @@ class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
     }
 
     /**
-     * Test Process action with setting the search.
-     * Actions will not be set for contacts, so that
-     * it has to return 0 tagged contact and the date.
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \CiviCRM_API3_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testApiProcessNoRelevantContact()
     {
@@ -51,9 +52,11 @@ class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
     }
 
     /**
-     * Test Process action with setting the search.
-     * Actions and tag will be set for 1 contact, so that
-     * it has to return it as the handled one.
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \CiviCRM_API3_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testApiProcessWithContact()
     {
