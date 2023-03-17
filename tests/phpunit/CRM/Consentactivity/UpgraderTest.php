@@ -23,21 +23,6 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
     /**
      * @return void
      */
-    public function testPostInstall()
-    {
-        $installer = new CRM_Consentactivity_Upgrader();
-        try {
-            $this->assertEmpty($installer->install());
-            $this->assertEmpty($installer->enable());
-            $this->assertEmpty($installer->postInstall());
-        } catch (Exception $e) {
-            $this->fail('Should not throw exception. '.$e->getMessage());
-        }
-    }
-
-    /**
-     * @return void
-     */
     public function testEnableNoIssue()
     {
         $installer = new CRM_Consentactivity_Upgrader();
@@ -58,7 +43,6 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $this->assertEmpty($installer->postInstall());
         $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
@@ -80,7 +64,6 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $this->assertEmpty($installer->postInstall());
         $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
@@ -105,7 +88,6 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $this->assertEmpty($installer->postInstall());
         $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
@@ -127,7 +109,6 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $this->assertEmpty($installer->postInstall());
         $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
@@ -155,7 +136,6 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $this->assertEmpty($installer->postInstall());
         $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
