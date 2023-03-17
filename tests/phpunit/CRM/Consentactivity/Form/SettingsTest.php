@@ -8,6 +8,9 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
 {
+    /**
+     * @return array
+     */
     private static function testDefaultSetting(): array
     {
         return [
@@ -24,6 +27,9 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     private function setupTestDefaultConfig()
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
@@ -31,9 +37,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * PreProcess test case with existing config.
-     * Setup test configuration then call the function.
-     * It shouldn't throw exception.
+     * @return void
      */
     public function testPreProcessExistingConfig()
     {
@@ -62,8 +66,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * setDefaultValues test case. It has to return
-     * the config values.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testSetDefaultValues()
     {
@@ -87,8 +91,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * addRules test case with existing config.
-     * It shouldn't throw exception.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testAddRules()
     {
@@ -104,7 +108,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * zeroNotAllowed test case.
+     * @return void
      */
     public function testZeroNotAllowed()
     {
@@ -125,7 +129,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * sameTagsNotAllowed test case.
+     * @return void
      */
     public function testSameTagsNotAllowed()
     {
@@ -141,7 +145,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * customFieldDuplicationNotAllowed test case.
+     * @return void
      */
     public function testCustomFieldDuplicationNotAllowed()
     {
@@ -161,10 +165,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * Build quick form test case.
-     * Setup test configuration, preProcess then call the function.
-     * It shouldn't throw exception.
-     * The title should be set.
+     * @return void
+     * @throws \CRM_Core_Exception
      */
     public function testBuildQuickFormNoActionState()
     {
@@ -192,8 +194,10 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     }
 
     /**
-     * Post Process test cases.
-     * The necessary params are updated manually.
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testPostDefaultOriginalValues()
     {
@@ -229,6 +233,12 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame(true, $cfg['consent-after-contribution']);
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostDefaultSearchUpdate()
     {
         $_POST['tagId'] = '2';
@@ -267,6 +277,12 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame($cfg['tagging-search-id'], $cfgNew['tagging-search-id']);
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostMapping()
     {
         $_POST['tagId'] = '2';

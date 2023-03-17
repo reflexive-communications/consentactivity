@@ -23,6 +23,11 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements TransactionalInterface
 {
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessMissingParameter()
     {
         $form = new CRM_Profile_Form_Edit();
@@ -40,6 +45,9 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(1, count($activities));
     }
 
+    /**
+     * @return void
+     */
     public function testPostProcessInvalidContactId()
     {
         $form = new CRM_Profile_Form_Edit();
@@ -50,6 +58,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcess()
     {
         $form = new CRM_Profile_Form_Edit();
@@ -66,6 +79,12 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(1, count($activities));
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessWithUpdatedTagId()
     {
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
@@ -100,6 +119,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(0, count($tags));
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessEventConfirmForm()
     {
         $form = new CRM_Event_Form_Registration_Confirm();
@@ -116,6 +140,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(1, count($activities));
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessEventRegisterFormConfirmEnabled()
     {
         $form = new CRM_Event_Form_Registration_Register();
@@ -132,6 +161,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(0, count($activities));
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessEventRegisterFormConfirmDisabled()
     {
         $form = new CRM_Event_Form_Registration_Register();
@@ -148,8 +182,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(1, count($activities));
     }
 
-    /*
-     * The previously created checkbox will be returned.
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testCustomCheckboxFields()
     {
@@ -194,6 +231,12 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertSame(1, count($params));
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessWithCustomFields()
     {
         $customGroup = CustomGroup::create(false)
@@ -257,6 +300,12 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostProcessWithCustomFieldsUpdateGroupStatus()
     {
         $customGroup = CustomGroup::create(false)
@@ -360,6 +409,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testAnonymizeContact()
     {
         // contact
@@ -485,8 +539,11 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         }
     }
 
-    /*
-     * It tests the post function.
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testPostNotRelevantData()
     {
@@ -520,6 +577,12 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertCount(count($activitiesOriginal), $activities);
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostConfigNotSet()
     {
         $contact = Contact::create(false)
@@ -541,6 +604,12 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertCount(count($activitiesOriginal), $activities);
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostOldReceiveDate()
     {
         $contact = Contact::create(false)
@@ -564,6 +633,12 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         self::assertCount(count($activitiesOriginal), $activities);
     }
 
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public function testPostTriggerActivity()
     {
         $contact = Contact::create(false)

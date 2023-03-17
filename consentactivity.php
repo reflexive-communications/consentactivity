@@ -2,17 +2,16 @@
 
 require_once 'consentactivity.civix.php';
 
-// phpcs:disable
+use Civi\Token\Event\TokenValueEvent;
 use CRM_Consentactivity_ExtensionUtil as E;
-
-// phpcs:enable
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * Implements hook_civicrm_config().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/
  */
-function consentactivity_civicrm_config(&$config)
+function consentactivity_civicrm_config(&$config): void
 {
     _consentactivity_civix_civicrm_config($config);
 }
@@ -22,7 +21,7 @@ function consentactivity_civicrm_config(&$config)
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postProcess
  */
-function consentactivity_civicrm_postProcess($formName, $form)
+function consentactivity_civicrm_postProcess($formName, $form): void
 {
     CRM_Consentactivity_Service::postProcess($formName, $form);
 }
@@ -32,7 +31,7 @@ function consentactivity_civicrm_postProcess($formName, $form)
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
  */
-function consentactivity_civicrm_navigationMenu(&$menu)
+function consentactivity_civicrm_navigationMenu(&$menu): void
 {
     _consentactivity_civix_insert_navigation_menu($menu, 'Administer', [
         'label' => E::ts('Consentactivity Settings'),
@@ -54,7 +53,7 @@ function consentactivity_civicrm_navigationMenu(&$menu)
  * @param CRM_Core_Form $form
  * @param array $errors
  */
-function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
+function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors): void
 {
     // extend tag validation. On case of tag deletion, check
     if ($formName === 'CRM_Tag_Form_Edit' && $form->_action === CRM_Core_Action::DELETE) {
@@ -78,7 +77,7 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_post
  */
-function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef)
+function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef): void
 {
     CRM_Consentactivity_Service::post($op, $objectName, $objectId, $objectRef);
 }
@@ -88,7 +87,7 @@ function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef)
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
  */
-function consentactivity_civicrm_tokens(&$tokens)
+function consentactivity_civicrm_tokens(&$tokens): void
 {
     $tokens['Consentactivity'] = [
         'Consentactivity.consent_renewal' => E::ts('Renew Consent Link'),
@@ -100,16 +99,16 @@ function consentactivity_civicrm_tokens(&$tokens)
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container
  */
-function consentactivity_civicrm_container($container)
+function consentactivity_civicrm_container($container): void
 {
-    $container->addResource(new \Symfony\Component\Config\Resource\FileResource(__FILE__));
+    $container->addResource(new FileResource(__FILE__));
     $container->findDefinition('dispatcher')->addMethodCall(
         'addListener',
         ['civi.token.eval', 'consentactivity_evaluate_tokens']
     );
 }
 
-function consentactivity_evaluate_tokens(\Civi\Token\Event\TokenValueEvent $e)
+function consentactivity_evaluate_tokens(TokenValueEvent $e): void
 {
     foreach ($e->getRows() as $row) {
         $urlParams = [

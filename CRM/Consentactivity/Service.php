@@ -1,18 +1,13 @@
 <?php
 
+use Civi\Api4\Activity;
+use Civi\Api4\Contact;
+use Civi\Api4\EntityTag;
+use Civi\Api4\GroupContact;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
-use Civi\Api4\Activity;
 use Civi\Api4\SavedSearch;
 use Civi\Api4\Tag;
-use Civi\Api4\EntityTag;
-use Civi\Api4\Contact;
-use Civi\Api4\GroupContact;
-use Civi\Api4\Email;
-use Civi\Api4\Address;
-use Civi\Api4\IM;
-use Civi\Api4\Phone;
-use Civi\Api4\Website;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 class CRM_Consentactivity_Service
@@ -46,13 +41,15 @@ class CRM_Consentactivity_Service
         '\Civi\Api4\Email',
     ];
 
-    /*
+    /**
      * It creates the activity type for the gdpr consent activity.
      * By default it usess the hardcoded values. If an existing activity has to be used as
      * default consent activity, the label has to be updated to the default value. The service
      * will use that one.
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function createDefaultActivityType(): array
     {
@@ -73,7 +70,7 @@ class CRM_Consentactivity_Service
         return $result;
     }
 
-    /*
+    /**
      * It updates an existing activity type with making it reserved and active.
      * As the update does not return all fields, the getActivityType function is
      * returned.
@@ -81,6 +78,8 @@ class CRM_Consentactivity_Service
      * @param int $optionValueId
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function updateExistingActivityType(int $optionValueId): array
     {
@@ -99,8 +98,12 @@ class CRM_Consentactivity_Service
      *
      * @param string $formName the name of the current form
      * @param CRM_Core_Form $form
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
-    public static function postProcess(string $formName, $form)
+    public static function postProcess(string $formName, $form): void
     {
         if (!self::formNameIsInFormList($formName)) {
             return;
@@ -134,6 +137,9 @@ class CRM_Consentactivity_Service
      * @param int $contactId the id of the contact that triggers the activity
      *
      * @return array the created activity.
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function createConsentActivityToContact(int $contactId): array
     {
@@ -165,12 +171,14 @@ class CRM_Consentactivity_Service
         return $activity;
     }
 
-    /*
+    /**
      * It is a wrapper function for option value get api call.
      *
      * @param int $optionValueId
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function getActivityType(int $optionValueId): array
     {
@@ -182,13 +190,18 @@ class CRM_Consentactivity_Service
         return $result ?? [];
     }
 
-    /*
+    /**
      * This function creates a saved search, that could be the base query of the
      * gathering process of the contacts with old consents.
      *
      * @param string $activityName
+     * @param string $tagId
+     * @param string $anonimizedTagId
+     * @param bool $aclFlag
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function savedSearchExpired(string $activityName, string $tagId, string $anonimizedTagId, bool $aclFlag = true): array
     {
@@ -201,6 +214,17 @@ class CRM_Consentactivity_Service
         return $results->first();
     }
 
+    /**
+     * @param string $activityName
+     * @param string $tagId
+     * @param string $anonimizedTagId
+     * @param int $savedSearchId
+     * @param bool $aclFlag
+     *
+     * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public static function savedSearchExpiredUpdate(string $activityName, string $tagId, string $anonimizedTagId, int $savedSearchId, bool $aclFlag = true): array
     {
         $results = SavedSearch::update($aclFlag)
@@ -213,13 +237,17 @@ class CRM_Consentactivity_Service
         return $results->first();
     }
 
-    /*
+    /**
      * This function creates a saved search, that could be the base query of the
      * gathering process of the contacts with old consents.
      *
      * @param string $activityName
+     * @param string $anonimizedTagId
+     * @param bool $aclFlag
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function savedSearchTagging(string $activityName, string $anonimizedTagId, bool $aclFlag = true): array
     {
@@ -232,6 +260,16 @@ class CRM_Consentactivity_Service
         return $results->first();
     }
 
+    /**
+     * @param string $activityName
+     * @param string $anonimizedTagId
+     * @param int $savedSearchId
+     * @param bool $aclFlag
+     *
+     * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
     public static function savedSearchTaggingUpdate(string $activityName, string $anonimizedTagId, int $savedSearchId, bool $aclFlag = true): array
     {
         $results = SavedSearch::update($aclFlag)
@@ -244,12 +282,14 @@ class CRM_Consentactivity_Service
         return $results->first();
     }
 
-    /*
+    /**
      * It is a wrapper function for saved search get api call.
      *
      * @param int $savedSearchId
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function getSavedSearch(int $savedSearchId): array
     {
@@ -261,12 +301,14 @@ class CRM_Consentactivity_Service
         return $result ?? [];
     }
 
-    /*
+    /**
      * It is a wrapper function for saved searchdelete api call.
      *
      * @param int $savedSearchId
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function deleteSavedSearch(int $savedSearchId): array
     {
@@ -278,13 +320,15 @@ class CRM_Consentactivity_Service
         return $result ?? [];
     }
 
-    /*
+    /**
      * It checks that the tag with the given tagId exists
      * or not.
      *
      * @param int $tagId
      *
      * @return bool
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function tagExists(int $tagId): bool
     {
@@ -296,7 +340,7 @@ class CRM_Consentactivity_Service
         return count($tags) === 1;
     }
 
-    /*
+    /**
      * It returns the consend field options for the settings
      * admin field.
      *
@@ -321,11 +365,12 @@ class CRM_Consentactivity_Service
         return $paramOptions;
     }
 
-    /*
+    /**
      * It returns the custom field options for the settings
      * admin field. Only the checkbox types are returned.
      *
      * @return array
+     * @throws \CRM_Core_Exception
      */
     public static function customCheckboxFields(): array
     {
@@ -351,7 +396,7 @@ class CRM_Consentactivity_Service
         return $paramOptions;
     }
 
-    /*
+    /**
      * It deletes the following contact related data:
      * - Webpage
      * - Instant message addresses
@@ -365,6 +410,9 @@ class CRM_Consentactivity_Service
      * Also sets the privacy flags.
      *
      * @param int $contactId
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function anonymizeContact(int $contactId): void
     {
@@ -427,6 +475,10 @@ class CRM_Consentactivity_Service
      * @param string $objectName
      * @param $objectId - the unique identifier for the object.
      * @param $objectRef - the reference to the object if available.
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public static function post(string $op, string $objectName, $objectId, &$objectRef): void
     {
@@ -447,7 +499,7 @@ class CRM_Consentactivity_Service
         $activity = self::createConsentActivityToContact($objectRef->contact_id);
         if (isset($activity['id'])) {
             // update activity with sql
-            $sql = "UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2";
+            $sql = 'UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2';
             $params = [
                 1 => [$receiveDate, 'String'],
                 2 => [$activity['id'], 'Int'],
@@ -456,12 +508,14 @@ class CRM_Consentactivity_Service
         }
     }
 
-    /*
+    /**
      * It checks the form variables and does the actions based on the
      * settings in the consent admin form.
      *
      * @param int $contactId
      * @param array $submitValues
+     *
+     * @throws \CRM_Core_Exception
      */
     private static function consentFieldAndGroupMaintenace(int $contactId, array $submitValues): void
     {
@@ -485,11 +539,14 @@ class CRM_Consentactivity_Service
         }
     }
 
-    /*
+    /**
      * It handles the group insertion or status update action.
      *
      * @param int $contactId
      * @param int $groupId
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     private static function addContactToGroup(int $contactId, int $groupId): void
     {
@@ -520,12 +577,15 @@ class CRM_Consentactivity_Service
             ->execute();
     }
 
-    /*
+    /**
      * It updates the contact consent field to the given state
      * if it is not yet given.
      *
      * @param int $contactId
      * @param string $consentField
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     private static function giveConsentIfNotYetGiven(int $contactId, string $consentField): void
     {
@@ -544,7 +604,7 @@ class CRM_Consentactivity_Service
         }
     }
 
-    /*
+    /**
      * It returns true if the given formName is in the predefined list.
      * Otherwise it returns false.
      *
@@ -557,11 +617,13 @@ class CRM_Consentactivity_Service
         return array_search($formName, self::FORMS_THAT_COULD_CONTAIN_OPT_OUT_FIELDS) > -1;
     }
 
-    /*
+    /**
      * This function gets the option group id of the activity_type option group.
      * It will be necessary for finding the option value.
      *
      * @return int
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     private static function getActivityTypeOptionGroupId(): int
     {
@@ -575,7 +637,7 @@ class CRM_Consentactivity_Service
         return $optionGroup['id'];
     }
 
-    /*
+    /**
      * It returns an array as activity type.
      * It tries to find the existing activity type. If not found
      * It returns empty array.
@@ -583,6 +645,8 @@ class CRM_Consentactivity_Service
      * @param int $optionGroupId
      *
      * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     private static function findActivityType(int $optionGroupId): array
     {
@@ -603,6 +667,12 @@ class CRM_Consentactivity_Service
         return self::updateExistingActivityType($optionValue['id']);
     }
 
+    /**
+     * @param string $activityName
+     * @param string $anonimizedTagId
+     *
+     * @return array
+     */
     private static function savedSearchTaggingApiParams(string $activityName, string $anonimizedTagId): array
     {
         return [
@@ -669,6 +739,13 @@ class CRM_Consentactivity_Service
         ];
     }
 
+    /**
+     * @param string $activityName
+     * @param string $tagId
+     * @param string $anonimizedTagId
+     *
+     * @return array
+     */
     private static function savedSearchExpiredApiParams(string $activityName, string $tagId, string $anonimizedTagId): array
     {
         return [
