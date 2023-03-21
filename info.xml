@@ -38,6 +38,7 @@
     </classloader>
     <mixins>
         <mixin>menu-xml@1.0.0</mixin>
+        <mixin>mgd-php@1.0.0</mixin>
     </mixins>
     <upgrader>CRM_Consentactivity_Upgrader</upgrader>
     <civix>
