@@ -9,7 +9,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
 /**
  * @group headless
  */
-class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
+class api_v3_Consentactivity_ExpireTest extends HeadlessTestCase
 {
     /**
      * @return void
@@ -17,7 +17,7 @@ class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
      */
     public function testApiProcessDefaultSearchId()
     {
-        $result = civicrm_api3('ConsentactivityExpire', 'process');
+        $result = civicrm_api3('Consentactivity', 'expire');
         self::assertSame(0, $result['values']['handled']);
         self::assertSame(E::ts('Saved Search is not set.'), $result['values']['message']);
     }
@@ -46,9 +46,9 @@ class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
         $config['expired-tag-id'] = '1';
         $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
-        $result = civicrm_api3('ConsentactivityExpire', 'process', []);
+        $result = civicrm_api3('Consentactivity', 'expire');
         self::assertSame(0, $result['values']['handled']);
-        self::assertTrue(array_key_exists('date', $result['values']));
+        self::assertArrayHasKey('date', $result['values']);
     }
 
     /**
@@ -89,7 +89,7 @@ class api_v3_ConsentactivityExpire_ProcessTest extends HeadlessTestCase
             ->addValue('entity_id', $contact['id'])
             ->addValue('tag_id', $config['tag-id'])
             ->execute();
-        $result = civicrm_api3('ConsentactivityExpire', 'process', []);
+        $result = civicrm_api3('Consentactivity', 'expire');
         self::assertCount(0, $result['values']['errors']);
         self::assertSame(1, $result['values']['handled'], 'Invalid number of handled: '.$result['values']['handled']);
         $updatedContact = Contact::get(false)

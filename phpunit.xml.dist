@@ -20,8 +20,7 @@
             <file>./consentactivity.civix.php</file>
             <file>./CRM/Consentactivity/Upgrader/Base.php</file>
             <!-- Skip mgd files managed database record -->
-            <directory suffix="mgd.php">./api/v3/ConsentactivityExpire/</directory>
-            <directory suffix="mgd.php">./api/v3/ConsentactivityTagging/</directory>
+            <directory suffix="mgd.php">./api/v3/Consentactivity</directory>
         </exclude>
     </coverage>
     <testsuites>
