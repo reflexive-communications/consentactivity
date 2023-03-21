@@ -49,6 +49,5 @@ function civicrm_api3_consentactivity_tagging_Process($params): array
         }
     }
 
-    // Spec: civicrm_api3_create_success($values = 1, $params = [], $entity = NULL, $action = NULL)
     return civicrm_api3_create_success(['found' => $taggedContacts, 'date' => $search['api_params']['having'][0][2]], $params, 'ConsentactivityTagging', 'Process');
 }
