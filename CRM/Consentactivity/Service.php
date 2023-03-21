@@ -499,12 +499,10 @@ class CRM_Consentactivity_Service
         $activity = self::createConsentActivityToContact($objectRef->contact_id);
         if (isset($activity['id'])) {
             // update activity with sql
-            $sql = 'UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2';
-            $params = [
+            \Civi\RcBase\Utils\DB::query('UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2', [
                 1 => [$receiveDate, 'String'],
-                2 => [$activity['id'], 'Int'],
-            ];
-            CRM_Core_DAO::executeQuery($sql, $params);
+                2 => [$activity['id'], 'Positive'],
+            ]);
         }
     }
 
