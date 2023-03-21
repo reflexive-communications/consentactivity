@@ -18,7 +18,6 @@
             <!-- Skip generated files -->
             <file>./consentactivity.php</file>
             <file>./consentactivity.civix.php</file>
-            <file>./CRM/Consentactivity/Upgrader/Base.php</file>
             <!-- Skip mgd files managed database record -->
             <directory suffix="mgd.php">./api/v3/Consentactivity</directory>
         </exclude>
