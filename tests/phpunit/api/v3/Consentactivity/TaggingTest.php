@@ -9,7 +9,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
 /**
  * @group headless
  */
-class api_v3_ConsentactivityTagging_ProcessTest extends HeadlessTestCase
+class api_v3_Consentactivity_TaggingTest extends HeadlessTestCase
 {
     /**
      * @return void
@@ -17,7 +17,7 @@ class api_v3_ConsentactivityTagging_ProcessTest extends HeadlessTestCase
      */
     public function testApiProcessDefaultSearchId()
     {
-        $result = civicrm_api3('ConsentactivityTagging', 'process');
+        $result = civicrm_api3('Consentactivity', 'tagging');
         self::assertSame(0, $result['values']['tagged']);
         self::assertSame(ts('Saved Search is not set.'), $result['values']['message']);
     }
@@ -45,9 +45,9 @@ class api_v3_ConsentactivityTagging_ProcessTest extends HeadlessTestCase
         $config['expired-tag-id'] = '1';
         $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
-        $result = civicrm_api3('ConsentactivityTagging', 'process', []);
+        $result = civicrm_api3('Consentactivity', 'tagging');
         self::assertSame(0, $result['values']['found']);
-        self::assertTrue(array_key_exists('date', $result['values']));
+        self::assertArrayHasKey('date', $result['values']);
     }
 
     /**
@@ -83,9 +83,9 @@ class api_v3_ConsentactivityTagging_ProcessTest extends HeadlessTestCase
         $config['expired-tag-id'] = '1';
         $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
-        $result = civicrm_api3('ConsentactivityTagging', 'process');
+        $result = civicrm_api3('Consentactivity', 'tagging');
         self::assertSame(1, $result['values']['found']);
-        self::assertTrue(array_key_exists('date', $result['values']));
+        self::assertArrayHasKey('date', $result['values']);
         // check tag on the contact
         $entityTags = EntityTag::get()
             ->addWhere('entity_table', '=', 'civicrm_contact')

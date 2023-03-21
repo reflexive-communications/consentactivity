@@ -70,10 +70,6 @@ msgstr "Hozzájárulás megújítása sikertelen"
 msgid "Thank you for staying with us."
 msgstr "Köszönjük, hogy velünk maradsz!"
 
-#: ./CRM/Consentactivity/Upgrader/Base.php
-msgid "Upgrade %1 to revision %2"
-msgstr "Upgrade %1 to revision %2"
-
 #: ./CRM/Consentactivity/Upgrader.php
 msgid " could not create configs in database"
 msgstr " could not create configs in database"
@@ -82,7 +78,7 @@ msgstr " could not create configs in database"
 msgid " could not remove configs from database"
 msgstr " could not remove configs from database"
 
-#: ./api/v3/ConsentactivityExpire/Process.php ./api/v3/ConsentactivityTagging/Process.php ./tests/phpunit/api/v3/ConsentactivityExpire/ProcessTest.php ./tests/phpunit/api/v3/ConsentactivityTagging/ProcessTest.php
+#: ./api/v3/Consentactivity/Expire.php ./api/v3/Consentactivity/Tagging.php ./tests/phpunit/api/v3/Consentactivity/ExpireTest.php ./tests/phpunit/api/v3/Consentactivity/TaggingTest.php
 msgid "Saved Search is not set."
 msgstr "Mentett keresés nincs beállítva."
 
@@ -133,4 +129,3 @@ msgstr "Csoport"
 #: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
 msgid "The %1 team."
 msgstr "Üdvözlettel: %1 csapata."
-

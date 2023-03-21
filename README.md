@@ -31,11 +31,11 @@ The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 The settings form could be reached from the `Administer > Consentactivity Settings` menu. You can set the expiration parameters, enable or disable the consent activity after contribution and define the pseudo privacy fields.
 
-![Settings form](./assets/docs/admin-settings-form.png)
+![Settings form](./images/admin-settings-form.png)
 
 ## Consent renew page
 
-![Consent renew page](./assets/docs/consent-renew-page.png)
+![Consent renew page](./images/consent-renew-page.png)
 
 ## Requirements
 

@@ -6,7 +6,7 @@ use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * ConsentactivityExpire.Process API
+ * Consentactivity.Expire API
  *
  * @param array $params
  *
@@ -14,14 +14,14 @@ use CRM_Consentactivity_ExtensionUtil as E;
  * @throws API_Exception
  * @see civicrm_api3_create_success
  */
-function civicrm_api3_consentactivity_expire_Process($params): array
+function civicrm_api3_consentactivity_Expire($params): array
 {
     $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
     $cfg->load();
     $config = $cfg->get();
     // Don't need to execute the process if the search query is not set yet.
     if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
-        return civicrm_api3_create_success(['handled' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'ConsentactivityExpire', 'Process');
+        return civicrm_api3_create_success(['handled' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'Consentactivity', 'expire');
     }
     $search = SavedSearch::get(false)
         ->addWhere('id', '=', $config['saved-search-id'])
@@ -64,5 +64,5 @@ function civicrm_api3_consentactivity_expire_Process($params): array
         return civicrm_api3_create_error('Errors occurred during the execution.', $response);
     }
 
-    return civicrm_api3_create_success($response, $params, 'ConsentactivityExpire', 'Process');
+    return civicrm_api3_create_success($response, $params, 'Consentactivity', 'expire');
 }

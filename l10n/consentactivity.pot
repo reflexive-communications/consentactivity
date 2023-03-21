@@ -70,10 +70,6 @@ msgstr ""
 msgid "Thank you for staying with us."
 msgstr ""
 
-#: ./CRM/Consentactivity/Upgrader/Base.php
-msgid "Upgrade %1 to revision %2"
-msgstr ""
-
 #: ./CRM/Consentactivity/Upgrader.php
 msgid " could not create configs in database"
 msgstr ""
@@ -82,7 +78,7 @@ msgstr ""
 msgid " could not remove configs from database"
 msgstr ""
 
-#: ./api/v3/ConsentactivityExpire/Process.php ./api/v3/ConsentactivityTagging/Process.php ./tests/phpunit/api/v3/ConsentactivityExpire/ProcessTest.php ./tests/phpunit/api/v3/ConsentactivityTagging/ProcessTest.php
+#: ./api/v3/Consentactivity/Expire.php ./api/v3/Consentactivity/Tagging.php ./tests/phpunit/api/v3/Consentactivity/ExpireTest.php ./tests/phpunit/api/v3/Consentactivity/TaggingTest.php
 msgid "Saved Search is not set."
 msgstr ""
 

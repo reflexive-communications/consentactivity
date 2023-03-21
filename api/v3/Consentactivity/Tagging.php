@@ -5,7 +5,7 @@ use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
- * ConsentactivityTagging.Process API
+ * Consentactivity.Tagging API
  *
  * @param array $params
  *
@@ -13,14 +13,14 @@ use CRM_Consentactivity_ExtensionUtil as E;
  * @throws API_Exception
  * @see civicrm_api3_create_success
  */
-function civicrm_api3_consentactivity_tagging_Process($params): array
+function civicrm_api3_consentactivity_Tagging($params): array
 {
     $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
     $cfg->load();
     $config = $cfg->get();
     // Don't need to execute the process if the search query is not set yet.
     if ($config['tagging-search-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
-        return civicrm_api3_create_success(['tagged' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'ConsentactivityTagging', 'Process');
+        return civicrm_api3_create_success(['tagged' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'Consentactivity', 'tagging');
     }
     $search = SavedSearch::get(false)
         ->addWhere('id', '=', $config['tagging-search-id'])
@@ -49,6 +49,5 @@ function civicrm_api3_consentactivity_tagging_Process($params): array
         }
     }
 
-    // Spec: civicrm_api3_create_success($values = 1, $params = [], $entity = NULL, $action = NULL)
-    return civicrm_api3_create_success(['found' => $taggedContacts, 'date' => $search['api_params']['having'][0][2]], $params, 'ConsentactivityTagging', 'Process');
+    return civicrm_api3_create_success(['found' => $taggedContacts, 'date' => $search['api_params']['having'][0][2]], $params, 'Consentactivity', 'tagging');
 }
