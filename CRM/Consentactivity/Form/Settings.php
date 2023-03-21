@@ -178,7 +178,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         );
         $this->setTitle(E::ts('Consentactivity Settings'));
         // js file that handles the new map entry event.
-        Civi::resources()->addScriptFile(E::LONG_NAME, 'assets/js/settings.js');
+        Civi::resources()->addScriptFile(E::LONG_NAME, 'js/settings.js');
     }
 
     /**
