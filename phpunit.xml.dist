@@ -6,6 +6,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          convertDeprecationsToExceptions="true"
+         failOnRisky="true"
          bootstrap="tests/phpunit/bootstrap.php"
          testdox="true">
     <coverage>
@@ -23,7 +24,7 @@
         </exclude>
     </coverage>
     <testsuites>
-        <testsuite name="My Test Suite">
+        <testsuite name="all">
             <directory>./tests/phpunit</directory>
         </testsuite>
     </testsuites>
