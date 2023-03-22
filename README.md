@@ -40,10 +40,10 @@ The settings form could be reached from the `Administer > Consentactivity Settin
 ## Requirements
 
 -   PHP v7.3+
--   CiviCRM v5.37.1
--   RcBase v0.8.2
+-   CiviCRM v5.38+
+-   rc-base
 
-## Installation (CLI, Git)
+## Installation
 
 Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) repo for this extension and
 install it with the command-line tool [cv](https://github.com/civicrm/cv).

@@ -52,6 +52,8 @@ function consentactivity_civicrm_navigationMenu(&$menu): void
  * @param array $files
  * @param CRM_Core_Form $form
  * @param array $errors
+ *
+ * @throws \CRM_Core_Exception
  */
 function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors): void
 {
