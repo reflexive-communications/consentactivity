@@ -42,7 +42,6 @@ The settings form could be reached from the `Administer > Consentactivity Settin
 -   PHP v7.3+
 -   CiviCRM v5.37.1
 -   RcBase v0.8.2
--   Flexmailer
 
 ## Installation (CLI, Git)
 
