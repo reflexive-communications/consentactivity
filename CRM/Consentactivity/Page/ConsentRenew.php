@@ -12,11 +12,16 @@ class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
     /**
      * @return void
      * @throws \Civi\RcBase\Exception\APIException
+     * @throws \CRM_Core_Exception
      */
     public function run(): void
     {
-        $org_name = Get::entityByID('Domain', CRM_Core_Config::domainID(), 'name');
-        $this->assign('org_name', $org_name);
+        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config->load();
+        $cfg = $config->get();
+
+        $this->assign('org_name', Get::entityByID('Domain', CRM_Core_Config::domainID(), 'name'));
+        $this->assign('email_contact', $cfg['email-contact'] ?? '');
 
         Civi::resources()->addStyleFile(E::LONG_NAME, 'assets/css/landing.css');
 
@@ -39,9 +44,6 @@ class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
                 throw new \Civi\RcBase\Exception\RunTimeException('Failed to renew consent');
             }
 
-            $config = new CRM_Consentactivity_Config(E::LONG_NAME);
-            $config->load();
-            $cfg = $config->get();
             $redirect = $cfg['landing-page'];
             if (!empty($redirect)) {
                 CRM_Utils_System::redirect($redirect);
