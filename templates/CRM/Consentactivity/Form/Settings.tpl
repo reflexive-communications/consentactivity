@@ -30,6 +30,18 @@
                 <span class="description">{ts}Add a consent activity after contribution.{/ts}</span>
             </td>
         </tr>
+        <tr>
+            <td class="label">{$form.landing_page.label}</td>
+            <td class="content">{$form.landing_page.html}<br/>
+                <span class="description">{ts}Users will be redirected to this page after consent was renewed{/ts}</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">{$form.email_contact.label}</td>
+            <td class="content">{$form.email_contact.html}<br/>
+                <span class="description">{ts}Users can send emails to this address for data-removal requests{/ts}</span>
+            </td>
+        </tr>
     </table>
 </div>
 <div id="parameter-mapping">

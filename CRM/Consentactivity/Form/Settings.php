@@ -40,6 +40,8 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->_defaults['consentAfterContribution'] = $config['consent-after-contribution'] ? '1' : '';
         $this->_defaults['consentExpirationYears'] = $config['consent-expiration-years'];
         $this->_defaults['consentExpirationTaggingDays'] = $config['consent-expiration-tagging-days'];
+        $this->_defaults['landing_page'] = $config['landing-page'] ?? '';
+        $this->_defaults['email_contact'] = $config['email-contact'] ?? '';
         if (isset($config['custom-field-map']) && count($config['custom-field-map']) > 0) {
             foreach ($config['custom-field-map'] as $k => $v) {
                 $this->_defaults['map_custom_field_id_'.$k] = $v['custom-field-id'];
@@ -145,22 +147,24 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
             ['' => E::ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']),
             true
         );
-        $this->add('checkbox', 'consentAfterContribution', E::ts('Consent After Contribution'), [], false);
+        $this->add('checkbox', 'consentAfterContribution', E::ts('Consent After Contribution'));
+        $this->add('text', 'landing_page', E::ts('Landing page for consent renewal'));
+        $this->add('text', 'email_contact', E::ts('Email address for manual data management'));
         // select field for the custom-field-map entries.
         // if we have entries in the map, use the entry length
         // of the entries for indexing, otherwise use 0 index.
         $cfMap = [];
         $config = $this->config->get();
         if (array_key_exists('custom-field-map', $config) === false || count($config['custom-field-map']) === 0) {
-            $this->add('select', 'map_custom_field_id_0', '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
-            $this->add('select', 'map_consent_field_id_0', '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
-            $this->add('select', 'map_group_id_0', '', [0 => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
+            $this->add('select', 'map_custom_field_id_0', '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields());
+            $this->add('select', 'map_consent_field_id_0', '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::consentFields());
+            $this->add('select', 'map_group_id_0', '', [0 => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search'));
             $cfMap['map_custom_field_id_0'] = ['consent' => 'map_consent_field_id_0', 'group' => 'map_group_id_0'];
         } else {
             foreach ($config['custom-field-map'] as $k => $v) {
-                $this->add('select', 'map_custom_field_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields(), false);
-                $this->add('select', 'map_consent_field_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::consentFields(), false);
-                $this->add('select', 'map_group_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search', []), false);
+                $this->add('select', 'map_custom_field_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields());
+                $this->add('select', 'map_consent_field_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::consentFields());
+                $this->add('select', 'map_group_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search'));
                 $cfMap['map_custom_field_id_'.$k] = ['consent' => 'map_consent_field_id_'.$k, 'group' => 'map_group_id_'.$k];
             }
         }
@@ -193,6 +197,8 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $config['consent-after-contribution'] = $this->_submitValues['consentAfterContribution'] == '' ? false : true;
         $config['consent-expiration-years'] = $this->_submitValues['consentExpirationYears'];
         $config['consent-expiration-tagging-days'] = $this->_submitValues['consentExpirationTaggingDays'];
+        $config['landing-page'] = $this->_submitValues['landing_page'];
+        $config['email-contact'] = $this->_submitValues['email_contact'];
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
             // create it

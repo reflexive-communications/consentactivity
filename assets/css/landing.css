@@ -1,0 +1,20 @@
+body {
+    background: #e0e0d8;
+}
+
+.page-title {
+    display: none;
+}
+
+.consentactivity-container {
+    padding: 30px;
+    text-align: center;
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 2em;
+}
+
+.consentactivity-container div {
+    margin: 10px 10px 40px;
+}

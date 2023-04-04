@@ -39,6 +39,14 @@ msgid "Consent After Contribution"
 msgstr ""
 
 #: ./CRM/Consentactivity/Form/Settings.php
+msgid "Landing page for consent renewal"
+msgstr ""
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Email address for manual data management"
+msgstr ""
+
+#: ./CRM/Consentactivity/Form/Settings.php
 msgid "Save"
 msgstr ""
 
@@ -52,22 +60,6 @@ msgstr ""
 
 #: ./CRM/Consentactivity/Form/Settings.php
 msgid "The configuration has been updated."
-msgstr ""
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php ./tests/phpunit/CRM/Consentactivity/Page/ConsentRenewTest.php
-msgid "Missing input parameters"
-msgstr ""
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php ./tests/phpunit/CRM/Consentactivity/Page/ConsentRenewTest.php
-msgid "There was an error in your request"
-msgstr ""
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php
-msgid "Failed to renew consent."
-msgstr ""
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php
-msgid "Thank you for staying with us."
 msgstr ""
 
 #: ./CRM/Consentactivity/Upgrader.php
@@ -111,6 +103,14 @@ msgid "Add a consent activity after contribution."
 msgstr ""
 
 #: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Users will be redirected to this page after consent was renewed"
+msgstr ""
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Users can send emails to this address for data-removal requests"
+msgstr ""
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
 msgid "Parameter mapping"
 msgstr ""
 
@@ -127,6 +127,14 @@ msgid "Group"
 msgstr ""
 
 #: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
-msgid "The %1 team."
+msgid "Sorry, something went wrong. Please try again later!"
+msgstr ""
+
+#: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
+msgid "You have successfully renewed your GDPR consent at %1!"
+msgstr ""
+
+#: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
+msgid "You can revoke your consent or request your personal data deletion at any time by writing to %1 email address."
 msgstr ""
 

@@ -39,6 +39,14 @@ msgid "Consent After Contribution"
 msgstr "Hozzájárulás Adomány Után"
 
 #: ./CRM/Consentactivity/Form/Settings.php
+msgid "Landing page for consent renewal"
+msgstr "Köszönő oldal consent megújítás után"
+
+#: ./CRM/Consentactivity/Form/Settings.php
+msgid "Email address for manual data management"
+msgstr "Email-cím adattörlési kérelmek fogadására"
+
+#: ./CRM/Consentactivity/Form/Settings.php
 msgid "Save"
 msgstr "Mentés"
 
@@ -53,22 +61,6 @@ msgstr "Hiba a keresés mentése során"
 #: ./CRM/Consentactivity/Form/Settings.php
 msgid "The configuration has been updated."
 msgstr "A beállítások frissültek."
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php ./tests/phpunit/CRM/Consentactivity/Page/ConsentRenewTest.php
-msgid "Missing input parameters"
-msgstr "Hiányzó bemeneti paraméterek"
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php ./tests/phpunit/CRM/Consentactivity/Page/ConsentRenewTest.php
-msgid "There was an error in your request"
-msgstr "Hiba történt a kérés kiszolgálása során."
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php
-msgid "Failed to renew consent."
-msgstr "Hozzájárulás megújítása sikertelen"
-
-#: ./CRM/Consentactivity/Page/ConsentRenew.php
-msgid "Thank you for staying with us."
-msgstr "Köszönjük, hogy velünk maradsz!"
 
 #: ./CRM/Consentactivity/Upgrader.php
 msgid " could not create configs in database"
@@ -111,6 +103,14 @@ msgid "Add a consent activity after contribution."
 msgstr "Adomány után consent activity hozzáadása az adományozónak."
 
 #: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Users will be redirected to this page after consent was renewed"
+msgstr "Erre az oldalra lesznek a kontaktok átirányitva consent megújítás után"
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
+msgid "Users can send emails to this address for data-removal requests"
+msgstr "Erre az email-címre küldhetnek a kontaktok adattörlési kérelmeket"
+
+#: ./templates/CRM/Consentactivity/Form/Settings.tpl
 msgid "Parameter mapping"
 msgstr "Paraméter beállítás"
 
@@ -127,5 +127,13 @@ msgid "Group"
 msgstr "Csoport"
 
 #: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
-msgid "The %1 team."
-msgstr "Üdvözlettel: %1 csapata."
+msgid "Sorry, something went wrong. Please try again later!"
+msgstr "Sajnáljuk, valamilyen hiba történt. Kérlek próbáld meg később!"
+
+#: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
+msgid "You have successfully renewed your GDPR consent at %1!"
+msgstr "Köszönjük, hogy ismételten hozzájárulásodat adtad adataid kezeléséhez a(z) %1 adatbázisában!"
+
+#: ./templates/CRM/Consentactivity/Page/ConsentRenew.tpl
+msgid "You can revoke your consent or request your personal data deletion at any time by writing to %1 email address."
+msgstr "Hozzájárulásodat bármikor visszavonhatod a(z) %1 email címre küldött üzenettel, melyben adataid törlését kéred!"

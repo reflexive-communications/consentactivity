@@ -12,48 +12,6 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
     const DOMAIN_NAME = 'my-domain';
 
     /**
-     * @return void
-     * @throws \API_Exception
-     * @throws \CRM_Core_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
-     */
-    public function testRunMissingParameters()
-    {
-        $_GET = [];
-        $_POST = [];
-        $_REQUEST = [];
-        $page = new CRM_Consentactivity_Page_ConsentRenew();
-        self::expectException(CRM_Core_Exception::class);
-        self::expectExceptionMessage(E::ts('Missing input parameters'));
-        $page->run();
-    }
-
-    /**
-     * @return void
-     * @throws \API_Exception
-     * @throws \CRM_Core_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
-     */
-    public function testRunInvalidParameters()
-    {
-        $_GET = [
-            'jid' => '10',
-            'qid' => '10',
-            'h' => 'wronghash',
-        ];
-        $_POST = [];
-        $_REQUEST = [
-            'jid' => '10',
-            'qid' => '10',
-            'h' => 'wronghash',
-        ];
-        $page = new CRM_Consentactivity_Page_ConsentRenew();
-        self::expectException(CRM_Core_Exception::class);
-        self::expectExceptionMessage(E::ts('There was an error in your request'));
-        $page->run();
-    }
-
-    /**
      * @param string $title
      *
      * @return int
@@ -247,7 +205,7 @@ class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
         ];
         $page = new CRM_Consentactivity_Page_ConsentRenew();
         try {
-            self::expectOutputRegex('/The '.self::DOMAIN_NAME.' team./i');
+            self::expectOutputRegex('/You have successfully renewed your GDPR consent at '.self::DOMAIN_NAME.'/i');
             $page->run();
         } catch (Exception $e) {
             self::fail('Page load should be successful.');

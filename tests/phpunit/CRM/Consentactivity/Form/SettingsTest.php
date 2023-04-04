@@ -24,6 +24,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
             'consent-expiration-years' => CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR,
             'consent-expiration-tagging-days' => CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS,
             'custom-field-map' => CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP,
+            'landing-page' => CRM_Consentactivity_Config::DEFAULT_LANDING_PAGE,
+            'email-contact' => CRM_Consentactivity_Config::DEFAULT_EMAIL_CONTACT,
         ];
     }
 
@@ -85,6 +87,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame($testSettings['tag-id'], $defaults['tagId']);
         self::assertSame($testSettings['consent-expiration-years'], $defaults['consentExpirationYears']);
         self::assertSame($testSettings['consent-expiration-tagging-days'], $defaults['consentExpirationTaggingDays']);
+        self::assertSame($testSettings['landing-page'], $defaults['landing_page']);
+        self::assertSame($testSettings['email-contact'], $defaults['email_contact']);
         self::assertSame($testSettings['custom-field-map'][0]['custom-field-id'], $defaults['map_custom_field_id_0']);
         self::assertSame($testSettings['custom-field-map'][0]['consent-field-id'], $defaults['map_consent_field_id_0']);
         self::assertSame($testSettings['custom-field-map'][0]['group-id'], $defaults['map_group_id_0']);
@@ -206,6 +210,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         $_POST['consentAfterContribution'] = '1';
         $_POST['consentExpirationYears'] = '2';
         $_POST['consentExpirationTaggingDays'] = '10';
+        $_POST['landing_page'] = 'https://example.com';
+        $_POST['email_contact'] = 'officer@example.com';
         $this->setupTestDefaultConfig();
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
@@ -227,6 +233,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame($_POST['tagId'], $cfg['tag-id']);
         self::assertSame($_POST['consentExpirationYears'], $cfg['consent-expiration-years']);
         self::assertSame($_POST['consentExpirationTaggingDays'], $cfg['consent-expiration-tagging-days']);
+        self::assertSame($_POST['landing_page'], $cfg['landing-page']);
+        self::assertSame($_POST['email_contact'], $cfg['email-contact']);
         self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id']);
         self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id']);
         self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id']);
@@ -246,6 +254,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         $_POST['consentAfterContribution'] = '1';
         $_POST['consentExpirationYears'] = '2';
         $_POST['consentExpirationTaggingDays'] = '10';
+        $_POST['landing_page'] = 'https://example.com';
+        $_POST['email_contact'] = 'officer@example.com';
         $this->setupTestDefaultConfig();
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
@@ -273,6 +283,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame(true, $cfgNew['consent-after-contribution']);
         self::assertSame($_POST['consentExpirationYears'], $cfgNew['consent-expiration-years']);
         self::assertSame($_POST['consentExpirationTaggingDays'], $cfgNew['consent-expiration-tagging-days']);
+        self::assertSame($_POST['landing_page'], $cfgNew['landing-page']);
+        self::assertSame($_POST['email_contact'], $cfgNew['email-contact']);
         self::assertSame($cfg['saved-search-id'], $cfgNew['saved-search-id']);
         self::assertSame($cfg['tagging-search-id'], $cfgNew['tagging-search-id']);
     }
@@ -296,6 +308,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         $_POST['map_custom_field_id_1'] = '2';
         $_POST['map_consent_field_id_1'] = '2';
         $_POST['map_group_id_1'] = '1';
+        $_POST['landing_page'] = 'https://example.com';
+        $_POST['email_contact'] = 'officer@example.com';
         $this->setupTestDefaultConfig();
         $config = new CRM_Consentactivity_Config(E::LONG_NAME);
         $config->load();
@@ -323,6 +337,8 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame(true, $cfgNew['consent-after-contribution']);
         self::assertSame($_POST['consentExpirationYears'], $cfgNew['consent-expiration-years']);
         self::assertSame($_POST['consentExpirationTaggingDays'], $cfgNew['consent-expiration-tagging-days']);
+        self::assertSame($_POST['landing_page'], $cfgNew['landing-page']);
+        self::assertSame($_POST['email_contact'], $cfgNew['email-contact']);
         self::assertSame($cfg['saved-search-id'], $cfgNew['saved-search-id']);
         self::assertSame($cfg['tagging-search-id'], $cfgNew['tagging-search-id']);
         self::assertSame($_POST['map_custom_field_id_0'], $cfgNew['custom-field-map'][0]['custom-field-id']);
