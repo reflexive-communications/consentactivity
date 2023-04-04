@@ -18,6 +18,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
 
     const DEFAULT_LANDING_PAGE = '';
 
+    const DEFAULT_EMAIL_CONTACT = '';
+
     /**
      * Provides a default configuration object.
      * The activity-type defaults to 0, as it is an invalid activity
@@ -50,6 +52,8 @@ class CRM_Consentactivity_Config extends CRM_RcBase_Config
             'custom-field-map' => self::DEFAULT_CUSTOM_FIELD_MAP,
             // Custom landing page, redirect here after consent renewal
             'landing-page' => self::DEFAULT_LANDING_PAGE,
+            // Email address for data management
+            'email-contact' => self::DEFAULT_EMAIL_CONTACT,
         ];
     }
 }
