@@ -41,6 +41,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $this->_defaults['consentExpirationYears'] = $config['consent-expiration-years'];
         $this->_defaults['consentExpirationTaggingDays'] = $config['consent-expiration-tagging-days'];
         $this->_defaults['landing_page'] = $config['landing-page'] ?? '';
+        $this->_defaults['email_contact'] = $config['email-contact'] ?? '';
         if (isset($config['custom-field-map']) && count($config['custom-field-map']) > 0) {
             foreach ($config['custom-field-map'] as $k => $v) {
                 $this->_defaults['map_custom_field_id_'.$k] = $v['custom-field-id'];
@@ -146,8 +147,9 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
             ['' => E::ts('- select -')] + CRM_Core_BAO_EntityTag::buildOptions('tag_id', 'search', ['entity_table' => 'civicrm_contact']),
             true
         );
-        $this->add('checkbox', 'consentAfterContribution', E::ts('Consent After Contribution'), [], false);
+        $this->add('checkbox', 'consentAfterContribution', E::ts('Consent After Contribution'));
         $this->add('text', 'landing_page', E::ts('Landing page for consent renewal'));
+        $this->add('text', 'email_contact', E::ts('Email address for manual data management'));
         // select field for the custom-field-map entries.
         // if we have entries in the map, use the entry length
         // of the entries for indexing, otherwise use 0 index.
@@ -196,6 +198,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $config['consent-expiration-years'] = $this->_submitValues['consentExpirationYears'];
         $config['consent-expiration-tagging-days'] = $this->_submitValues['consentExpirationTaggingDays'];
         $config['landing-page'] = $this->_submitValues['landing_page'];
+        $config['email-contact'] = $this->_submitValues['email_contact'];
         $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
         if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
             // create it
