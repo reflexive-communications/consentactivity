@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Consentactivity\Config;
+use Civi\Consentactivity\Service;
 use Civi\RcBase\ApiWrapper\Get;
 use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_Consentactivity_ExtensionUtil as E;
@@ -16,7 +18,7 @@ class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
      */
     public function run(): void
     {
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
 
@@ -39,7 +41,7 @@ class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
             }
 
             // Add consent-activity
-            $activity = CRM_Consentactivity_Service::createConsentActivityToContact($queue->contact_id);
+            $activity = Service::createConsentActivityToContact($queue->contact_id);
             if (!count($activity)) {
                 throw new \Civi\RcBase\Exception\RunTimeException('Failed to renew consent');
             }

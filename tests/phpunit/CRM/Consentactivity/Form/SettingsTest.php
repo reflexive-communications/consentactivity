@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Consentactivity\Config;
+use Civi\Consentactivity\Service;
 use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
@@ -16,16 +18,16 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         return [
             'activity-type-id' => 0,
             'option-value-id' => 0,
-            'saved-search-id' => CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID,
-            'tagging-search-id' => CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID,
-            'tag-id' => CRM_Consentactivity_Config::DEFAULT_TAG_ID,
-            'expired-tag-id' => CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID,
+            'saved-search-id' => Config::DEFAULT_EXPIRATION_SEARCH_ID,
+            'tagging-search-id' => Config::DEFAULT_TAG_SEARCH_ID,
+            'tag-id' => Config::DEFAULT_TAG_ID,
+            'expired-tag-id' => Config::DEFAULT_EXPIRED_TAG_ID,
             'consent-after-contribution' => false,
-            'consent-expiration-years' => CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR,
-            'consent-expiration-tagging-days' => CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS,
-            'custom-field-map' => CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP,
-            'landing-page' => CRM_Consentactivity_Config::DEFAULT_LANDING_PAGE,
-            'email-contact' => CRM_Consentactivity_Config::DEFAULT_EMAIL_CONTACT,
+            'consent-expiration-years' => Config::DEFAULT_CONSENT_EXPIRATION_YEAR,
+            'consent-expiration-tagging-days' => Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS,
+            'custom-field-map' => Config::DEFAULT_CUSTOM_FIELD_MAP,
+            'landing-page' => Config::DEFAULT_LANDING_PAGE,
+            'email-contact' => Config::DEFAULT_EMAIL_CONTACT,
         ];
     }
 
@@ -34,7 +36,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
      */
     private function setupTestDefaultConfig()
     {
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         self::assertTrue($config->update(self::testDefaultSetting()), 'Config update has to be successful.');
     }
 
@@ -60,7 +62,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
     public function testPreProcessMissingConfig()
     {
         $form = new CRM_Consentactivity_Form_Settings();
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->remove();
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage(E::LONG_NAME.'_config config invalid.');
@@ -73,7 +75,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
      */
     public function testSetDefaultValues()
     {
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $testSettings = self::testDefaultSetting();
         $testSettings['custom-field-map'][] = [
             'custom-field-id' => '1',
@@ -174,7 +176,7 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
      */
     public function testBuildQuickFormNoActionState()
     {
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $testSettings = self::testDefaultSetting();
         $testSettings['custom-field-map'][] = [
             'custom-field-id' => '1',
@@ -213,10 +215,10 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         $_POST['landing_page'] = 'https://example.com';
         $_POST['email_contact'] = 'officer@example.com';
         $this->setupTestDefaultConfig();
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
-        $current = CRM_Consentactivity_Service::createDefaultActivityType();
+        $current = Service::createDefaultActivityType();
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $config->update($cfg);
@@ -235,9 +237,9 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         self::assertSame($_POST['consentExpirationTaggingDays'], $cfg['consent-expiration-tagging-days']);
         self::assertSame($_POST['landing_page'], $cfg['landing-page']);
         self::assertSame($_POST['email_contact'], $cfg['email-contact']);
-        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id']);
-        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id']);
-        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id']);
+        self::assertNotSame(Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id']);
+        self::assertNotSame(Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id']);
+        self::assertNotSame(Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id']);
         self::assertSame(true, $cfg['consent-after-contribution']);
     }
 
@@ -257,16 +259,16 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         $_POST['landing_page'] = 'https://example.com';
         $_POST['email_contact'] = 'officer@example.com';
         $this->setupTestDefaultConfig();
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
-        $current = CRM_Consentactivity_Service::createDefaultActivityType();
+        $current = Service::createDefaultActivityType();
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $cfg['tag-id'] = 1;
         $cfg['expired-tag-id'] = 1;
-        $cfg['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
-        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false)['id'];
+        $cfg['saved-search-id'] = Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
+        $cfg['tagging-search-id'] = Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false)['id'];
         $config->update($cfg);
 
         $form = new CRM_Consentactivity_Form_Settings();
@@ -311,16 +313,16 @@ class CRM_Consentactivity_Form_SettingsTest extends HeadlessTestCase
         $_POST['landing_page'] = 'https://example.com';
         $_POST['email_contact'] = 'officer@example.com';
         $this->setupTestDefaultConfig();
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
-        $current = CRM_Consentactivity_Service::createDefaultActivityType();
+        $current = Service::createDefaultActivityType();
         $cfg['activity-type-id'] = $current['value'];
         $cfg['option-value-id'] = $current['id'];
         $cfg['tag-id'] = 1;
         $cfg['expired-tag-id'] = 2;
-        $cfg['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
-        $cfg['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false)['id'];
+        $cfg['saved-search-id'] = Service::savedSearchExpired($current['name'], $cfg['tag-id'], $cfg['expired-tag-id'], false)['id'];
+        $cfg['tagging-search-id'] = Service::savedSearchTagging($current['name'], $cfg['expired-tag-id'], false)['id'];
         $config->update($cfg);
 
         $form = new CRM_Consentactivity_Form_Settings();

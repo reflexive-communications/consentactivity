@@ -1,6 +1,10 @@
 <?php
 
-class CRM_Consentactivity_Config extends CRM_RcBase_Config
+namespace Civi\Consentactivity;
+
+use CRM_RcBase_Config;
+
+class Config extends CRM_RcBase_Config
 {
     const DEFAULT_CONSENT_EXPIRATION_YEAR = 3;
 

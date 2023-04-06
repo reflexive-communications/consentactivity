@@ -3,6 +3,8 @@
 use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\EntityTag;
+use Civi\Consentactivity\Config;
+use Civi\Consentactivity\Service;
 use Civi\Consentactivity\HeadlessTestCase;
 use CRM_Consentactivity_ExtensionUtil as E;
 
@@ -38,12 +40,12 @@ class api_v3_Consentactivity_TaggingTest extends HeadlessTestCase
             ->addValue('contact_type', 'Individual')
             ->execute();
         // setup tag and search
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
-        $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
+        $activityType = Service::getActivityType($config['option-value-id']);
         $config['expired-tag-id'] = '1';
-        $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
+        $config['tagging-search-id'] = Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('Consentactivity', 'tagging');
         self::assertSame(0, $result['values']['found']);
@@ -66,7 +68,7 @@ class api_v3_Consentactivity_TaggingTest extends HeadlessTestCase
             ->addValue('contact_type', 'Individual')
             ->execute()
             ->first();
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $activityDate = date('Y-m-d H:i', strtotime(date('Y-m-d H:i').'- '.$config['consent-expiration-years'].' years'));
@@ -78,10 +80,10 @@ class api_v3_Consentactivity_TaggingTest extends HeadlessTestCase
             ->addValue('activity_date_time', $activityDate)
             ->execute();
         // setup tag and search
-        $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
+        $activityType = Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
         $config['expired-tag-id'] = '1';
-        $config['tagging-search-id'] = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
+        $config['tagging-search-id'] = Service::savedSearchTagging($activityType['name'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('Consentactivity', 'tagging');
         self::assertSame(1, $result['values']['found']);

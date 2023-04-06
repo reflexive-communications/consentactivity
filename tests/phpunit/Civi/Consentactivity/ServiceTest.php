@@ -1,5 +1,7 @@
 <?php
 
+namespace Civi\Consentactivity;
+
 use Civi\Api4\Activity;
 use Civi\Api4\Address;
 use Civi\Api4\Contact;
@@ -14,14 +16,17 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\Phone;
 use Civi\Api4\Website;
-use Civi\Consentactivity\HeadlessTestCase;
 use Civi\Test\TransactionalInterface;
 use CRM_Consentactivity_ExtensionUtil as E;
+use CRM_Core_Exception;
+use CRM_Event_Form_Registration_Confirm;
+use CRM_Event_Form_Registration_Register;
+use CRM_Profile_Form_Edit;
 
 /**
  * @group headless
  */
-class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements TransactionalInterface
+class ServiceTest extends HeadlessTestCase implements TransactionalInterface
 {
     /**
      * @return void
@@ -39,7 +44,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $submit = [
         ];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
@@ -55,7 +60,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
         self::expectException(CRM_Core_Exception::class);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 
     /**
@@ -73,7 +78,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $form->setVar('_id', $contact['id']);
         $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
@@ -87,7 +92,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
      */
     public function testPostProcessWithUpdatedTagId()
     {
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
         $cfg['tag-id'] = 1;
@@ -106,7 +111,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $form->setVar('_id', $contact['id']);
         $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
@@ -134,7 +139,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $form->setVar('_values', ['participant' => ['contact_id' => $contact['id']]]);
         $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Confirm::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Event_Form_Registration_Confirm::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
@@ -155,7 +160,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $form->setVar('_values', ['event' => ['is_confirm_enabled' => 1], 'participant' => ['contact_id' => $contact['id']]]);
         $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(0, count($activities));
@@ -176,7 +181,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $form->setVar('_values', ['event' => ['is_confirm_enabled' => 0], 'participant' => ['contact_id' => $contact['id']]]);
         $submit = ['is_opt_out' => ''];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Event_Form_Registration_Register::class, $form), 'PostProcess supposed to be empty.');
         $activities = Activity::get(false)
             ->execute();
         self::assertSame(1, count($activities));
@@ -227,7 +232,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->addValue('created_id', 1)
             ->execute()
             ->first();
-        $params = CRM_Consentactivity_Service::customCheckboxFields();
+        $params = Service::customCheckboxFields();
         self::assertSame(1, count($params));
     }
 
@@ -276,7 +281,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->addValue('created_id', 1)
             ->execute()
             ->first();
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
         $cfg['custom-field-map'][] = [
@@ -297,7 +302,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             'last_name' => 'name',
         ];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 
     /**
@@ -375,7 +380,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->addValue('created_id', 1)
             ->execute()
             ->first();
-        $config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $config = new Config(E::LONG_NAME);
         $config->load();
         $cfg = $config->get();
         $cfg['custom-field-map'][] = [
@@ -406,7 +411,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             'last_name' => 'name',
         ];
         $form->setVar('_submitValues', $submit);
-        self::assertEmpty(CRM_Consentactivity_Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
+        self::assertEmpty(Service::postProcess(CRM_Profile_Form_Edit::class, $form), 'PostProcess supposed to be empty.');
     }
 
     /**
@@ -470,7 +475,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->addValue('website_type_id', 2)
             ->execute();
         // call anonimization
-        self::assertEmpty(CRM_Consentactivity_Service::anonymizeContact($contact['id']));
+        self::assertEmpty(Service::anonymizeContact($contact['id']));
         $updatedContact = Contact::get(false)
             ->addWhere('id', '=', $contact['id'])
             ->setLimit(1)
@@ -530,7 +535,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         foreach ($privacyFieldsThatNeedsToBeSet as $field) {
             self::assertTrue($updatedContact[$field], 'The consent field '.$field.' should be set.');
         }
-        foreach (CRM_Consentactivity_Service::CONTACT_DATA_ENTITIES as $entity) {
+        foreach (Service::CONTACT_DATA_ENTITIES as $entity) {
             $numberOfEntities = $entity::get(false)
                 ->addWhere('contact_id', '=', $contact['id'])
                 ->selectRowCount()
@@ -553,25 +558,25 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->first();
         $activitiesOriginal = Activity::get(false)
             ->execute();
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['consent-after-contribution'] = true;
         $cfg->update($config);
         $refObject = (object)['is_test' => false, 'receive_date' => '2020010112131400', 'contact_id' => $contact['id']];
 
-        self::assertEmpty(CRM_Consentactivity_Service::post('delete', 'Contribution', 1, $refObject));
+        self::assertEmpty(Service::post('delete', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
 
-        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contact', 1, $refObject));
+        self::assertEmpty(Service::post('create', 'Contact', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
 
         $refObject->is_test = true;
-        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        self::assertEmpty(Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
@@ -591,14 +596,14 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->first();
         $activitiesOriginal = Activity::get(false)
             ->execute();
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['consent-after-contribution'] = false;
         $cfg->update($config);
         $refObject = (object)['is_test' => false, 'receive_date' => '2020010112131400', 'contact_id' => $contact['id']];
 
-        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        self::assertEmpty(Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
@@ -618,7 +623,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->first();
         $activitiesOriginal = Activity::get(false)
             ->execute();
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['consent-after-contribution'] = true;
@@ -627,7 +632,7 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
         $before += 2;
         $refObject = (object)['is_test' => false, 'receive_date' => date('YmdHis', strtotime($before.' years ago')), 'contact_id' => $contact['id']];
 
-        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        self::assertEmpty(Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal), $activities);
@@ -647,14 +652,14 @@ class CRM_Consentactivity_ServiceTest extends HeadlessTestCase implements Transa
             ->first();
         $activitiesOriginal = Activity::get(false)
             ->execute();
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['consent-after-contribution'] = true;
         $cfg->update($config);
         $refObject = (object)['is_test' => false, 'receive_date' => date('YmdHis'), 'contact_id' => $contact['id']];
 
-        self::assertEmpty(CRM_Consentactivity_Service::post('create', 'Contribution', 1, $refObject));
+        self::assertEmpty(Service::post('create', 'Contribution', 1, $refObject));
         $activities = Activity::get(false)
             ->execute();
         self::assertCount(count($activitiesOriginal) + 1, $activities);

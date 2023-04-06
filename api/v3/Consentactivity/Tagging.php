@@ -1,6 +1,7 @@
 <?php
 
 use Civi\Api4\SavedSearch;
+use Civi\Consentactivity\Config;
 use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
 
@@ -15,11 +16,11 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 function civicrm_api3_consentactivity_Tagging($params): array
 {
-    $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+    $cfg = new Config(E::LONG_NAME);
     $cfg->load();
     $config = $cfg->get();
     // Don't need to execute the process if the search query is not set yet.
-    if ($config['tagging-search-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
+    if ($config['tagging-search-id'] === Config::DEFAULT_TAG_SEARCH_ID) {
         return civicrm_api3_create_success(['tagged' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'Consentactivity', 'tagging');
     }
     $search = SavedSearch::get(false)
