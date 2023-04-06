@@ -1,8 +1,8 @@
 <?php
 
 use Civi\Consentactivity\Config;
-use Civi\Consentactivity\Service;
 use Civi\Consentactivity\HeadlessTestCase;
+use Civi\Consentactivity\Service;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**

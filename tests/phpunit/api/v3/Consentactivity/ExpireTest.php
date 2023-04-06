@@ -4,8 +4,8 @@ use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\EntityTag;
 use Civi\Consentactivity\Config;
-use Civi\Consentactivity\Service;
 use Civi\Consentactivity\HeadlessTestCase;
+use Civi\Consentactivity\Service;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**

@@ -9,7 +9,7 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 class CRM_Consentactivity_Page_ConsentRenewTest extends HeadlessTestCase
 {
-    const DOMAIN_NAME = 'my-domain';
+    public const DOMAIN_NAME = 'my-domain';
 
     /**
      * @param string $title
