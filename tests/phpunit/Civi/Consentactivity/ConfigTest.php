@@ -1,11 +1,11 @@
 <?php
 
-use Civi\Consentactivity\HeadlessTestCase;
+namespace Civi\Consentactivity;
 
 /**
  * @group headless
  */
-class CRM_Consentactivity_ConfigTest extends HeadlessTestCase
+class ConfigTest extends HeadlessTestCase
 {
     /**
      * @return void
@@ -13,7 +13,7 @@ class CRM_Consentactivity_ConfigTest extends HeadlessTestCase
      */
     public function testCreate()
     {
-        $config = new CRM_Consentactivity_Config('consentactivity_test');
+        $config = new Config('consentactivity_test');
         self::assertTrue($config->create(), 'Create config has to be successful.');
         $cfg = $config->get();
 
@@ -32,16 +32,16 @@ class CRM_Consentactivity_ConfigTest extends HeadlessTestCase
 
         self::assertSame(0, $cfg['activity-type-id'], 'Invalid activity-type-id initial value.');
         self::assertSame(0, $cfg['option-value-id'], 'Invalid option-value-id initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id'], 'Invalid saved-search-id initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id'], 'Invalid tagging-search-id initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_ID, $cfg['tag-id'], 'Invalid tag-id initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id'], 'Invalid expired-tag-id initial value.');
+        self::assertSame(Config::DEFAULT_EXPIRATION_SEARCH_ID, $cfg['saved-search-id'], 'Invalid saved-search-id initial value.');
+        self::assertSame(Config::DEFAULT_TAG_SEARCH_ID, $cfg['tagging-search-id'], 'Invalid tagging-search-id initial value.');
+        self::assertSame(Config::DEFAULT_TAG_ID, $cfg['tag-id'], 'Invalid tag-id initial value.');
+        self::assertSame(Config::DEFAULT_EXPIRED_TAG_ID, $cfg['expired-tag-id'], 'Invalid expired-tag-id initial value.');
         self::assertSame(false, $cfg['consent-after-contribution'], 'Invalid consent-after-contribution key initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_YEAR, $cfg['consent-expiration-years'], 'Invalid consent-expiration-years initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS, $cfg['consent-expiration-tagging-days'], 'Invalid consent-expiration-tagging-days initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map'], 'Invalid custom-field-map initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_LANDING_PAGE, $cfg['landing-page'], 'Invalid landing-page initial value.');
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EMAIL_CONTACT, $cfg['email-contact'], 'Invalid email-contact initial value.');
+        self::assertSame(Config::DEFAULT_CONSENT_EXPIRATION_YEAR, $cfg['consent-expiration-years'], 'Invalid consent-expiration-years initial value.');
+        self::assertSame(Config::DEFAULT_CONSENT_EXPIRATION_TAGGING_DAYS, $cfg['consent-expiration-tagging-days'], 'Invalid consent-expiration-tagging-days initial value.');
+        self::assertSame(Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map'], 'Invalid custom-field-map initial value.');
+        self::assertSame(Config::DEFAULT_LANDING_PAGE, $cfg['landing-page'], 'Invalid landing-page initial value.');
+        self::assertSame(Config::DEFAULT_EMAIL_CONTACT, $cfg['email-contact'], 'Invalid email-contact initial value.');
 
         self::assertTrue($config->create(), 'Create config has to be successful multiple times.');
     }

@@ -2,6 +2,8 @@
 
 require_once 'consentactivity.civix.php';
 
+use Civi\Consentactivity\Config;
+use Civi\Consentactivity\Service;
 use Civi\Token\Event\TokenValueEvent;
 use CRM_Consentactivity_ExtensionUtil as E;
 use Symfony\Component\Config\Resource\FileResource;
@@ -23,7 +25,7 @@ function consentactivity_civicrm_config(&$config): void
  */
 function consentactivity_civicrm_postProcess($formName, $form): void
 {
-    CRM_Consentactivity_Service::postProcess($formName, $form);
+    Service::postProcess($formName, $form);
 }
 
 /**
@@ -60,7 +62,7 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
     // extend tag validation. On case of tag deletion, check
     if ($formName === 'CRM_Tag_Form_Edit' && $form->_action === CRM_Core_Action::DELETE) {
         $ids = $form->getVar('_id');
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         foreach ($ids as $id) {
@@ -81,7 +83,7 @@ function consentactivity_civicrm_validateForm($formName, &$fields, &$files, &$fo
  */
 function consentactivity_civicrm_post($op, $objectName, $objectId, &$objectRef): void
 {
-    CRM_Consentactivity_Service::post($op, $objectName, $objectId, $objectRef);
+    Service::post($op, $objectName, $objectId, $objectRef);
 }
 
 /**

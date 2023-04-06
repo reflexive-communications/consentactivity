@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Consentactivity\Config;
+use Civi\Consentactivity\Service;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
@@ -12,7 +14,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     /**
      * Configdb
      *
-     * @var CRM_Consentactivity_Config
+     * @var Config
      */
     private $config;
 
@@ -23,7 +25,7 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
     public function preProcess(): void
     {
         // Get current settings
-        $this->config = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $this->config = new Config(E::LONG_NAME);
         $this->config->load();
     }
 
@@ -156,14 +158,14 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $cfMap = [];
         $config = $this->config->get();
         if (array_key_exists('custom-field-map', $config) === false || count($config['custom-field-map']) === 0) {
-            $this->add('select', 'map_custom_field_id_0', '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields());
-            $this->add('select', 'map_consent_field_id_0', '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::consentFields());
+            $this->add('select', 'map_custom_field_id_0', '', [0 => E::ts('- select -')] + Service::customCheckboxFields());
+            $this->add('select', 'map_consent_field_id_0', '', [0 => E::ts('- select -')] + Service::consentFields());
             $this->add('select', 'map_group_id_0', '', [0 => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search'));
             $cfMap['map_custom_field_id_0'] = ['consent' => 'map_consent_field_id_0', 'group' => 'map_group_id_0'];
         } else {
             foreach ($config['custom-field-map'] as $k => $v) {
-                $this->add('select', 'map_custom_field_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::customCheckboxFields());
-                $this->add('select', 'map_consent_field_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Consentactivity_Service::consentFields());
+                $this->add('select', 'map_custom_field_id_'.$k, '', [0 => E::ts('- select -')] + Service::customCheckboxFields());
+                $this->add('select', 'map_consent_field_id_'.$k, '', [0 => E::ts('- select -')] + Service::consentFields());
                 $this->add('select', 'map_group_id_'.$k, '', [0 => E::ts('- select -')] + CRM_Contact_BAO_GroupContact::buildOptions('group_id', 'search'));
                 $cfMap['map_custom_field_id_'.$k] = ['consent' => 'map_consent_field_id_'.$k, 'group' => 'map_group_id_'.$k];
             }
@@ -199,20 +201,20 @@ class CRM_Consentactivity_Form_Settings extends CRM_Core_Form
         $config['consent-expiration-tagging-days'] = $this->_submitValues['consentExpirationTaggingDays'];
         $config['landing-page'] = $this->_submitValues['landing_page'];
         $config['email-contact'] = $this->_submitValues['email_contact'];
-        $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
-        if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
+        $activityType = Service::getActivityType($config['option-value-id']);
+        if ($config['saved-search-id'] === Config::DEFAULT_EXPIRATION_SEARCH_ID) {
             // create it
-            $savedSearch = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id']);
+            $savedSearch = Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id']);
             $config['saved-search-id'] = $savedSearch['id'];
         } else {
-            CRM_Consentactivity_Service::savedSearchExpiredUpdate($activityType['name'], $config['tag-id'], $config['expired-tag-id'], $config['saved-search-id']);
+            Service::savedSearchExpiredUpdate($activityType['name'], $config['tag-id'], $config['expired-tag-id'], $config['saved-search-id']);
         }
-        if ($config['tagging-search-id'] === CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID) {
+        if ($config['tagging-search-id'] === Config::DEFAULT_TAG_SEARCH_ID) {
             // create it
-            $savedSearch = CRM_Consentactivity_Service::savedSearchTagging($activityType['name'], $config['expired-tag-id']);
+            $savedSearch = Service::savedSearchTagging($activityType['name'], $config['expired-tag-id']);
             $config['tagging-search-id'] = $savedSearch['id'];
         } else {
-            CRM_Consentactivity_Service::savedSearchTaggingUpdate($activityType['name'], $config['expired-tag-id'], $config['tagging-search-id']);
+            Service::savedSearchTaggingUpdate($activityType['name'], $config['expired-tag-id'], $config['tagging-search-id']);
         }
         $customFieldMap = [];
         foreach ($this->_submitValues as $k => $v) {
