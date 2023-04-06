@@ -1,5 +1,8 @@
 <?php
 
+namespace Civi\Consentactivity;
+
+use Civi;
 use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\EntityTag;
@@ -8,9 +11,14 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\SavedSearch;
 use Civi\Api4\Tag;
+use Civi\RcBase\Utils\DB;
 use CRM_Consentactivity_ExtensionUtil as E;
+use CRM_Core_BAO_CustomField;
+use CRM_Core_BAO_UFField;
+use CRM_Core_DAO;
+use CRM_Core_Form;
 
-class CRM_Consentactivity_Service
+class Service
 {
     public const DEFAULT_CONSENT_ACTIVITY_TYPE_LABEL = 'GDPR Consent Activity';
 
@@ -143,7 +151,7 @@ class CRM_Consentactivity_Service
      */
     public static function createConsentActivityToContact(int $contactId): array
     {
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $activity = Activity::create(false)
@@ -160,7 +168,7 @@ class CRM_Consentactivity_Service
         }
         // Remove the expired tag from the contact if the tag-id is set in the config.
         // The result checking is skipped, because not every contact has this tag, only the old ones.
-        if ($config['tag-id'] !== CRM_Consentactivity_Config::DEFAULT_TAG_ID) {
+        if ($config['tag-id'] !== Config::DEFAULT_TAG_ID) {
             EntityTag::delete(false)
                 ->addWhere('entity_table', '=', 'civicrm_contact')
                 ->addWhere('entity_id', '=', $contactId)
@@ -485,7 +493,7 @@ class CRM_Consentactivity_Service
         if ($op !== 'create' || $objectName !== 'Contribution' || $objectRef->is_test) {
             return;
         }
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         if (!$config['consent-after-contribution']) {
@@ -499,7 +507,7 @@ class CRM_Consentactivity_Service
         $activity = self::createConsentActivityToContact($objectRef->contact_id);
         if (isset($activity['id'])) {
             // update activity with sql
-            \Civi\RcBase\Utils\DB::query('UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2', [
+            DB::query('UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2', [
                 1 => [$receiveDate, 'String'],
                 2 => [$activity['id'], 'Positive'],
             ]);
@@ -517,7 +525,7 @@ class CRM_Consentactivity_Service
      */
     private static function consentFieldAndGroupMaintenace(int $contactId, array $submitValues): void
     {
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         foreach ($config['custom-field-map'] as $rule) {

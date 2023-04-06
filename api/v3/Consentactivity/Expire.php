@@ -1,6 +1,8 @@
 <?php
 
 use Civi\Api4\SavedSearch;
+use Civi\Consentactivity\Config;
+use Civi\Consentactivity\Service;
 use Civi\RcBase\ApiWrapper\Remove;
 use Civi\RcBase\ApiWrapper\Save;
 use CRM_Consentactivity_ExtensionUtil as E;
@@ -16,11 +18,11 @@ use CRM_Consentactivity_ExtensionUtil as E;
  */
 function civicrm_api3_consentactivity_Expire($params): array
 {
-    $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+    $cfg = new Config(E::LONG_NAME);
     $cfg->load();
     $config = $cfg->get();
     // Don't need to execute the process if the search query is not set yet.
-    if ($config['saved-search-id'] === CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID) {
+    if ($config['saved-search-id'] === Config::DEFAULT_EXPIRATION_SEARCH_ID) {
         return civicrm_api3_create_success(['handled' => 0, 'message' => E::ts('Saved Search is not set.')], $params, 'Consentactivity', 'expire');
     }
     $search = SavedSearch::get(false)
@@ -45,7 +47,7 @@ function civicrm_api3_consentactivity_Expire($params): array
         }
         foreach ($contacts as $contact) {
             try {
-                CRM_Consentactivity_Service::anonymizeContact($contact['id']);
+                Service::anonymizeContact($contact['id']);
                 Save::tagContact($contact['id'], $config['expired-tag-id']);
                 Remove::tagFromContact($contact['id'], $config['tag-id']);
                 $handledContacts++;

@@ -3,7 +3,9 @@
 use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\EntityTag;
+use Civi\Consentactivity\Config;
 use Civi\Consentactivity\HeadlessTestCase;
+use Civi\Consentactivity\Service;
 use CRM_Consentactivity_ExtensionUtil as E;
 
 /**
@@ -38,13 +40,13 @@ class api_v3_Consentactivity_ExpireTest extends HeadlessTestCase
             ->addValue('contact_type', 'Individual')
             ->execute();
         // setup tag and search
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
-        $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
+        $activityType = Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
         $config['expired-tag-id'] = '1';
-        $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
+        $config['saved-search-id'] = Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         $result = civicrm_api3('Consentactivity', 'expire');
         self::assertSame(0, $result['values']['handled']);
@@ -67,7 +69,7 @@ class api_v3_Consentactivity_ExpireTest extends HeadlessTestCase
             ->addValue('contact_type', 'Individual')
             ->execute()
             ->first();
-        $cfg = new CRM_Consentactivity_Config(E::LONG_NAME);
+        $cfg = new Config(E::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $activityDate = date('Y-m-d H:i', strtotime(date('Y-m-d H:i').'- '.$config['consent-expiration-years'].' years - 10 days'));
@@ -79,10 +81,10 @@ class api_v3_Consentactivity_ExpireTest extends HeadlessTestCase
             ->addValue('activity_date_time', $activityDate)
             ->execute();
         // setup tag and search
-        $activityType = CRM_Consentactivity_Service::getActivityType($config['option-value-id']);
+        $activityType = Service::getActivityType($config['option-value-id']);
         $config['tag-id'] = '1';
         $config['expired-tag-id'] = '2';
-        $config['saved-search-id'] = CRM_Consentactivity_Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
+        $config['saved-search-id'] = Service::savedSearchExpired($activityType['name'], $config['tag-id'], $config['expired-tag-id'], false)['id'];
         $cfg->update($config);
         EntityTag::create(false)
             ->addValue('entity_table', 'civicrm_contact')
@@ -151,7 +153,7 @@ class api_v3_Consentactivity_ExpireTest extends HeadlessTestCase
         foreach ($privacyFieldsThatNeedsToBeSet as $field) {
             self::assertTrue($updatedContact[$field], 'The consent field '.$field.' should be set.');
         }
-        foreach (CRM_Consentactivity_Service::CONTACT_DATA_ENTITIES as $entity) {
+        foreach (Service::CONTACT_DATA_ENTITIES as $entity) {
             $numberOfEntities = $entity::get(false)
                 ->addWhere('contact_id', '=', $contact['id'])
                 ->selectRowCount()

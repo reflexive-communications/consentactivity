@@ -1,5 +1,6 @@
 <?php
 
+use Civi\Consentactivity\Config;
 use Civi\Consentactivity\HeadlessTestCase;
 
 /**
@@ -43,7 +44,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
+        $cfg = new Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['option-value-id'] = $config['option-value-id'] + 1;
@@ -64,7 +65,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
+        $cfg = new Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         unset($config['tag-id']);
@@ -88,7 +89,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
+        $cfg = new Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '100000';
@@ -109,7 +110,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
+        $cfg = new Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '100000';
@@ -123,8 +124,8 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         }
         $cfg->load();
         $config = $cfg->get();
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
-        self::assertSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
+        self::assertSame(Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
+        self::assertSame(Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
     }
 
     /**
@@ -136,7 +137,7 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_Consentactivity_Upgrader();
         $this->assertEmpty($installer->install());
         $this->assertEmpty($installer->enable());
-        $cfg = new CRM_Consentactivity_Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
+        $cfg = new Config(CRM_Consentactivity_ExtensionUtil::LONG_NAME);
         $cfg->load();
         $config = $cfg->get();
         $config['tag-id'] = '1';
@@ -153,8 +154,8 @@ class CRM_Consentactivity_UpgraderTest extends HeadlessTestCase
         $config = $cfg->get();
         self::assertNotSame(10, $config['saved-search-id']);
         self::assertNotSame(11, $config['tagging-search-id']);
-        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
-        self::assertNotSame(CRM_Consentactivity_Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
+        self::assertNotSame(Config::DEFAULT_EXPIRATION_SEARCH_ID, $config['saved-search-id']);
+        self::assertNotSame(Config::DEFAULT_TAG_SEARCH_ID, $config['tagging-search-id']);
     }
 
     /**
