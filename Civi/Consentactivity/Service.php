@@ -11,6 +11,7 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\SavedSearch;
 use Civi\Api4\Tag;
+use Civi\RcBase\Utils\DB;
 use CRM_Consentactivity_ExtensionUtil as E;
 use CRM_Core_BAO_CustomField;
 use CRM_Core_BAO_UFField;
@@ -506,7 +507,7 @@ class Service
         $activity = self::createConsentActivityToContact($objectRef->contact_id);
         if (isset($activity['id'])) {
             // update activity with sql
-            \Civi\RcBase\Utils\DB::query('UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2', [
+            DB::query('UPDATE civicrm_activity SET created_date = %1, activity_date_time = %1 WHERE id =  %2', [
                 1 => [$receiveDate, 'String'],
                 2 => [$activity['id'], 'Positive'],
             ]);
