@@ -13,7 +13,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
      * @return void
      * @throws \CRM_Core_Exception
      */
-    public function testUpgrade5000()
+    public function testUpgrade3000()
     {
         $config = new Config(E::LONG_NAME);
         $config->load();
@@ -22,7 +22,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
         $config->update($cfg);
         $installer = new CRM_Consentactivity_Upgrader();
         try {
-            $this->assertTrue($installer->upgrade_5000());
+            $this->assertTrue($installer->upgrade_3000());
         } catch (Exception $e) {
             $this->fail('Should not throw exception. '.$e->getMessage());
         }
@@ -36,7 +36,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
      * @return void
      * @throws \CRM_Core_Exception
      */
-    public function testUpgrade5100()
+    public function testUpgrade3001()
     {
         $config = new Config(E::LONG_NAME);
         $config->load();
@@ -50,7 +50,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
         $config->update($cfg);
         $installer = new CRM_Consentactivity_Upgrader();
         try {
-            $this->assertTrue($installer->upgrade_5100());
+            $this->assertTrue($installer->upgrade_3001());
         } catch (Exception $e) {
             $this->fail('Should not throw exception. '.$e->getMessage());
         }
@@ -66,8 +66,9 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
     /**
      * @return void
      * @throws \CRM_Core_Exception
+     * @throws \Exception
      */
-    public function testUpgrade5101()
+    public function testUpgrade3002()
     {
         $config = new Config(E::LONG_NAME);
         $config->load();
@@ -78,7 +79,7 @@ class CRM_Consentactivity_UpgraderInstalledTest extends HeadlessTestCase
 
         $config->update($cfg);
         $installer = new CRM_Consentactivity_Upgrader();
-        self::assertTrue($installer->upgrade_5101());
+        self::assertTrue($installer->upgrade_3002());
         $config->load();
         $cfg = $config->get();
         self::assertSame(Config::DEFAULT_CUSTOM_FIELD_MAP, $cfg['custom-field-map']);
