@@ -107,7 +107,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5000(): bool
+    public function upgrade_3000(): bool
     {
         return true;
     }
@@ -119,7 +119,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5100(): bool
+    public function upgrade_3001(): bool
     {
         $config = new Config(E::LONG_NAME);
         $config->load();
@@ -152,7 +152,7 @@ class CRM_Consentactivity_Upgrader extends CRM_Extension_Upgrader_Base
      * @return true on success
      * @throws Exception
      */
-    public function upgrade_5101(): bool
+    public function upgrade_3002(): bool
     {
         $config = new Config(E::LONG_NAME);
         $config->load();
