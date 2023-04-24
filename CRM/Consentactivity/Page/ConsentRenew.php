@@ -25,7 +25,7 @@ class CRM_Consentactivity_Page_ConsentRenew extends CRM_Core_Page
         $this->assign('org_name', Get::entityByID('Domain', CRM_Core_Config::domainID(), 'name'));
         $this->assign('email_contact', $cfg['email-contact'] ?? '');
 
-        Civi::resources()->addStyleFile(E::LONG_NAME, 'assets/css/landing.css');
+        Civi::resources()->addStyleFile(E::LONG_NAME, 'css/landing.css');
 
         try {
             $job_id = CRM_Utils_Request::retrieve('jid', 'Int');
