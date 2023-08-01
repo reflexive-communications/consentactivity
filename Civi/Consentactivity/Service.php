@@ -132,6 +132,9 @@ class Service
             $values = $form->getVar('_values');
             $cid = $values['participant']['contact_id'];
         }
+        if (is_null($cid)) {
+            return;
+        }
         self::createConsentActivityToContact($cid);
         // handle the consent field and group insertion
         self::consentFieldAndGroupMaintenace($cid, $form->getVar('_submitValues'));
