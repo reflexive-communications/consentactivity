@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/reflexive-communications/consentactivity/actions/workflows/main.yml/badge.svg)](https://github.com/reflexive-communications/consentactivity/actions/workflows/main.yml)
 
+**THIS REPO HAS BEEN ARCHIVED!**
+
 This extension could be used for tracking GDPR related activities.
 A contact gives consent when:
 
