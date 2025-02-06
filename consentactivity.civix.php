@@ -27,7 +27,7 @@ class CRM_Consentactivity_ExtensionUtil
      *   Translated text.
      * @see ts
      */
-    public static function ts($text, $params = [])
+    public static function ts($text, $params = []): string
     {
         if (!array_key_exists('domain', $params)) {
             $params['domain'] = [self::LONG_NAME, null];
@@ -47,7 +47,7 @@ class CRM_Consentactivity_ExtensionUtil
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo'.
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo/css/foo.css'.
      */
-    public static function url($file = null)
+    public static function url($file = null): string
     {
         if ($file === null) {
             return rtrim(CRM_Core_Resources::singleton()->getUrl(self::LONG_NAME), '/');
@@ -86,16 +86,54 @@ class CRM_Consentactivity_ExtensionUtil
     {
         return self::CLASS_PREFIX.'_'.str_replace('\\', '_', $suffix);
     }
+
+    /**
+     * @return \CiviMix\Schema\SchemaHelperInterface
+     */
+    public static function schema()
+    {
+        if (!isset($GLOBALS['CiviMixSchema'])) {
+            pathload()->loadPackage('civimix-schema@5', true);
+        }
+
+        return $GLOBALS['CiviMixSchema']->getHelper(static::LONG_NAME);
+    }
+
 }
 
-use CRM_Consentactivity_ExtensionUtil as E;
+pathload()->addSearchDir(__DIR__.'/mixin/lib');
+spl_autoload_register('_consentactivity_civix_class_loader', true, true);
+
+function _consentactivity_civix_class_loader($class)
+{
+    if ($class === 'CRM_Consentactivity_DAO_Base') {
+        if (version_compare(CRM_Utils_System::version(), '5.74.beta', '>=')) {
+            class_alias('CRM_Core_DAO_Base', 'CRM_Consentactivity_DAO_Base');
+            // ^^ Materialize concrete names -- encourage IDE's to pick up on this association.
+        } else {
+            $realClass = 'CiviMix\\Schema\\Consentactivity\\DAO';
+            class_alias($realClass, $class);
+            // ^^ Abstract names -- discourage IDE's from picking up on this association.
+        }
+
+        return;
+    }
+
+    // This allows us to tap-in to the installation process (without incurring real file-reads on typical requests).
+    if (strpos($class, 'CiviMix\\Schema\\Consentactivity\\') === 0) {
+        // civimix-schema@5 is designed for backported use in download/activation workflows,
+        // where new revisions may become dynamically available.
+        pathload()->loadPackage('civimix-schema@5', true);
+        CiviMix\Schema\loadClass($class);
+    }
+}
 
 /**
  * (Delegated) Implements hook_civicrm_config().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config
  */
-function _consentactivity_civix_civicrm_config(&$config = null)
+function _consentactivity_civix_civicrm_config($config = null)
 {
     static $configured = false;
     if ($configured) {
@@ -103,19 +141,32 @@ function _consentactivity_civix_civicrm_config(&$config = null)
     }
     $configured = true;
 
-    $template =& CRM_Core_Smarty::singleton();
-
-    $extRoot = dirname(__FILE__).DIRECTORY_SEPARATOR;
-    $extDir = $extRoot.'templates';
-
-    if (is_array($template->template_dir)) {
-        array_unshift($template->template_dir, $extDir);
-    } else {
-        $template->template_dir = [$extDir, $template->template_dir];
-    }
-
+    $extRoot = __DIR__.DIRECTORY_SEPARATOR;
     $include_path = $extRoot.PATH_SEPARATOR.get_include_path();
     set_include_path($include_path);
+    // Based on <compatibility>, this does not currently require mixin/polyfill.php.
+}
+
+/**
+ * Implements hook_civicrm_install().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
+ */
+function _consentactivity_civix_civicrm_install()
+{
+    _consentactivity_civix_civicrm_config();
+    // Based on <compatibility>, this does not currently require mixin/polyfill.php.
+}
+
+/**
+ * (Delegated) Implements hook_civicrm_enable().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
+ */
+function _consentactivity_civix_civicrm_enable(): void
+{
+    _consentactivity_civix_civicrm_config();
+    // Based on <compatibility>, this does not currently require mixin/polyfill.php.
 }
 
 /**
@@ -135,7 +186,7 @@ function _consentactivity_civix_insert_navigation_menu(&$menu, $path, $item)
     if (empty($path)) {
         $menu[] = [
             'attributes' => array_merge([
-                'label' => CRM_Utils_Array::value('name', $item),
+                'label' => $item['name'] ?? null,
                 'active' => 1,
             ], $item),
         ];

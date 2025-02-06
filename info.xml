@@ -22,11 +22,11 @@
         <url desc="Support">https://github.com/reflexive-communications/consentactivity/issues</url>
         <url desc="Licensing">https://www.gnu.org/licenses/agpl-3.0.html</url>
     </urls>
-    <releaseDate>2023-08-01</releaseDate>
-    <version>3.1.2</version>
+    <releaseDate>2025-02-06</releaseDate>
+    <version>3.2.0</version>
     <develStage>stable</develStage>
     <compatibility>
-        <ver>5.38</ver>
+        <ver>5.76</ver>
     </compatibility>
     <requires>
         <ext>rc-base</ext>
@@ -38,10 +38,11 @@
     <mixins>
         <mixin>menu-xml@1.0.0</mixin>
         <mixin>mgd-php@1.0.0</mixin>
+        <mixin>smarty@1.0.3</mixin>
     </mixins>
-    <upgrader>CRM_Consentactivity_Upgrader</upgrader>
+    <upgrader>CiviMix\Schema\Consentactivity\AutomaticUpgrader</upgrader>
     <civix>
         <namespace>CRM/Consentactivity</namespace>
-        <format>22.12.1</format>
+        <format>24.09.1</format>
     </civix>
 </extension>
