@@ -116,22 +116,29 @@ class Service
         if (!self::formNameIsInFormList($formName)) {
             return;
         }
-        // on the petition form, the contact id is saved as contactID. on the profiles it is id.
-        $cid = $formName === 'CRM_Campaign_Form_Petition_Signature' ? $form->getVar('_contactId') : $form->getVar('_id');
-        // when the form name is event registration register and the event registration process
-        // also contains confirm screen, we can return, as it will be handled on that screen
-        // without the confirm screen, we have to process it now.
-        // On the event forms the contact id could be found under the participant.
-        if ($formName === 'CRM_Event_Form_Registration_Register') {
-            $values = $form->getVar('_values');
-            if ($values['event']['is_confirm_enabled']) {
+
+        switch ($formName) {
+            case 'CRM_Campaign_Form_Petition_Signature':
+                $cid = $form->_contactId;
+                break;
+            case 'CRM_Profile_Form_Edit':
+                $cid = $form->getContactID();
+                break;
+            case 'CRM_Event_Form_Registration_Register':
+                $values = $form->_values;
+                if ($values['event']['is_confirm_enabled']) {
+                    return;
+                }
+                $cid = $values['participant']['contact_id'];
+                break;
+            case 'CRM_Event_Form_Registration_Confirm':
+                $values = $form->_values;
+                $cid = $values['participant']['contact_id'];
+                break;
+            default:
                 return;
-            }
-            $cid = $values['participant']['contact_id'];
-        } elseif ($formName === 'CRM_Event_Form_Registration_Confirm') {
-            $values = $form->getVar('_values');
-            $cid = $values['participant']['contact_id'];
         }
+
         if (is_null($cid)) {
             return;
         }
