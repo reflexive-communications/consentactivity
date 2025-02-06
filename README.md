@@ -7,9 +7,9 @@
 This extension could be used for tracking GDPR related activities.
 A contact gives consent when:
 
--   submits a profile, a petition or event form.
--   creates a contribution from a form of with import (if the contribution is created in the last N years, and the feature is enabled).
--   clicks to the link that is evaluated from the `Consentactivity.consent_renewal` email token.
+- submits a profile, a petition or event form.
+- creates a contribution from a form of with import (if the contribution is created in the last N years, and the feature is enabled).
+- clicks to the link that is evaluated from the `Consentactivity.consent_renewal` email token.
 
 An activity is added to the contact when the consent is given.
 A search kit saved search is supplied to search for contacts with expired & nearly expired consents. The date field has to be updated in the Having statement.
@@ -23,9 +23,9 @@ The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
--   PHP v7.3+
--   CiviCRM v5.38+
--   rc-base
+- PHP v7.3+
+- CiviCRM v5.76+
+- rc-base
 
 ## Installation
 

@@ -14,23 +14,23 @@ When the upgrade-db task is running, it checks for the existance of the setting 
 
 The extension has in internal setting database where the following parameters are stored:
 
--   `activity-type-id`
--   `option-value-id`
--   `saved-search-id` The search for the expiration.
--   `tagging-search-id` The search for the tagging.
--   `tag-id` The tag id that has to be added to the contact.
--   `expired-tag-id` The tag id that has to be added to the contact after the consent expiration.
--   `consent-after-contribution` If this flag is set true, the consent activity will be triggered after the contribution.
--   `consent-expiration-years` The number of years after the consent gets expired. By default it is 3 years.
--   `consent-expiration-tagging-days` The number of days before the expiration. The tag has to be added at this time.
--   `custom-field-map` This array contains the associations between the pseudo consent fields and the actual consent fields and groups.
+- `activity-type-id`
+- `option-value-id`
+- `saved-search-id` The search for the expiration.
+- `tagging-search-id` The search for the tagging.
+- `tag-id` The tag id that has to be added to the contact.
+- `expired-tag-id` The tag id that has to be added to the contact after the consent expiration.
+- `consent-after-contribution` If this flag is set true, the consent activity will be triggered after the contribution.
+- `consent-expiration-years` The number of years after the consent gets expired. By default it is 3 years.
+- `consent-expiration-tagging-days` The number of days before the expiration. The tag has to be added at this time.
+- `custom-field-map` This array contains the associations between the pseudo consent fields and the actual consent fields and groups.
 
 ### Scheduled jobs
 
 The extension provides two API endpoints and daily scheduled processes.
 
--   The tagging job applies a given tag to the contacts that are found by the tagging saved search. The tag is added if the latest consent activity is older than `Now - consent-expiration-years + consent-expiration-tagging-days`.
--   The expiration job deletes the contact data, sets the privacy field to not given consent state and adds the expiration-tag to the contact that are found by the expiration saved search. (The latest consent activity is older than `Now - consent-expiration-years`.)
+- The tagging job applies a given tag to the contacts that are found by the tagging saved search. The tag is added if the latest consent activity is older than `Now - consent-expiration-years + consent-expiration-tagging-days`.
+- The expiration job deletes the contact data, sets the privacy field to not given consent state and adds the expiration-tag to the contact that are found by the expiration saved search. (The latest consent activity is older than `Now - consent-expiration-years`.)
 
 ### Deleted saved search
 
